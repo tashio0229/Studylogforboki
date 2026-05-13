@@ -355,4 +355,4 @@ status: active
 
 - CPAラーニング（日商簿記1級）: https://www.cpa-learning.com/
 - 日商簿記検定 公式サイト: https://www.kentei.ne.jp/bookkeeping
-- 第170回申込確認（6月試験）: 商工会議所の公式サイトで確認すること
+- 第170回申込確認（6月試験）: ✅ 2026-05-13 申込完了
