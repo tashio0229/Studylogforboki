@@ -1,0 +1,5 @@
+{
+  "name": "secretary",
+  "description": "パーソナル秘書スキル。対話的オンボーディングでMarkdownベースの管理フォルダ階層を自動生成します。",
+  "version": "1.0.0"
+}

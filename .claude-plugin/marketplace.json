@@ -1,0 +1,24 @@
+{
+  "name": "studylogforboki-secretary",
+  "owner": {
+    "name": "tashio0229"
+  },
+  "metadata": {
+    "description": "ベステラ株式会社 経理財務課向けパーソナル秘書プラグイン"
+  },
+  "plugins": [
+    {
+      "name": "secretary",
+      "source": "./plugins/secretary",
+      "description": "対話的オンボーディングでMarkdownベースの管理フォルダ階層を自動生成するパーソナル秘書スキル",
+      "version": "1.0.0",
+      "author": {
+        "name": "tashio0229"
+      },
+      "repository": "https://github.com/tashio0229/Studylogforboki",
+      "license": "MIT",
+      "category": "productivity",
+      "tags": ["secretary", "todo", "productivity", "markdown", "organization", "finance", "accounting"]
+    }
+  ]
+}
