@@ -18,6 +18,7 @@
     .badge-blue { background: #e8f0fe; color: #1a73e8; }
     .badge-green { background: #e6f4ea; color: #137333; }
     .badge-red { background: #fce8e6; color: #c5221f; }
+    .badge-orange { background: #fff3e0; color: #e65100; }
     .badge-gray { background: #f1f3f4; color: #5f6368; }
 
     .lecture-list { list-style: none; }
@@ -41,7 +42,7 @@
     .memo { color: #666; font-size: 12px; }
 
     .review-day { margin-bottom: 16px; }
-    .review-date { font-weight: bold; font-size: 13px; padding: 6px 10px; border-radius: 4px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .review-date { font-weight: bold; font-size: 13px; padding: 6px 10px; border-radius: 4px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .review-date.today { background: #e8f0fe; color: #1a73e8; }
     .review-date.past { background: #f1f3f4; color: #aaa; }
     .review-date.future { background: #fff8e1; color: #795548; }
@@ -50,6 +51,7 @@
     .review-item input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
     .review-item label { font-size: 13px; cursor: pointer; }
     .review-item label.done { color: #aaa; text-decoration: line-through; }
+    .review-section { font-size: 11px; font-weight: bold; color: #999; padding: 4px 10px 2px; text-transform: uppercase; }
 
     .progress-wrap { margin: 8px 0; }
     .progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
@@ -61,7 +63,7 @@
 <body>
 
 <h1>📚 簿記1級 学習ダッシュボード</h1>
-<div class="meta">最終更新: 2026-05-21 ｜ 6月試験まで: 約24日 ｜ 11月試験まで: 約186日</div>
+<div class="meta">最終更新: 2026-05-22 ｜ 6月試験まで: 約23日 ｜ 11月試験まで: 約185日</div>
 
 <div class="container">
 
@@ -215,48 +217,42 @@
           </tr>
         </thead>
         <tbody>
-          <!-- #02 材料費会計① -->
-          <tr><td>T02-例1-問1</td><td>材料副費の処理 問1</td><td>工業 #02 材料費会計①</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>T02-例1-問2</td><td>材料副費の処理 問2</td><td>工業 #02 材料費会計①</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>T02-例1-問3</td><td>材料副費の処理 問3</td><td>工業 #02 材料費会計①</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>T02-例1-問4</td><td>材料副費の処理 問4</td><td>工業 #02 材料費会計①</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>T02-例2</td><td>値引き・割戻の処理</td><td>工業 #02 材料費会計①</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P02-2-1</td><td>材料副費（練習問題）</td><td>工業 #02 材料費会計①</td><td><span class="mark mark-d">△</span></td><td>2026-05-15</td><td>2026-05-18</td><td>0</td><td class="memo">例題と違う角度の出題に戸惑い。解説で理解済み</td></tr>
-          <!-- #03 材料費会計② -->
-          <tr><td>T03-例3</td><td>予定受入価格</td><td>工業 #03 材料費会計②</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <tr><td>T03-例4</td><td>予定価格法</td><td>工業 #03 材料費会計②</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <tr><td>P02-2-2</td><td>予定消費価格と予定受入価格</td><td>工業 #03 材料費会計②</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <tr><td>P02-2-3</td><td>非原価項目</td><td>工業 #03 材料費会計②</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <!-- #04 労務費会計 -->
-          <tr><td>T04-例1</td><td>賃金（未払いなし）</td><td>工業 #04 労務費会計</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <tr><td>T04-例2</td><td>賃金（未払いあり）</td><td>工業 #04 労務費会計</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <tr><td>T04-例3</td><td>賃金（予定消費賃率の使用）</td><td>工業 #04 労務費会計</td><td><span class="mark mark-x">✕</span></td><td>2026-05-16</td><td>2026-05-17</td><td>0</td><td class="memo">予定消費賃率の考え方が不明瞭</td></tr>
-          <tr><td>P03-3-1</td><td>予定消費賃率</td><td>工業 #04 労務費会計</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <tr><td>P03-3-2</td><td>賃率差異</td><td>工業 #04 労務費会計</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <tr><td>P03-3-3</td><td>未払賃金</td><td>工業 #04 労務費会計</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <!-- #05 経費会計 -->
-          <tr><td>T05-例1</td><td>経費の消費額の計算</td><td>工業 #05 経費会計</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <tr><td>T05-例2</td><td>外注加工賃（無償支給）</td><td>工業 #05 経費会計</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
-          <!-- #07/#08 部門別計算 -->
-          <tr><td>T08-例5</td><td>補助部門費の予定配賦</td><td>工業 #08 部門別計算②</td><td><span class="mark mark-d">△</span></td><td>2026-05-18</td><td>2026-05-21</td><td>1</td><td class="memo">初回✕→翌日再挑戦で△に改善</td></tr>
-          <tr><td>T08-例6</td><td>補助部門費の予算許容額配賦</td><td>工業 #08 部門別計算②</td><td><span class="mark mark-d">△</span></td><td>2026-05-18</td><td>2026-05-21</td><td>1</td><td class="memo">初回✕→翌日再挑戦で△に改善</td></tr>
-          <tr><td>P07/08-6-1</td><td>第一次集計</td><td>工業 #07/#08 部門別計算</td><td><span class="mark mark-o">○</span></td><td>2026-05-18</td><td>2026-05-25</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P07/08-6-2</td><td>補助部門相互間の用役授受</td><td>工業 #07/#08 部門別計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-18</td><td>2026-05-21</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P07/08-6-3</td><td>第二次集計と第三次集計（前半）</td><td>工業 #07/#08 部門別計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-18</td><td>2026-05-21</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P07/08-6-4</td><td>単一基準と複数基準</td><td>工業 #07/#08 部門別計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>2</td><td class="memo">初回✕(5/18)→2回目✕(5/19)→3回目△(5/20)。複数基準配賦法×階梯式の論点確認後に改善</td></tr>
-          <tr><td>P07/08-6-5</td><td>第二次集計方法の判断</td><td>工業 #07/#08 部門別計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>2</td><td class="memo">初回✕(5/18)→2回目✕(5/19)→3回目△(5/20)。概念理解後に改善</td></tr>
-          <!-- #09 個別原価計算 -->
-          <tr><td>T09-例1</td><td>個別原価計算（基本）</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>T09-例2</td><td>仕損費の直接経費処理①</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>1</td><td class="memo">初回✕(5/19)→2回目△(5/20)。解説見て改善</td></tr>
-          <tr><td>T09-例3</td><td>仕損費の直接経費処理②</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>T09-例4</td><td>仕損費の間接経費処理</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>T09-例5</td><td>作業屑の処理</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>T09-例6</td><td>ロット別個別原価計算</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P09-7-1</td><td>個別原価計算表（仕損費の直接経費処理）</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P09-7-2</td><td>仕損費の処理（間接経費処理）</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P09-7-3</td><td>異常仕損費</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P09-7-4</td><td>作業屑の処理</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P09-7-5</td><td>個別原価計算（総合）</td><td>工業 #09 個別原価計算</td><td><span class="mark mark-x">✕</span></td><td>2026-05-20</td><td>2026-05-21</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>T02-例1-問1</td><td>材料副費の処理 問1</td><td>工業 #02</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>T02-例1-問2</td><td>材料副費の処理 問2</td><td>工業 #02</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>T02-例1-問3</td><td>材料副費の処理 問3</td><td>工業 #02</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>T02-例1-問4</td><td>材料副費の処理 問4</td><td>工業 #02</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>T02-例2</td><td>値引き・割戻の処理</td><td>工業 #02</td><td><span class="mark mark-o">○</span></td><td>2026-05-15</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>P02-2-1</td><td>材料副費（練習問題）</td><td>工業 #02</td><td><span class="mark mark-d">△</span></td><td>2026-05-15</td><td>2026-05-22</td><td>1</td><td class="memo">例題と違う角度の出題に戸惑い</td></tr>
+          <tr><td>T03-例3</td><td>予定受入価格</td><td>工業 #03</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>T03-例4</td><td>予定価格法</td><td>工業 #03</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>P02-2-2</td><td>予定消費価格と予定受入価格</td><td>工業 #03</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>P02-2-3</td><td>非原価項目</td><td>工業 #03</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>T04-例1</td><td>賃金（未払いなし）</td><td>工業 #04</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>T04-例2</td><td>賃金（未払いあり）</td><td>工業 #04</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>T04-例3</td><td>賃金（予定消費賃率の使用）</td><td>工業 #04</td><td><span class="mark mark-x">✕</span></td><td>2026-05-16</td><td>2026-05-17</td><td>0</td><td class="memo">予定消費賃率の考え方が不明瞭</td></tr>
+          <tr><td>P03-3-1</td><td>予定消費賃率</td><td>工業 #04</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>P03-3-2</td><td>賃率差異</td><td>工業 #04</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>P03-3-3</td><td>未払賃金</td><td>工業 #04</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>T05-例1</td><td>経費の消費額の計算</td><td>工業 #05</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>T05-例2</td><td>外注加工賃（無償支給）</td><td>工業 #05</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>1</td><td class="memo">△継続</td></tr>
+          <tr><td>T08-例5</td><td>補助部門費の予定配賦</td><td>工業 #08</td><td><span class="mark mark-d">△</span></td><td>2026-05-18</td><td>2026-05-22</td><td>1</td><td class="memo">初回✕→△改善。5/21スキップ繰越</td></tr>
+          <tr><td>T08-例6</td><td>補助部門費の予算許容額配賦</td><td>工業 #08</td><td><span class="mark mark-d">△</span></td><td>2026-05-18</td><td>2026-05-22</td><td>1</td><td class="memo">初回✕→△改善。5/21スキップ繰越</td></tr>
+          <tr><td>P07/08-6-1</td><td>第一次集計</td><td>工業 #07/#08</td><td><span class="mark mark-o">○</span></td><td>2026-05-18</td><td>2026-05-25</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>P07/08-6-2</td><td>補助部門相互間の用役授受</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-18</td><td>2026-05-22</td><td>0</td><td class="memo">5/21スキップ繰越</td></tr>
+          <tr><td>P07/08-6-3</td><td>第二次集計と第三次集計（前半）</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-18</td><td>2026-05-22</td><td>0</td><td class="memo">5/21スキップ繰越</td></tr>
+          <tr><td>P07/08-6-4</td><td>単一基準と複数基準</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>2</td><td class="memo">✕×2→△(5/20)</td></tr>
+          <tr><td>P07/08-6-5</td><td>第二次集計方法の判断</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>2</td><td class="memo">✕×2→△(5/20)</td></tr>
+          <tr><td>T09-例1</td><td>個別原価計算（基本）</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-19</td><td>2026-05-22</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>T09-例2</td><td>仕損費の直接経費処理①</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>1</td><td class="memo">初回✕→△(5/20)</td></tr>
+          <tr><td>T09-例3</td><td>仕損費の直接経費処理②</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>T09-例4</td><td>仕損費の間接経費処理</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>T09-例5</td><td>作業屑の処理</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>T09-例6</td><td>ロット別個別原価計算</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>P09-7-1</td><td>個別原価計算表（仕損費の直接経費処理）</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>P09-7-2</td><td>仕損費の処理（間接経費処理）</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>P09-7-3</td><td>異常仕損費</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>P09-7-4</td><td>作業屑の処理</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-20</td><td>2026-05-23</td><td>0</td><td class="memo">-</td></tr>
+          <tr><td>P09-7-5</td><td>個別原価計算（総合）</td><td>工業 #09</td><td><span class="mark mark-x">✕</span></td><td>2026-05-20</td><td>2026-05-22</td><td>0</td><td class="memo">5/21スキップ繰越</td></tr>
         </tbody>
       </table>
     </div>
@@ -267,73 +263,73 @@
     <div class="card-header">🔁 復習スケジュール</div>
     <div class="card-body">
 
-      <!-- 今日 -->
+      <!-- 今日 5/22 -->
       <div class="review-day">
-        <div class="review-date today">📌 2026-05-21（木・今日）<span class="badge badge-red">✕ P09-7-5 必須</span></div>
-        <div class="review-item"><input type="checkbox"><label>【✕ 必須】P09-7-5 個別原価計算（総合）工業 #09 ｜ 初回✕ → どこで詰まったか確認してから再挑戦</label></div>
-        <div class="review-item"><input type="checkbox"><label>T08-例5 補助部門費の予定配賦 工業 #08 ｜ △(2回目) → 自力で解けるか確認</label></div>
-        <div class="review-item"><input type="checkbox"><label>T08-例6 補助部門費の予算許容額配賦 工業 #08 ｜ △(2回目) → 自力で解けるか確認</label></div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-2 補助部門相互間の用役授受 工業 #07/#08 ｜ △(1回目) → 自力で解けるか確認</label></div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-3 第二次集計と第三次集計（前半）工業 #07/#08 ｜ △(1回目) → 自力で解けるか確認</label></div>
-      </div>
-
-      <!-- 5/22 -->
-      <div class="review-day">
-        <div class="review-date future">📅 2026-05-22（金）<span class="badge badge-gray">15件</span></div>
-        <div class="review-item"><input type="checkbox"><label>T02-例1-問1〜問4 材料副費の処理（全4問）工業 #02 ｜ ○ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T02-例2 値引き・割戻の処理 工業 #02 ｜ ○ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P02-2-1 材料副費（練習問題）工業 #02 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T03-例3 予定受入価格 工業 #03 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T03-例4 予定価格法 工業 #03 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P02-2-2 予定消費価格と予定受入価格 工業 #03 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P02-2-3 非原価項目 工業 #03 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T04-例1 賃金（未払いなし）工業 #04 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T04-例2 賃金（未払いあり）工業 #04 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P03-3-1 予定消費賃率 工業 #04 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P03-3-2 賃率差異 工業 #04 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P03-3-3 未払賃金 工業 #04 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T05-例1 経費の消費額の計算 工業 #05 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T05-例2 外注加工賃（無償支給）工業 #05 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例1 個別原価計算（基本）工業 #09 ｜ △ 第1復習</label></div>
+        <div class="review-date today">📌 2026-05-22（金・今日）<span class="badge badge-red">✕ P09-7-5 必須</span><span class="badge badge-orange">計20件</span></div>
+        <div class="review-section">▼ 最優先（✕ 繰越）</div>
+        <div class="review-item"><input type="checkbox"><label>【✕ 必須】P09-7-5 個別原価計算（総合）</label></div>
+        <div class="review-section">▼ 繰越（5/21スキップ分）</div>
+        <div class="review-item"><input type="checkbox"><label>T08-例5 補助部門費の予定配賦</label></div>
+        <div class="review-item"><input type="checkbox"><label>T08-例6 補助部門費の予算許容額配賦</label></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-2 補助部門相互間の用役授受</label></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-3 第二次集計と第三次集計</label></div>
+        <div class="review-section">▼ 本日予定（○ 第2復習）</div>
+        <div class="review-item"><input type="checkbox"><label>T02-例1-問1〜問4 材料副費の処理（全4問）</label></div>
+        <div class="review-item"><input type="checkbox"><label>T02-例2 値引き・割戻の処理</label></div>
+        <div class="review-section">▼ 本日予定（△ 第2復習）</div>
+        <div class="review-item"><input type="checkbox"><label>P02-2-1 材料副費（練習問題）</label></div>
+        <div class="review-item"><input type="checkbox"><label>T03-例3 予定受入価格</label></div>
+        <div class="review-item"><input type="checkbox"><label>T03-例4 予定価格法</label></div>
+        <div class="review-item"><input type="checkbox"><label>P02-2-2 予定消費価格と予定受入価格</label></div>
+        <div class="review-item"><input type="checkbox"><label>P02-2-3 非原価項目</label></div>
+        <div class="review-item"><input type="checkbox"><label>T04-例1 賃金（未払いなし）</label></div>
+        <div class="review-item"><input type="checkbox"><label>T04-例2 賃金（未払いあり）</label></div>
+        <div class="review-item"><input type="checkbox"><label>P03-3-1 予定消費賃率</label></div>
+        <div class="review-item"><input type="checkbox"><label>P03-3-2 賃率差異</label></div>
+        <div class="review-item"><input type="checkbox"><label>P03-3-3 未払賃金</label></div>
+        <div class="review-item"><input type="checkbox"><label>T05-例1 経費の消費額の計算</label></div>
+        <div class="review-item"><input type="checkbox"><label>T05-例2 外注加工賃（無償支給）</label></div>
+        <div class="review-section">▼ 本日予定（△ 第1復習）</div>
+        <div class="review-item"><input type="checkbox"><label>T09-例1 個別原価計算（基本）</label></div>
       </div>
 
       <!-- 5/23 -->
       <div class="review-day">
         <div class="review-date future">📅 2026-05-23（土）<span class="badge badge-gray">12件</span></div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-1 第一次集計 工業 #07/#08 ｜ ○ 再確認</label></div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-4 単一基準と複数基準 工業 #07/#08 ｜ △(3回目) → 今度は自力で解き切れるか</label></div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-5 第二次集計方法の判断 工業 #07/#08 ｜ △(3回目) → 概念をスラスラ説明できるか</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例2 仕損費の直接経費処理① 工業 #09 ｜ △(2回目)</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例3 仕損費の直接経費処理② 工業 #09 ｜ △ 第1復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例4 仕損費の間接経費処理 工業 #09 ｜ △ 第1復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例5 作業屑の処理 工業 #09 ｜ △ 第1復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例6 ロット別個別原価計算 工業 #09 ｜ △ 第1復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P09-7-1 個別原価計算表（仕損費の直接経費処理）工業 #09 ｜ △ 第1復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P09-7-2 仕損費の処理（間接経費処理）工業 #09 ｜ △ 第1復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P09-7-3 異常仕損費 工業 #09 ｜ △ 第1復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P09-7-4 作業屑の処理 工業 #09 ｜ △ 第1復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-1 第一次集計 ｜ ○ 再確認</label></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-4 単一基準と複数基準 ｜ △(3回目)</label></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-5 第二次集計方法の判断 ｜ △(3回目)</label></div>
+        <div class="review-item"><input type="checkbox"><label>T09-例2 仕損費の直接経費処理① ｜ △(2回目)</label></div>
+        <div class="review-item"><input type="checkbox"><label>T09-例3 仕損費の直接経費処理② ｜ △ 第1復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>T09-例4 仕損費の間接経費処理 ｜ △ 第1復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>T09-例5 作業屑の処理 ｜ △ 第1復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>T09-例6 ロット別個別原価計算 ｜ △ 第1復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>P09-7-1 個別原価計算表（仕損費の直接経費処理）｜ △ 第1復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>P09-7-2 仕損費の処理（間接経費処理）｜ △ 第1復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>P09-7-3 異常仕損費 ｜ △ 第1復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>P09-7-4 作業屑の処理 ｜ △ 第1復習</label></div>
       </div>
 
       <!-- 5/25 -->
       <div class="review-day">
         <div class="review-date future">📅 2026-05-25（月）</div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-1 第一次集計 工業 #07/#08 ｜ ○ 第2復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-1 第一次集計 ｜ ○ 第2復習</label></div>
       </div>
 
       <!-- 5/29 -->
       <div class="review-day">
         <div class="review-date future">📅 2026-05-29（金）</div>
-        <div class="review-item"><input type="checkbox"><label>T02-例1-問1〜問4 材料副費の処理（全4問）工業 #02 ｜ ○ 第3復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T02-例2 値引き・割戻の処理 工業 #02 ｜ ○ 第3復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P02-2-1 材料副費（練習問題）工業 #02 ｜ △ 第3復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>T02-例1-問1〜問4 材料副費の処理（全4問）｜ ○ 第3復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>T02-例2 値引き・割戻の処理 ｜ ○ 第3復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>P02-2-1 材料副費（練習問題）｜ △ 第3復習</label></div>
       </div>
 
       <!-- 6/14 -->
       <div class="review-day">
         <div class="review-date urgent">⚠️ 2026-06-14（日）6月試験前日</div>
-        <div class="review-item"><input type="checkbox"><label>T02-例1-問1〜問4 材料副費の処理（全4問）工業 #02 ｜ ○ 最終確認</label></div>
-        <div class="review-item"><input type="checkbox"><label>T02-例2 値引き・割戻の処理 工業 #02 ｜ ○ 最終確認</label></div>
-        <div class="review-item"><input type="checkbox"><label>P02-2-1 材料副費（練習問題）工業 #02 ｜ △ 第4復習</label></div>
+        <div class="review-item"><input type="checkbox"><label>T02-例1-問1〜問4 材料副費の処理（全4問）｜ ○ 最終確認</label></div>
+        <div class="review-item"><input type="checkbox"><label>T02-例2 値引き・割戻の処理 ｜ ○ 最終確認</label></div>
+        <div class="review-item"><input type="checkbox"><label>P02-2-1 材料副費（練習問題）｜ △ 第4復習</label></div>
       </div>
 
     </div>
