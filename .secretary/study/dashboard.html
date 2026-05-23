@@ -6,12 +6,14 @@
   <title>簿記1級 学習ダッシュボード</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f5f5f5; color: #333; font-size: 14px; }
-    h1 { background: #2c3e50; color: white; padding: 16px 24px; font-size: 18px; }
-    .meta { background: #34495e; color: #ccc; padding: 6px 24px; font-size: 12px; }
-    .container { max-width: 1200px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .card { background: white; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); overflow: hidden; }
-    .card.full { grid-column: 1 / -1; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f0f2f5; color: #333; font-size: 14px; }
+    h1 { background: #2c3e50; color: white; padding: 16px 24px; font-size: 18px; display: flex; align-items: center; gap: 12px; }
+    .meta { background: #34495e; color: #ccc; padding: 6px 24px; font-size: 12px; display: flex; gap: 24px; }
+    .container { max-width: 1300px; margin: 20px auto; padding: 0 16px; display: flex; flex-direction: column; gap: 20px; }
+    .row { display: grid; gap: 20px; }
+    .row-2 { grid-template-columns: 1fr 1fr; }
+    .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .card { background: white; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); overflow: hidden; }
     .card-header { padding: 12px 16px; font-weight: bold; font-size: 14px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .card-body { padding: 16px; }
     .badge { font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
@@ -20,187 +22,545 @@
     .badge-red { background: #fce8e6; color: #c5221f; }
     .badge-orange { background: #fff3e0; color: #e65100; }
     .badge-gray { background: #f1f3f4; color: #5f6368; }
+    .badge-purple { background: #f3e8fd; color: #7b1fa2; }
 
+    /* 今日の指令 */
+    .directive { border-left: 5px solid #1a73e8; background: #e8f0fe; padding: 14px 18px; border-radius: 8px; }
+    .directive h2 { font-size: 15px; color: #1a73e8; margin-bottom: 10px; }
+    .directive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .directive-item { background: white; border-radius: 6px; padding: 10px 12px; }
+    .directive-item .label { font-size: 11px; color: #888; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
+    .directive-item .value { font-size: 13px; font-weight: bold; }
+    .directive-item.urgent { border-left: 3px solid #c5221f; }
+    .directive-item.primary { border-left: 3px solid #1a73e8; }
+    .directive-item.warning { border-left: 3px solid #e37400; }
+    .directive-item.ok { border-left: 3px solid #137333; }
+
+    /* 乖離アラート */
+    .alert-bar { background: #fce8e6; border: 1px solid #f5c6c2; border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+    .alert-bar .alert-icon { font-size: 20px; }
+    .alert-bar .alert-text { flex: 1; }
+    .alert-bar .alert-text strong { color: #c5221f; }
+    .alert-bar .alert-stat { text-align: right; }
+    .alert-bar .alert-stat .num { font-size: 24px; font-weight: bold; color: #c5221f; }
+    .alert-bar .alert-stat .unit { font-size: 11px; color: #888; }
+
+    /* プログレスバー */
+    .progress-wrap { margin: 6px 0; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
+    .progress-bar { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+    .fill-blue { background: #1a73e8; }
+    .fill-green { background: #34a853; }
+    .fill-orange { background: #fbbc04; }
+    .fill-red { background: #ea4335; }
+
+    /* カレンダー */
+    .cal-section { }
+    .cal-month-label { font-size: 13px; font-weight: bold; color: #555; margin: 12px 0 6px; padding-left: 4px; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-header { font-size: 11px; font-weight: bold; text-align: center; padding: 4px; color: #888; }
+    .cal-header.sun { color: #c5221f; }
+    .cal-header.sat { color: #1a73e8; }
+    .cal-day {
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      padding: 6px 7px;
+      min-height: 95px;
+      font-size: 11px;
+      background: #fafafa;
+      vertical-align: top;
+      position: relative;
+    }
+    .cal-day.today { background: #e8f0fe; border-color: #1a73e8; border-width: 2px; }
+    .cal-day.past { background: #f5f5f5; opacity: 0.7; }
+    .cal-day.weekend { background: #fff8f0; }
+    .cal-day.exam-day { background: #fce8e6; border-color: #c5221f; border-width: 2px; }
+    .cal-day.milestone { background: #e6f4ea; border-color: #137333; border-width: 2px; }
+    .cal-day.heavy-review { border-color: #e37400; }
+    .cal-day.empty { background: transparent; border: none; min-height: 0; }
+    .cal-date { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 3px; }
+    .cal-day.today .cal-date { color: #1a73e8; }
+    .cal-day.exam-day .cal-date { color: #c5221f; }
+    .cal-day.milestone .cal-date { color: #137333; }
+    .cal-hours { font-size: 10px; color: #888; margin-bottom: 4px; }
+    .cal-lecture { font-size: 11px; color: #1a73e8; font-weight: bold; margin-bottom: 2px; }
+    .cal-review { font-size: 10px; color: #e37400; margin-bottom: 2px; }
+    .cal-review.heavy { color: #c5221f; font-weight: bold; }
+    .cal-note { font-size: 10px; color: #666; }
+    .cal-tag { display: inline-block; font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-top: 2px; }
+    .tag-exam { background: #fce8e6; color: #c5221f; }
+    .tag-milestone { background: #e6f4ea; color: #137333; }
+    .tag-cranch-end { background: #e8f0fe; color: #1a73e8; }
+
+    /* フェーズタイムライン */
+    .timeline { position: relative; padding: 20px 0 8px; }
+    .timeline-bar { height: 24px; background: #f0f0f0; border-radius: 12px; overflow: hidden; display: flex; }
+    .timeline-phase { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: white; }
+    .phase-0 { background: #4285f4; }
+    .phase-1 { background: #34a853; }
+    .phase-2 { background: #fbbc04; }
+    .phase-3 { background: #ea4335; }
+    .phase-exam { background: #9c27b0; }
+    .timeline-markers { display: flex; justify-content: space-between; font-size: 10px; color: #888; margin-top: 4px; }
+    .phase-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+    .phase-legend-item { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+    .phase-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .timeline-now { position: absolute; top: 14px; transform: translateX(-50%); }
+    .timeline-now::before { content: '▼'; font-size: 12px; color: #c5221f; display: block; text-align: center; margin-bottom: -4px; }
+    .timeline-now-label { font-size: 10px; color: #c5221f; font-weight: bold; white-space: nowrap; }
+
+    /* 講義リスト */
     .lecture-list { list-style: none; }
-    .lecture-item { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; border-bottom: 1px solid #f5f5f5; }
+    .lecture-item { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid #f5f5f5; }
     .lecture-item:last-child { border-bottom: none; }
-    .lecture-item input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; width: 15px; height: 15px; cursor: pointer; }
-    .lecture-label { flex: 1; }
+    .lecture-item input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
+    .lecture-label { flex: 1; font-size: 13px; }
     .lecture-label.done { color: #aaa; text-decoration: line-through; }
-    .lecture-num { font-weight: bold; color: #1a73e8; margin-right: 4px; }
-    .lecture-time { color: #888; font-size: 12px; margin-left: 4px; }
-    .section-title { font-size: 12px; font-weight: bold; color: #888; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .lecture-num { font-weight: bold; color: #1a73e8; margin-right: 4px; font-size: 12px; }
+    .lecture-time { color: #888; font-size: 11px; margin-left: 4px; }
+    .lecture-target { color: #e37400; font-size: 10px; font-weight: bold; margin-left: 4px; }
+    .section-title { font-size: 11px; font-weight: bold; color: #888; margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { background: #f8f9fa; padding: 8px 10px; text-align: left; font-weight: 600; border-bottom: 2px solid #e0e0e0; white-space: nowrap; }
-    td { padding: 7px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+    /* 演習ログ */
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { background: #f8f9fa; padding: 7px 8px; text-align: left; font-weight: 600; border-bottom: 2px solid #e0e0e0; white-space: nowrap; }
+    td { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
     tr:last-child td { border-bottom: none; }
-    .mark { font-weight: bold; font-size: 15px; }
+    tr.overdue { background: #fff5f5; }
+    .mark { font-weight: bold; font-size: 14px; }
     .mark-o { color: #137333; }
     .mark-d { color: #e37400; }
     .mark-x { color: #c5221f; }
-    .memo { color: #666; font-size: 12px; }
+    .memo { color: #666; font-size: 11px; }
 
-    .review-day { margin-bottom: 16px; }
-    .review-date { font-weight: bold; font-size: 13px; padding: 6px 10px; border-radius: 4px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .review-date.today { background: #e8f0fe; color: #1a73e8; }
-    .review-date.past { background: #f1f3f4; color: #aaa; }
-    .review-date.future { background: #fff8e1; color: #795548; }
-    .review-date.urgent { background: #fce8e6; color: #c5221f; }
-    .review-item { display: flex; align-items: flex-start; gap: 8px; padding: 4px 10px; }
+    /* 復習スケジュール */
+    .review-day { margin-bottom: 14px; }
+    .review-date { font-weight: bold; font-size: 13px; padding: 5px 10px; border-radius: 4px; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .review-date.today-r { background: #e8f0fe; color: #1a73e8; }
+    .review-date.future-r { background: #fff8e1; color: #795548; }
+    .review-date.urgent-r { background: #fce8e6; color: #c5221f; }
+    .review-item { display: flex; align-items: flex-start; gap: 8px; padding: 3px 10px; }
     .review-item input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
     .review-item label { font-size: 13px; cursor: pointer; }
-    .review-item label.done { color: #aaa; text-decoration: line-through; }
-    .review-section { font-size: 11px; font-weight: bold; color: #999; padding: 4px 10px 2px; text-transform: uppercase; }
 
-    .progress-wrap { margin: 8px 0; }
-    .progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
-    .progress-bar { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
-    .progress-fill { height: 100%; border-radius: 4px; background: #1a73e8; transition: width 0.3s; }
-    .progress-fill.green { background: #34a853; }
-
-    .today-summary { background: #e8f4fd; border-left: 4px solid #1a73e8; padding: 12px 16px; border-radius: 4px; margin-bottom: 16px; font-size: 13px; }
-    .today-summary strong { color: #1a73e8; }
+    @media (max-width: 768px) {
+      .row-2, .row-3 { grid-template-columns: 1fr; }
+      .cal-grid { grid-template-columns: repeat(7, 1fr); gap: 2px; }
+      .cal-day { min-height: 70px; padding: 4px; }
+      .directive-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
-<h1>📚 簿記1級 学習ダッシュボード</h1>
-<div class="meta">最終更新: 2026-05-24 ｜ 6月試験まで: 約21日 ｜ 11月試験まで: 約183日</div>
+<h1>📚 簿記1級 学習ダッシュボード
+  <span style="font-size:13px; font-weight:normal; margin-left:auto;">最終更新: 2026-05-24</span>
+</h1>
+<div class="meta">
+  <span>🎯 6月試験まで: <strong style="color:#ffcc80">21日</strong></span>
+  <span>🏆 11月試験まで: <strong style="color:#ffcc80">183日</strong></span>
+  <span>🏭 工業/原計: <strong style="color:#ffcc80">9/28</strong></span>
+  <span>📊 商業/会計: <strong style="color:#ffcc80">0/60</strong></span>
+</div>
 
 <div class="container">
 
-  <!-- 工業/原計 進捗 -->
-  <div class="card">
-    <div class="card-header">
-      🏭 工業/原計コース（登川）
-      <span class="badge badge-blue">全28講義</span>
-      <span class="badge badge-green">9/28完了</span>
+  <!-- 乖離アラート -->
+  <div class="alert-bar">
+    <div class="alert-icon">🚨</div>
+    <div class="alert-text">
+      <strong>計画乖離: 工業/原計が約10日遅延中</strong><br>
+      <span style="font-size:12px; color:#666;">元計画: 5/17完走予定 → 実績: 9/28（5/24時点）。修正済みスケジュールで6/7完走を目指す。T04-例3（✕）は5/17から放置中。</span>
     </div>
-    <div class="card-body">
-      <div class="progress-wrap">
-        <div class="progress-label"><span>進捗</span><span>9 / 28（32.1%）</span></div>
-        <div class="progress-bar"><div class="progress-fill" style="width: 32.1%"></div></div>
-      </div>
-
-      <div class="section-title">完了</div>
-      <ul class="lecture-list">
-        <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#01</span>第1章 原価計算総論<span class="lecture-time">20分</span></div></li>
-        <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#02</span>第2章第2～3節 材料費会計①<span class="lecture-time">88分</span></div></li>
-        <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#03</span>第2章第4節 材料費会計②<span class="lecture-time">77分</span></div></li>
-        <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#04</span>第3章 労務費会計<span class="lecture-time">116分</span></div></li>
-        <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#05</span>第4章 経費会計<span class="lecture-time">41分</span></div></li>
-        <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#06</span>第5章 製造間接費<span class="lecture-time">92分</span></div></li>
-        <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#07</span>第6章第1～2節 部門別計算①<span class="lecture-time">95分</span></div></li>
-        <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#08</span>第6章第3～4節 部門別計算②<span class="lecture-time">165分</span></div></li>
-        <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#09</span>第7章 個別原価計算<span class="lecture-time">161分</span></div></li>
-      </ul>
-
-      <div class="section-title">未完了</div>
-      <ul class="lecture-list">
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#10</span>第8章第1～3節 単純総合原価計算①<span class="lecture-time">113分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#11</span>第8章第3～4節 単純総合原価計算②<span class="lecture-time">151分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#12</span>第9章 工程別総合原価計算<span class="lecture-time">146分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#13</span>第10章 組別総合原価計算<span class="lecture-time">22分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#14</span>第11章 等級別総合原価計算<span class="lecture-time">61分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#15</span>第12章 連産品<span class="lecture-time">116分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#16</span>第13章第1～4節 標準原価計算①<span class="lecture-time">120分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#17</span>第13章第5～6節 標準原価計算②<span class="lecture-time">173分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#18</span>第13章第7～8節 標準原価計算③<span class="lecture-time">141分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#19</span>第14章 直接原価計算<span class="lecture-time">114分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#20</span>第15章 CVP分析<span class="lecture-time">112分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#21</span>第16章 予算管理<span class="lecture-time">150分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#22</span>第17章 資金管理<span class="lecture-time">25分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#23</span>第18章第1～4節 意思決定会計Ⅰ①<span class="lecture-time">155分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#24</span>第18章第5～8節 意思決定会計Ⅰ②<span class="lecture-time">104分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#25</span>第19章第1～2節 意思決定会計Ⅱ①<span class="lecture-time">124分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#26</span>第19章第3～6節 意思決定会計Ⅱ②<span class="lecture-time">108分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#27</span>戦略的原価計算<span class="lecture-time">142分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#28</span>分権組織とグループ経営の管理会計<span class="lecture-time">125分</span></div></li>
-      </ul>
+    <div class="alert-stat">
+      <div class="num">19</div>
+      <div class="unit">講義未消化</div>
     </div>
   </div>
 
-  <!-- 商業/会計 進捗 -->
+  <!-- 今日の指令 -->
+  <div class="directive">
+    <h2>⚡ 今日の指令（5/24・日曜）</h2>
+    <div class="directive-grid">
+      <div class="directive-item urgent">
+        <div class="label">🚨 最優先</div>
+        <div class="value">T04-例3「賃金（予定消費賃率）」を今すぐ解く（✕放置1週間超）</div>
+      </div>
+      <div class="directive-item primary">
+        <div class="label">📚 本日講義目標</div>
+        <div class="value">#10 単純総合原価計算①（113分）を完了させる</div>
+      </div>
+      <div class="directive-item warning">
+        <div class="label">⏰ 利用可能時間</div>
+        <div class="value">7時間（日曜）— 今日サボると来週の3h/日ではリカバリー不可</div>
+      </div>
+      <div class="directive-item ok">
+        <div class="label">📅 今週末の位置づけ</div>
+        <div class="value">5/30（土）に20件復習 ＋ #17（173分）。缶詰日。今日で#10を確実に取る</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6月試験カレンダー -->
   <div class="card">
     <div class="card-header">
-      📊 商業/会計コース（登川）
-      <span class="badge badge-blue">全60講義</span>
-      <span class="badge badge-gray">0/60完了</span>
+      📅 6月試験カレンダー（5/24〜6/14）
+      <span class="badge badge-blue">修正スケジュール済み</span>
+      <span class="badge badge-green">6/7 工業/原計完走目標</span>
     </div>
     <div class="card-body">
-      <div class="progress-wrap">
-        <div class="progress-label"><span>進捗</span><span>0 / 60</span></div>
-        <div class="progress-bar"><div class="progress-fill green" style="width: 0%"></div></div>
+
+      <div class="cal-grid" style="margin-bottom:4px;">
+        <div class="cal-header sun">日</div>
+        <div class="cal-header">月</div>
+        <div class="cal-header">火</div>
+        <div class="cal-header">水</div>
+        <div class="cal-header">木</div>
+        <div class="cal-header">金</div>
+        <div class="cal-header sat">土</div>
       </div>
-      <div class="section-title">Phase 1以降（6/15〜）で開始予定</div>
-      <ul class="lecture-list">
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#01</span>簿記1級のガイダンス<span class="lecture-time">13分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#02</span>第1章 簿記の全体像<span class="lecture-time">8分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#03</span>第2章 企業会計原則等<span class="lecture-time">83分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#04</span>第3章 現金預金<span class="lecture-time">48分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#05</span>第4章第1～5節 有形固定資産①<span class="lecture-time">65分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#06</span>第4章第6～11節 有形固定資産②<span class="lecture-time">49分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#07</span>第5章 無形固定資産・投資その他の資産・繰延資産<span class="lecture-time">44分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#08</span>第6章 引当金<span class="lecture-time">25分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#09</span>第7章 商品売買<span class="lecture-time">40分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#10</span>第8章第1節 棚卸資産①<span class="lecture-time">41分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#11</span>第8章第2節 棚卸資産②<span class="lecture-time">56分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#12</span>第9章 経過勘定<span class="lecture-time">5分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#13</span>第10章第1～5節 有価証券①<span class="lecture-time">88分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#14</span>第10章第6～11節 有価証券②<span class="lecture-time">80分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#15</span>第11章第1～3節 債権債務・貸倒引当金①<span class="lecture-time">50分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#16</span>第11章第4～6節 債権債務・貸倒引当金②<span class="lecture-time">73分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#17</span>第12章第1～2節 デリバティブ取引①<span class="lecture-time">74分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#18</span>第12章第3～5節 デリバティブ取引②<span class="lecture-time">75分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#19</span>第13章第1～3節 リース会計①<span class="lecture-time">82分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#20</span>第13章第4～5節 リース会計②<span class="lecture-time">62分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#21</span>第14章 研究開発費・ソフトウェア<span class="lecture-time">76分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#22</span>第15章 減損会計<span class="lecture-time">74分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#23</span>第16章 税金及び税効果会計<span class="lecture-time">97分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#24</span>第17章第1～2節 外貨建取引①<span class="lecture-time">86分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#25</span>第17章第3～4節 外貨建取引②<span class="lecture-time">51分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#26</span>第18章 社債<span class="lecture-time">46分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#27</span>第19章第1～3節 退職給付会計①<span class="lecture-time">71分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#28</span>第19章第4節 退職給付会計②<span class="lecture-time">71分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#29</span>第20章 資産除去債務<span class="lecture-time">-</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#30</span>第21章第1～8節 純資産①<span class="lecture-time">96分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#31</span>第21章第9～11節 純資産②<span class="lecture-time">95分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#32</span>第22章 会計方針の開示・会計上の変更及び誤謬の訂正<span class="lecture-time">50分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#33</span>第23章 四半期財務諸表<span class="lecture-time">51分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#34</span>第24章第1～4節 収益認識①<span class="lecture-time">98分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#35</span>第24章第5～6節 収益認識②<span class="lecture-time">47分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#36</span>第24章第7節 収益認識③<span class="lecture-time">51分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#37</span>第25章 本支店会計<span class="lecture-time">85分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#38</span>第26章 連結会計Ⅰ（連結会計の基礎）<span class="lecture-time">56分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#39</span>第27章第1～3節 連結会計Ⅱ（資本連結）①<span class="lecture-time">57分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#40</span>第27章第4～5節 連結会計Ⅱ（資本連結）②<span class="lecture-time">77分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#41</span>第27章第6～7節 連結会計Ⅱ（資本連結）③<span class="lecture-time">55分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#42</span>第28章 連結会計Ⅲ（成果連結）<span class="lecture-time">62分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#43</span>第29章 連結会計Ⅳ（連結税効果）<span class="lecture-time">65分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#44</span>第30章 持分法会計<span class="lecture-time">84分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#45</span>第31章 包括利益<span class="lecture-time">61分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#46</span>第32章 連結退職給付<span class="lecture-time">41分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#47</span>第33章 在外支店<span class="lecture-time">34分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#48</span>第34章 在外子会社<span class="lecture-time">59分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#49</span>第35章 個別キャッシュ・フロー計算書①<span class="lecture-time">83分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#50</span>第35章 個別キャッシュ・フロー計算書②<span class="lecture-time">93分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#51</span>第36章 連結キャッシュ・フロー計算書<span class="lecture-time">56分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#52</span>第37章 セグメント情報<span class="lecture-time">39分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#53</span>第38章第1～2節 企業結合会計①<span class="lecture-time">115分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#54</span>第38章第3～4節 企業結合会計②<span class="lecture-time">55分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#55</span>第38章第5～6節 企業結合会計③<span class="lecture-time">51分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#56</span>第39章第1～6節 事業分離会計①<span class="lecture-time">50分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#57</span>第39章第7～8節 事業分離会計②<span class="lecture-time">78分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#58</span>第40章 １株当たり情報<span class="lecture-time">70分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#59</span>第41章 分配可能額<span class="lecture-time">59分</span></div></li>
-        <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#60</span>簿記1級補講講義<span class="lecture-time">83分</span></div></li>
-      </ul>
+
+      <!-- 第1週 5/24〜5/30 -->
+      <div class="cal-month-label">5月（第1週）</div>
+      <div class="cal-grid">
+        <!-- 日 5/24 TODAY -->
+        <div class="cal-day today">
+          <div class="cal-date">24</div>
+          <div class="cal-hours">7h利用可</div>
+          <div class="cal-lecture">📚 #10 単純総合①</div>
+          <div class="cal-review heavy">⚠️ T04-例3(✕)必須</div>
+          <span class="cal-tag" style="background:#e8f0fe;color:#1a73e8">TODAY</span>
+        </div>
+        <!-- 月 5/25 -->
+        <div class="cal-day">
+          <div class="cal-date">25</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #11 単純総合②</div>
+          <div class="cal-review">復習1件</div>
+        </div>
+        <!-- 火 5/26 -->
+        <div class="cal-day heavy-review">
+          <div class="cal-date">26</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #12 工程別（前半）</div>
+          <div class="cal-review heavy">⚠️ 復習12件</div>
+          <div class="cal-note">復習優先日</div>
+        </div>
+        <!-- 水 5/27 -->
+        <div class="cal-day">
+          <div class="cal-date">27</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #12後半+#13+#14</div>
+          <div class="cal-note">#13は22分・短い</div>
+        </div>
+        <!-- 木 5/28 -->
+        <div class="cal-day">
+          <div class="cal-date">28</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #15 連産品</div>
+        </div>
+        <!-- 金 5/29 -->
+        <div class="cal-day">
+          <div class="cal-date">29</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #16 標準原価①</div>
+        </div>
+        <!-- 土 5/30 -->
+        <div class="cal-day weekend heavy-review">
+          <div class="cal-date">30</div>
+          <div class="cal-hours">6h・土曜</div>
+          <div class="cal-lecture">📚 #17 標準原価②</div>
+          <div class="cal-review heavy">⚠️ 復習20件（缶詰）</div>
+        </div>
+      </div>
+
+      <!-- 第2週 5/31〜6/6 -->
+      <div class="cal-month-label" style="margin-top:10px;">5/31〜6月（第2週）</div>
+      <div class="cal-grid">
+        <!-- 日 5/31 -->
+        <div class="cal-day weekend">
+          <div class="cal-date">31</div>
+          <div class="cal-hours">7h・日曜</div>
+          <div class="cal-lecture">📚 #18 標準原価③</div>
+          <div class="cal-lecture">📚 #19 直接原価計算</div>
+        </div>
+        <!-- 月 6/1 -->
+        <div class="cal-day">
+          <div class="cal-date" style="color:#888">6/1</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #20 CVP分析</div>
+        </div>
+        <!-- 火 6/2 -->
+        <div class="cal-day">
+          <div class="cal-date" style="color:#888">6/2</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #21 予算管理</div>
+        </div>
+        <!-- 水 6/3 -->
+        <div class="cal-day">
+          <div class="cal-date" style="color:#888">6/3</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #22+#23 意思決定Ⅰ①</div>
+          <div class="cal-note">#22は25分・短い</div>
+        </div>
+        <!-- 木 6/4 -->
+        <div class="cal-day">
+          <div class="cal-date" style="color:#888">6/4</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #24 意思決定Ⅰ②</div>
+        </div>
+        <!-- 金 6/5 -->
+        <div class="cal-day">
+          <div class="cal-date" style="color:#888">6/5</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 #25 意思決定Ⅱ①</div>
+        </div>
+        <!-- 土 6/6 -->
+        <div class="cal-day weekend">
+          <div class="cal-date" style="color:#888">6/6</div>
+          <div class="cal-hours">6h・土曜</div>
+          <div class="cal-lecture">📚 #26+#27 意思決定Ⅱ②+戦略的</div>
+          <div class="cal-review">復習2件</div>
+        </div>
+      </div>
+
+      <!-- 第3週 6/7〜6/13 -->
+      <div class="cal-month-label" style="margin-top:10px;">6月（第3週）― 試験直前</div>
+      <div class="cal-grid">
+        <!-- 日 6/7 MILESTONE -->
+        <div class="cal-day milestone weekend">
+          <div class="cal-date">7</div>
+          <div class="cal-hours">7h・日曜</div>
+          <div class="cal-lecture">📚 #28 分権組織</div>
+          <div class="cal-note">🎯 工業/原計 完走！</div>
+          <span class="cal-tag tag-milestone">GOAL</span>
+        </div>
+        <!-- 月 6/8 -->
+        <div class="cal-day">
+          <div class="cal-date">8</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 商業#01-#03</div>
+          <div class="cal-note">ガイダンス+原則</div>
+        </div>
+        <!-- 火 6/9 -->
+        <div class="cal-day">
+          <div class="cal-date">9</div>
+          <div class="cal-hours">3h・クランチ</div>
+          <div class="cal-lecture">📚 商業#04-#05</div>
+          <div class="cal-note">現金預金+固定資産</div>
+          <span class="cal-tag tag-cranch-end">クランチ終了</span>
+        </div>
+        <!-- 水 6/10 -->
+        <div class="cal-day">
+          <div class="cal-date">10</div>
+          <div class="cal-hours">4.5h・通常</div>
+          <div class="cal-lecture">📚 商業#06-#09</div>
+          <div class="cal-note">工業/原計 過去問も</div>
+        </div>
+        <!-- 木 6/11 -->
+        <div class="cal-day">
+          <div class="cal-date">11</div>
+          <div class="cal-hours">4.5h・通常</div>
+          <div class="cal-lecture">📚 商業#10-#13</div>
+          <div class="cal-note">棚卸資産+有価証券</div>
+        </div>
+        <!-- 金 6/12 -->
+        <div class="cal-day">
+          <div class="cal-date">12</div>
+          <div class="cal-hours">4.5h・通常</div>
+          <div class="cal-lecture">📚 商業#14-#16</div>
+          <div class="cal-note">会計学 直前理論も</div>
+        </div>
+        <!-- 土 6/13 -->
+        <div class="cal-day weekend">
+          <div class="cal-date">13</div>
+          <div class="cal-hours">6h・前日</div>
+          <div class="cal-note">工業/原計 過去問（本番形式）</div>
+          <div class="cal-note">商業 頻出論点 最終確認</div>
+          <div class="cal-note">22時就寝</div>
+        </div>
+      </div>
+
+      <!-- 試験日 -->
+      <div class="cal-month-label" style="margin-top:10px;">6月（試験週）</div>
+      <div class="cal-grid">
+        <!-- 日 6/14 EXAM -->
+        <div class="cal-day exam-day">
+          <div class="cal-date">14</div>
+          <div class="cal-note" style="color:#c5221f; font-weight:bold; margin-top:4px;">🎯 第170回</div>
+          <div class="cal-note" style="color:#c5221f;">日商簿記1級</div>
+          <div class="cal-note" style="color:#c5221f;">試験当日</div>
+          <span class="cal-tag tag-exam">EXAM</span>
+        </div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day empty"></div>
+      </div>
+
     </div>
+  </div>
+
+  <!-- 11月試験フェーズ概要 -->
+  <div class="card">
+    <div class="card-header">
+      🏆 11月試験ロードマップ（本命）
+    </div>
+    <div class="card-body">
+      <div style="position:relative; padding-top:22px; margin-bottom:8px;">
+        <!-- NOW marker: 5/24 is about day 11 of 194 total → ~5.7% -->
+        <div class="timeline-now" style="left: 5.7%;">
+          <div style="font-size:12px; color:#c5221f; text-align:center;">▼</div>
+          <div class="timeline-now-label">今日</div>
+        </div>
+        <div class="timeline-bar">
+          <!-- Phase 0: 5/13-6/14 = 32日 / 194日 = 16.5% -->
+          <div class="timeline-phase phase-0" style="width:16.5%">Phase 0</div>
+          <!-- Phase 1: 6/15-8/19 = 65日 / 194日 = 33.5% -->
+          <div class="timeline-phase phase-1" style="width:33.5%">Phase 1</div>
+          <!-- Phase 2: 8/20-10/31 = 73日 / 194日 = 37.6% -->
+          <div class="timeline-phase phase-2" style="width:37.6%">Phase 2</div>
+          <!-- Phase 3: 11/1-11/22 = 22日 / 194日 = 11.3% -->
+          <div class="timeline-phase phase-3" style="width:11.3%">Phase 3</div>
+          <!-- exam 11/23 = ~0.5% -->
+          <div class="timeline-phase phase-exam" style="width:1.1%">🎯</div>
+        </div>
+        <div class="timeline-markers">
+          <span>5/13</span>
+          <span>6/14（6月試験）</span>
+          <span>8/20（中間決算クランチ）</span>
+          <span>11/1</span>
+          <span>11/23🏆</span>
+        </div>
+      </div>
+      <div class="phase-legend">
+        <div class="phase-legend-item"><div class="phase-dot" style="background:#4285f4"></div>Phase 0: 工業/原計インプット＋6月試験（偵察）</div>
+        <div class="phase-legend-item"><div class="phase-dot" style="background:#34a853"></div>Phase 1: 商業/会計インプット完走（6/15〜8/19・黄金期）</div>
+        <div class="phase-legend-item"><div class="phase-dot" style="background:#fbbc04"></div>Phase 2: 過去問10回分アウトプット集中（8/20〜10/31）</div>
+        <div class="phase-legend-item"><div class="phase-dot" style="background:#ea4335"></div>Phase 3: 直前仕上げ・弱点補強（11/1〜11/22）</div>
+      </div>
+
+      <div style="margin-top:16px; display:grid; grid-template-columns: repeat(4, 1fr); gap:10px;">
+        <div style="background:#e8f0fe; border-radius:8px; padding:10px;">
+          <div style="font-size:11px; color:#1a73e8; font-weight:bold; margin-bottom:4px;">Phase 0（今ここ）</div>
+          <div style="font-size:12px;">工業/原計 28講義完走<br>6月試験で実力確認</div>
+        </div>
+        <div style="background:#e6f4ea; border-radius:8px; padding:10px;">
+          <div style="font-size:11px; color:#137333; font-weight:bold; margin-bottom:4px;">Phase 1（6/15〜）</div>
+          <div style="font-size:12px;">商業/会計 60講義完走<br>7月が週35〜40h黄金期</div>
+        </div>
+        <div style="background:#fff8e1; border-radius:8px; padding:10px;">
+          <div style="font-size:11px; color:#e37400; font-weight:bold; margin-bottom:4px;">Phase 2（8/20〜）</div>
+          <div style="font-size:12px;">過去問10回分 全科目2周<br>弱点の再インプット</div>
+        </div>
+        <div style="background:#fce8e6; border-radius:8px; padding:10px;">
+          <div style="font-size:11px; color:#c5221f; font-weight:bold; margin-bottom:4px;">Phase 3（11/1〜）</div>
+          <div style="font-size:12px;">直近3回分 本番形式<br>苦手補強→前日就寝</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 講義進捗 row -->
+  <div class="row row-2">
+
+    <!-- 工業/原計 -->
+    <div class="card">
+      <div class="card-header">
+        🏭 工業/原計コース（登川）
+        <span class="badge badge-blue">全28講義</span>
+        <span class="badge badge-orange">9/28完了</span>
+      </div>
+      <div class="card-body">
+        <div class="progress-wrap">
+          <div class="progress-label"><span>進捗</span><span>9 / 28（32.1%）</span></div>
+          <div class="progress-bar"><div class="progress-fill fill-blue" style="width: 32.1%"></div></div>
+        </div>
+        <div class="section-title">完了済み（#01-#09）</div>
+        <ul class="lecture-list">
+          <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#01</span>原価計算総論<span class="lecture-time">20分</span></div></li>
+          <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#02</span>材料費会計①<span class="lecture-time">88分</span></div></li>
+          <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#03</span>材料費会計②<span class="lecture-time">77分</span></div></li>
+          <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#04</span>労務費会計<span class="lecture-time">116分</span></div></li>
+          <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#05</span>経費会計<span class="lecture-time">41分</span></div></li>
+          <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#06</span>製造間接費<span class="lecture-time">92分</span></div></li>
+          <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#07</span>部門別計算①<span class="lecture-time">95分</span></div></li>
+          <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#08</span>部門別計算②<span class="lecture-time">165分</span></div></li>
+          <li class="lecture-item"><input type="checkbox" checked disabled><div class="lecture-label done"><span class="lecture-num">#09</span>個別原価計算<span class="lecture-time">161分</span></div></li>
+        </ul>
+        <div class="section-title">残り（#10-#28）― 6/7完走目標</div>
+        <ul class="lecture-list">
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#10</span>単純総合原価計算①<span class="lecture-time">113分</span><span class="lecture-target">→ 5/24</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#11</span>単純総合原価計算②<span class="lecture-time">151分</span><span class="lecture-target">→ 5/25</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#12</span>工程別総合原価計算<span class="lecture-time">146分</span><span class="lecture-target">→ 5/26-27</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#13</span>組別総合原価計算<span class="lecture-time">22分</span><span class="lecture-target">→ 5/27</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#14</span>等級別総合原価計算<span class="lecture-time">61分</span><span class="lecture-target">→ 5/27</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#15</span>連産品<span class="lecture-time">116分</span><span class="lecture-target">→ 5/28</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#16</span>標準原価計算①<span class="lecture-time">120分</span><span class="lecture-target">→ 5/29</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#17</span>標準原価計算②<span class="lecture-time">173分</span><span class="lecture-target">→ 5/30</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#18</span>標準原価計算③<span class="lecture-time">141分</span><span class="lecture-target">→ 5/31</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#19</span>直接原価計算<span class="lecture-time">114分</span><span class="lecture-target">→ 5/31</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#20</span>CVP分析<span class="lecture-time">112分</span><span class="lecture-target">→ 6/1</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#21</span>予算管理<span class="lecture-time">150分</span><span class="lecture-target">→ 6/2</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#22</span>資金管理<span class="lecture-time">25分</span><span class="lecture-target">→ 6/3</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#23</span>意思決定会計Ⅰ①<span class="lecture-time">155分</span><span class="lecture-target">→ 6/3</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#24</span>意思決定会計Ⅰ②<span class="lecture-time">104分</span><span class="lecture-target">→ 6/4</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#25</span>意思決定会計Ⅱ①<span class="lecture-time">124分</span><span class="lecture-target">→ 6/5</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#26</span>意思決定会計Ⅱ②<span class="lecture-time">108分</span><span class="lecture-target">→ 6/6</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#27</span>戦略的原価計算<span class="lecture-time">142分</span><span class="lecture-target">→ 6/6</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#28</span>分権組織とグループ経営<span class="lecture-time">125分</span><span class="lecture-target">→ 6/7 🎯</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 商業/会計 -->
+    <div class="card">
+      <div class="card-header">
+        📊 商業/会計コース（登川）
+        <span class="badge badge-blue">全60講義</span>
+        <span class="badge badge-gray">0/60完了</span>
+      </div>
+      <div class="card-body">
+        <div class="progress-wrap">
+          <div class="progress-label"><span>進捗</span><span>0 / 60（Phase 1以降で開始）</span></div>
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width: 0%"></div></div>
+        </div>
+        <div style="background:#f8f9fa; border-radius:6px; padding:12px; margin:8px 0; font-size:12px; color:#555;">
+          <strong>6月試験向け（6/8〜6/13）:</strong> #01〜#16を駆け足で視聴<br>
+          <strong>Phase 1本番（6/15〜8/19）:</strong> 全60講義を丁寧にインプット<br>
+          <strong>重点単元:</strong> 連結会計・税効果・退職給付・収益認識
+        </div>
+        <div class="section-title">6月試験向け速習（#01-#16）</div>
+        <ul class="lecture-list">
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#01</span>ガイダンス<span class="lecture-time">13分</span><span class="lecture-target">→ 6/8</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#02</span>簿記の全体像<span class="lecture-time">8分</span><span class="lecture-target">→ 6/8</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#03</span>企業会計原則等<span class="lecture-time">83分</span><span class="lecture-target">→ 6/8</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#04</span>現金預金<span class="lecture-time">48分</span><span class="lecture-target">→ 6/9</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#05</span>有形固定資産①<span class="lecture-time">65分</span><span class="lecture-target">→ 6/9</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#06</span>有形固定資産②<span class="lecture-time">49分</span><span class="lecture-target">→ 6/10</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#07</span>無形固定資産等<span class="lecture-time">44分</span><span class="lecture-target">→ 6/10</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#08</span>引当金<span class="lecture-time">25分</span><span class="lecture-target">→ 6/10</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#09</span>商品売買<span class="lecture-time">40分</span><span class="lecture-target">→ 6/10</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#10</span>棚卸資産①<span class="lecture-time">41分</span><span class="lecture-target">→ 6/11</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#11</span>棚卸資産②<span class="lecture-time">56分</span><span class="lecture-target">→ 6/11</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#12</span>経過勘定<span class="lecture-time">5分</span><span class="lecture-target">→ 6/11</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#13</span>有価証券①<span class="lecture-time">88分</span><span class="lecture-target">→ 6/11</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#14</span>有価証券②<span class="lecture-time">80分</span><span class="lecture-target">→ 6/12</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#15</span>債権債務・貸倒①<span class="lecture-time">50分</span><span class="lecture-target">→ 6/12</span></div></li>
+          <li class="lecture-item"><input type="checkbox"><div class="lecture-label"><span class="lecture-num">#16</span>債権債務・貸倒②<span class="lecture-time">73分</span><span class="lecture-target">→ 6/12</span></div></li>
+        </ul>
+        <div class="section-title">Phase 1本番（#17-#60）― 6/15〜8/19</div>
+        <div style="font-size:12px; color:#888; padding:4px 0;">#17〜#60（44講義）は6月試験後に本格開始。連結・税効果・退職給付が核心。</div>
+      </div>
+    </div>
+
   </div>
 
   <!-- 演習ログ -->
-  <div class="card full">
+  <div class="card">
     <div class="card-header">
       ✏️ 演習ログ
       <span class="badge badge-blue">凡例: ○完全理解 △解説で理解 ✕理解不足</span>
@@ -208,21 +568,14 @@
       <span class="badge badge-orange">△ 19問</span>
       <span class="badge badge-red">✕ 1問</span>
     </div>
-    <div class="card-body">
-      <div class="today-summary">
-        <strong>5/23 本日の成果：</strong> 34問消化 ／ △→○ 改善13問（材料費・労務費・経費系を全部○に引き上げ）／ 動画視聴なし（純復習デー）
+    <div class="card-body" style="overflow-x:auto;">
+      <div style="background:#e8f4fd; border-left:4px solid #1a73e8; padding:10px 14px; border-radius:4px; margin-bottom:12px; font-size:12px;">
+        <strong>5/23 成果:</strong> 34問消化 ／ △→○ 改善13問（材料費・労務費・経費系を全部○に引き上げ）
       </div>
       <table>
         <thead>
           <tr>
-            <th>問題番号</th>
-            <th>タイトル</th>
-            <th>科目</th>
-            <th>結果</th>
-            <th>実施日</th>
-            <th>次回復習日</th>
-            <th>復習回数</th>
-            <th>メモ</th>
+            <th>問題番号</th><th>タイトル</th><th>科目</th><th>結果</th><th>実施日</th><th>次回復習日</th><th>回数</th><th>メモ</th>
           </tr>
         </thead>
         <tbody>
@@ -238,21 +591,21 @@
           <tr><td>T03-例4</td><td>予定価格法</td><td>工業 #03</td><td><span class="mark mark-o">○</span></td><td>2026-05-23</td><td>2026-05-30</td><td>1</td><td class="memo">△→○ 改善（5/23）</td></tr>
           <tr><td>T04-例1</td><td>賃金（未払いなし）</td><td>工業 #04</td><td><span class="mark mark-o">○</span></td><td>2026-05-23</td><td>2026-05-30</td><td>1</td><td class="memo">△→○ 改善（5/23）</td></tr>
           <tr><td>T04-例2</td><td>賃金（未払いあり）</td><td>工業 #04</td><td><span class="mark mark-o">○</span></td><td>2026-05-23</td><td>2026-05-30</td><td>1</td><td class="memo">△→○ 改善（5/23）</td></tr>
-          <tr style="background:#fff5f5"><td>T04-例3</td><td>賃金（予定消費賃率の使用）</td><td>工業 #04</td><td><span class="mark mark-x">✕</span></td><td>2026-05-16</td><td>2026-05-17 ⚠️放置</td><td>0</td><td class="memo">予定消費賃率の考え方が不明瞭</td></tr>
+          <tr class="overdue"><td>T04-例3</td><td>賃金（予定消費賃率の使用）</td><td>工業 #04</td><td><span class="mark mark-x">✕</span></td><td>2026-05-16</td><td>⚠️ 5/17 放置中</td><td>0</td><td class="memo">予定消費賃率の考え方が不明瞭</td></tr>
           <tr><td>P03-3-1</td><td>予定消費賃率</td><td>工業 #04</td><td><span class="mark mark-o">○</span></td><td>2026-05-23</td><td>2026-05-30</td><td>1</td><td class="memo">△→○ 改善（5/23）</td></tr>
           <tr><td>P03-3-2</td><td>賃率差異</td><td>工業 #04</td><td><span class="mark mark-o">○</span></td><td>2026-05-23</td><td>2026-05-30</td><td>1</td><td class="memo">△→○ 改善（5/23）</td></tr>
           <tr><td>P03-3-3</td><td>未払賃金</td><td>工業 #04</td><td><span class="mark mark-o">○</span></td><td>2026-05-23</td><td>2026-05-30</td><td>1</td><td class="memo">△→○ 改善（5/23）</td></tr>
           <tr><td>T05-例1</td><td>経費の消費額の計算</td><td>工業 #05</td><td><span class="mark mark-o">○</span></td><td>2026-05-23</td><td>2026-05-30</td><td>1</td><td class="memo">△→○ 改善（5/23）</td></tr>
-          <tr><td>T05-例2</td><td>外注加工賃（無償支給）</td><td>工業 #05</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>2</td><td class="memo">5/23 △継続。部品勘定の意味理解中</td></tr>
+          <tr><td>T05-例2</td><td>外注加工賃（無償支給）</td><td>工業 #05</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>2</td><td class="memo">5/23 △継続。部品勘定理解中</td></tr>
           <tr><td>T08-例5</td><td>補助部門費の予定配賦</td><td>工業 #08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-30</td><td>2</td><td class="memo">初回✕→△改善。5/23 △継続</td></tr>
           <tr><td>T08-例6</td><td>補助部門費の予算許容額配賦</td><td>工業 #08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-30</td><td>2</td><td class="memo">初回✕→△改善。5/23 △継続</td></tr>
           <tr><td>P07/08-6-1</td><td>第一次集計</td><td>工業 #07/#08</td><td><span class="mark mark-o">○</span></td><td>2026-05-18</td><td>2026-05-25</td><td>0</td><td class="memo">-</td></tr>
-          <tr><td>P07/08-6-2</td><td>補助部門相互間の用役授受</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">5/23 △。相互配賦法（連立方程式法）理解</td></tr>
-          <tr><td>P07/08-6-3</td><td>単一基準と複数基準</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">5/21スキップ→5/22繰越→5/23実施 △</td></tr>
-          <tr><td>P07/08-6-4</td><td>第二次集計と第三次集計</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-06-06</td><td>3</td><td class="memo">初回✕(5/18)→2回目✕(5/19)→3回目△(5/20)。5/23 △継続</td></tr>
-          <tr><td>P07/08-6-5</td><td>第二次集計方法の判断</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-06-06</td><td>3</td><td class="memo">初回✕(5/18)→2回目✕(5/19)→3回目△(5/20)。5/23 △継続</td></tr>
-          <tr><td>T09-例1</td><td>個別原価計算（基本）</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">5/23 △継続。部門別→個別の2段階整理が課題</td></tr>
-          <tr><td>T09-例2</td><td>仕損費の直接経費処理①</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-30</td><td>2</td><td class="memo">初回✕(5/19)→2回目△(5/20)。5/23 △継続</td></tr>
+          <tr><td>P07/08-6-2</td><td>補助部門相互間の用役授受</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">5/23 △。相互配賦法理解</td></tr>
+          <tr><td>P07/08-6-3</td><td>単一基準と複数基準</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">5/21スキップ→5/23実施 △</td></tr>
+          <tr><td>P07/08-6-4</td><td>第二次集計と第三次集計</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-06-06</td><td>3</td><td class="memo">✕×2→△(5/20)。5/23 △継続</td></tr>
+          <tr><td>P07/08-6-5</td><td>第二次集計方法の判断</td><td>工業 #07/#08</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-06-06</td><td>3</td><td class="memo">✕×2→△(5/20)。5/23 △継続</td></tr>
+          <tr><td>T09-例1</td><td>個別原価計算（基本）</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">5/23 △継続。2段階整理が課題</td></tr>
+          <tr><td>T09-例2</td><td>仕損費の直接経費処理①</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-30</td><td>2</td><td class="memo">初回✕→△(5/20)。5/23 △継続</td></tr>
           <tr><td>T09-例3</td><td>仕損費の直接経費処理②</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">5/23 △継続</td></tr>
           <tr><td>T09-例4</td><td>仕損費の間接経費処理</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-30</td><td>1</td><td class="memo">初回△(5/20)→5/23 △継続</td></tr>
           <tr><td>T09-例5</td><td>作業屑の処理</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">初回△(5/20)→5/23 △継続</td></tr>
@@ -261,80 +614,50 @@
           <tr><td>P09-7-2</td><td>仕損費の処理（間接経費処理）</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">初回△(5/20)→5/23 △継続</td></tr>
           <tr><td>P09-7-3</td><td>異常仕損費</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">初回△(5/20)→5/23 △継続</td></tr>
           <tr><td>P09-7-4</td><td>作業屑の処理</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">初回△(5/20)→5/23 △継続</td></tr>
-          <tr><td>P09-7-5</td><td>ロット別個別原価計算</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">初回✕(5/20)→△(5/23)。一括納入 vs 分割納入の違いで詰まっていた</td></tr>
+          <tr><td>P09-7-5</td><td>ロット別個別原価計算</td><td>工業 #09</td><td><span class="mark mark-d">△</span></td><td>2026-05-23</td><td>2026-05-26</td><td>1</td><td class="memo">初回✕(5/20)→△(5/23)。一括 vs 分割で詰まっていた</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
   <!-- 復習スケジュール -->
-  <div class="card full">
+  <div class="card">
     <div class="card-header">🔁 復習スケジュール</div>
     <div class="card-body">
-
-      <!-- 今日 5/24 -->
       <div class="review-day">
-        <div class="review-date urgent">⚠️ 2026-05-24（日・今日）<span class="badge badge-red">✕ T04-例3 放置中（5/17期限）</span></div>
-        <div class="review-section">▼ 緊急対応（✕ 長期放置）</div>
+        <div class="review-date urgent-r">⚠️ 2026-05-24（今日）<span class="badge badge-red">✕ T04-例3 最優先</span></div>
         <div class="review-item"><input type="checkbox"><label>【✕ 必須】T04-例3 賃金（予定消費賃率の使用）― 5/17から放置</label></div>
-        <div class="review-section">▼ 推奨（新規動画視聴）</div>
-        <div class="review-item"><input type="checkbox"><label>#10 第8章第1～3節 単純総合原価計算①（113分）</label></div>
       </div>
-
-      <!-- 5/25 -->
       <div class="review-day">
-        <div class="review-date future">📅 2026-05-25（月）<span class="badge badge-gray">1件</span></div>
+        <div class="review-date future-r">📅 2026-05-25（月）<span class="badge badge-gray">1件</span></div>
         <div class="review-item"><input type="checkbox"><label>P07/08-6-1 第一次集計 ｜ ○ 第1復習</label></div>
       </div>
-
-      <!-- 5/26 -->
       <div class="review-day">
-        <div class="review-date future">📅 2026-05-26（火）<span class="badge badge-orange">12件</span></div>
-        <div class="review-item"><input type="checkbox"><label>T05-例2 外注加工賃（無償支給）｜ △ 第3復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-2 補助部門相互間の用役授受 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-3 単一基準と複数基準 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例1 個別原価計算（基本）｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例3 仕損費の直接経費処理② ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例5 作業屑の処理 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例6 ロット別個別原価計算 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P09-7-1 個別原価計算表（仕損費の直接経費処理）｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P09-7-2 仕損費の処理（間接経費処理）｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P09-7-3 異常仕損費 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P09-7-4 作業屑の処理 ｜ △ 第2復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P09-7-5 ロット別個別原価計算 ｜ △ 第2復習</label></div>
+        <div class="review-date future-r">📅 2026-05-26（火）<span class="badge badge-orange">12件 ⚠️重</span></div>
+        <div class="review-item"><input type="checkbox"><label>T05-例2 外注加工賃（無償支給）</label></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-2 補助部門相互間の用役授受</label></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-3 単一基準と複数基準</label></div>
+        <div class="review-item"><input type="checkbox"><label>T09-例1 個別原価計算（基本）</label></div>
+        <div class="review-item"><input type="checkbox"><label>T09-例3 仕損費の直接経費処理②</label></div>
+        <div class="review-item"><input type="checkbox"><label>T09-例5 作業屑の処理</label></div>
+        <div class="review-item"><input type="checkbox"><label>T09-例6 ロット別個別原価計算</label></div>
+        <div class="review-item"><input type="checkbox"><label>P09-7-1 個別原価計算表（仕損費の直接経費処理）</label></div>
+        <div class="review-item"><input type="checkbox"><label>P09-7-2 仕損費の処理（間接経費処理）</label></div>
+        <div class="review-item"><input type="checkbox"><label>P09-7-3 異常仕損費</label></div>
+        <div class="review-item"><input type="checkbox"><label>P09-7-4 作業屑の処理</label></div>
+        <div class="review-item"><input type="checkbox"><label>P09-7-5 ロット別個別原価計算</label></div>
       </div>
-
-      <!-- 5/30 -->
       <div class="review-day">
-        <div class="review-date future">📅 2026-05-30（土）<span class="badge badge-orange">20件</span></div>
-        <div class="review-section">▼ ○ 第2復習（5/23解答分）</div>
-        <div class="review-item"><input type="checkbox"><label>T02-例1-問1〜問4 材料副費の処理（全4問）</label></div>
-        <div class="review-item"><input type="checkbox"><label>T02-例2 値引き・割戻の処理</label></div>
-        <div class="review-item"><input type="checkbox"><label>P02-2-1 材料副費（練習問題）</label></div>
-        <div class="review-item"><input type="checkbox"><label>P02-2-2 予定消費価格と予定受入価格</label></div>
-        <div class="review-item"><input type="checkbox"><label>P02-2-3 非原価項目</label></div>
-        <div class="review-item"><input type="checkbox"><label>T03-例3 予定受入価格</label></div>
-        <div class="review-item"><input type="checkbox"><label>T03-例4 予定価格法</label></div>
-        <div class="review-item"><input type="checkbox"><label>T04-例1 賃金（未払いなし）</label></div>
-        <div class="review-item"><input type="checkbox"><label>T04-例2 賃金（未払いあり）</label></div>
-        <div class="review-item"><input type="checkbox"><label>P03-3-1 予定消費賃率</label></div>
-        <div class="review-item"><input type="checkbox"><label>P03-3-2 賃率差異</label></div>
-        <div class="review-item"><input type="checkbox"><label>P03-3-3 未払賃金</label></div>
-        <div class="review-item"><input type="checkbox"><label>T05-例1 経費の消費額の計算</label></div>
-        <div class="review-section">▼ △ 第3復習</div>
-        <div class="review-item"><input type="checkbox"><label>T08-例5 補助部門費の予定配賦</label></div>
-        <div class="review-item"><input type="checkbox"><label>T08-例6 補助部門費の予算許容額配賦</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例2 仕損費の直接経費処理①</label></div>
-        <div class="review-item"><input type="checkbox"><label>T09-例4 仕損費の間接経費処理</label></div>
+        <div class="review-date future-r">📅 2026-05-30（土）<span class="badge badge-orange">20件 ⚠️超重</span></div>
+        <div class="review-item"><input type="checkbox"><label>T02-例1-問1〜問4・T02-例2・P02-2-1〜2-3・T03-例3・T03-例4（○ 第2復習 ×10件）</label></div>
+        <div class="review-item"><input type="checkbox"><label>T04-例1・T04-例2・P03-3-1〜3-3・T05-例1（○ 第2復習 ×6件）</label></div>
+        <div class="review-item"><input type="checkbox"><label>T08-例5・T08-例6・T09-例2・T09-例4（△ 第3復習 ×4件）</label></div>
       </div>
-
-      <!-- 6/6 -->
       <div class="review-day">
-        <div class="review-date future">📅 2026-06-06（土）<span class="badge badge-gray">2件</span></div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-4 第二次集計と第三次集計 ｜ △ 第4復習</label></div>
-        <div class="review-item"><input type="checkbox"><label>P07/08-6-5 第二次集計方法の判断 ｜ △ 第4復習</label></div>
+        <div class="review-date future-r">📅 2026-06-06（土）<span class="badge badge-gray">2件</span></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-4 第二次集計と第三次集計</label></div>
+        <div class="review-item"><input type="checkbox"><label>P07/08-6-5 第二次集計方法の判断</label></div>
       </div>
-
     </div>
   </div>
 
