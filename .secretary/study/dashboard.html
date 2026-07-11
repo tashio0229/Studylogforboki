@@ -424,6 +424,247 @@
     .countdown .num { font-size: 1.5rem; }
     main { padding: 1.25rem 1rem 0; gap: 1.4rem; }
     .card, .directive { padding: 1.15rem 1.15rem; }
+    .rec-form { grid-template-columns: 1fr; }
+    .rec-body { padding: 0 1.15rem 1.15rem; }
+    .rec-panel > summary { padding: 1rem 1.15rem; }
+  }
+
+  /* ============================================================
+     Recording mode — 記録入力・疑似管理・エクスポート（機能層）
+     閲覧ビューの上に足すレイヤー。確定DATAは書き換えず、記録は
+     localStorage に載せ「記録依頼リスト」としてエクスポートする。
+     exercise-log.md が唯一の正。ここは入力補助＋速報表示のみ。
+     ============================================================ */
+
+  /* --- Collapsible record panel (elevated card) §12 --- */
+  .rec-panel {
+    border-radius: var(--radius);
+    background:
+      radial-gradient(120% 100% at 100% 0%, var(--o-bg), transparent 55%),
+      var(--card);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .rec-panel > summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    padding: 1.15rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    transition: transform 0.12s ease-out;
+  }
+  .rec-panel > summary::-webkit-details-marker { display: none; }
+  .rec-panel > summary:active { transform: scale(0.99); }
+  .rec-panel > summary .rp-title {
+    font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15;
+  }
+  .rec-panel > summary .rp-sub { font-size: 0.78rem; color: var(--tx-3); font-weight: 600; }
+  .rec-panel > summary::after {
+    content: "›"; margin-left: auto; font-size: 1.4rem; color: var(--tx-3);
+    transform: rotate(90deg); transition: transform 0.25s ease; line-height: 1; flex-shrink: 0;
+  }
+  .rec-panel[open] > summary::after { transform: rotate(-90deg); }
+  .rp-badge {
+    font-size: 0.72rem; font-weight: 700; padding: 0.12rem 0.55rem;
+    border-radius: 999px; background: var(--act-bg); color: var(--act);
+    white-space: nowrap; margin-left: 0.1rem;
+  }
+  .rec-body { padding: 0 1.5rem 1.5rem; }
+  .rec-note {
+    font-size: 0.78rem; color: var(--tx-3); line-height: 1.5;
+    background: var(--card-2); padding: 0.7rem 0.85rem; border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+  }
+  .rec-note b { color: var(--tx-2); font-weight: 700; }
+
+  /* --- Form --- */
+  .rec-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem 1rem; }
+  .rec-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+  .rec-field.full { grid-column: 1 / -1; }
+  .rec-field > label { font-size: 0.74rem; font-weight: 700; color: var(--tx-3); letter-spacing: 0.01em; }
+  .rec-input, .rec-select {
+    font: inherit; font-size: 0.9rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--hair-strong);
+    background: var(--card-2);
+    color: var(--tx);
+    width: 100%;
+  }
+  .rec-input::placeholder { color: var(--tx-4); }
+  .rec-input:focus, .rec-select:focus { outline: 2px solid var(--act); outline-offset: 1px; border-color: transparent; }
+
+  /* Mark buttons ○△✕ (big, tappable, semantic §16) */
+  .mark-btns { display: flex; gap: 0.55rem; }
+  .mark-btn {
+    flex: 1; font: inherit; font-size: 1.45rem; font-weight: 800;
+    padding: 0.5rem 0 0.55rem; border-radius: var(--radius-sm);
+    border: 2px solid var(--hair-strong); background: var(--card-2);
+    color: var(--tx-3); cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem;
+    transition: transform 0.1s ease-out, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .mark-btn .mk-lbl { font-size: 0.64rem; font-weight: 700; letter-spacing: 0; }
+  .mark-btn:active { transform: scale(0.97); }
+  .mark-btn.o.sel { background: var(--o-bg); border-color: var(--o); color: var(--o); }
+  .mark-btn.d.sel { background: var(--d-bg); border-color: var(--d); color: var(--d); }
+  .mark-btn.x.sel { background: var(--x-bg); border-color: var(--x); color: var(--x); }
+
+  /* Buttons */
+  .btn {
+    font: inherit; font-size: 0.9rem; font-weight: 700;
+    padding: 0.7rem 1.1rem; border-radius: var(--radius-sm);
+    border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+    transition: transform 0.1s ease-out, background 0.15s ease, opacity 0.15s ease;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn.wide { width: 100%; }
+  .btn.sm { padding: 0.4rem 0.75rem; font-size: 0.78rem; }
+  .btn.primary { background: var(--act); color: #fff; }
+  .btn.o { background: var(--o); color: #fff; }
+  .btn.ghost { background: var(--card-2); color: var(--tx-2); border: 1px solid var(--hair-strong); }
+  .btn.danger { background: var(--x-bg); color: var(--x); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  #recAdd { margin-top: 1rem; }
+  .rec-err { font-size: 0.8rem; color: var(--x); font-weight: 600; min-height: 1.1em; margin-top: 0.55rem; }
+
+  /* Local-edit status (疑似管理バッジ) */
+  .local-status {
+    display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+    margin-top: 1rem; padding: 0.6rem 0.85rem; border-radius: var(--radius-sm);
+    background: var(--act-bg); font-size: 0.8rem; color: var(--act); font-weight: 700;
+  }
+  .local-status span { margin-right: auto; }
+
+  /* Today's record list */
+  .rec-tally { display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap; margin: 1.4rem 0 0.75rem; }
+  .rec-tally .big { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; }
+  .rec-tally .brk { font-size: 0.85rem; color: var(--tx-3); font-weight: 600; }
+  .rec-tally .brk .co { color: var(--o); } .rec-tally .brk .cd { color: var(--d); } .rec-tally .brk .cx { color: var(--x); }
+  .rec-warn {
+    font-size: 0.8rem; font-weight: 600; color: var(--d);
+    background: var(--d-bg); padding: 0.55rem 0.8rem; border-radius: var(--radius-sm); margin-bottom: 0.75rem;
+  }
+  .rec-list { display: flex; flex-direction: column; gap: 0.55rem; }
+  .rec-empty { font-size: 0.85rem; color: var(--tx-3); padding: 0.6rem 0.1rem; }
+  .rec-item {
+    display: flex; align-items: flex-start; gap: 0.7rem;
+    padding: 0.7rem 0.85rem; border-radius: var(--radius-sm); background: var(--card-2);
+  }
+  .rec-item .rm { font-size: 1.15rem; font-weight: 800; flex-shrink: 0; width: 1.4rem; text-align: center; line-height: 1.5; }
+  .rec-item.o .rm { color: var(--o); } .rec-item.d .rm { color: var(--d); } .rec-item.x .rm { color: var(--x); }
+  .rec-item .info { flex: 1; min-width: 0; }
+  .rec-item .ttl { font-size: 0.9rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  .rec-item .sub2 { font-size: 0.76rem; color: var(--tx-3); margin-top: 0.15rem; }
+  .rec-item .memo { font-size: 0.8rem; color: var(--tx-2); margin-top: 0.25rem; line-height: 1.4; }
+  .rec-del {
+    flex-shrink: 0; font: inherit; font-size: 1rem; line-height: 1;
+    width: 1.8rem; height: 1.8rem; border-radius: 50%;
+    border: none; background: transparent; color: var(--tx-3); cursor: pointer;
+    transition: transform 0.1s ease-out, background 0.15s ease, color 0.15s ease;
+  }
+  .rec-del:hover { background: var(--x-bg); color: var(--x); }
+  .rec-del:active { transform: scale(0.9); }
+  .rec-actions { margin-top: 1.2rem; }
+
+  /* Live overlay — 今日の記録の速報加算（確定値は上書きしない） */
+  .stat-live { display: inline-block; margin-top: 0.35rem; font-size: 0.82rem; font-weight: 700; color: var(--act); }
+  .stat.o .stat-live { color: var(--o); } .stat.d .stat-live { color: var(--d); } .stat.x .stat-live { color: var(--x); }
+
+  /* Pending dot overlay on the pattern board (未確定=点滅リング) */
+  .dot.pending {
+    background: transparent;
+    border: 2px dashed currentColor;
+    animation: pendingPulse 1.6s ease-in-out infinite;
+  }
+  .dot.pending.o { color: var(--o); } .dot.pending.d { color: var(--d); } .dot.pending.x { color: var(--x); }
+  @keyframes pendingPulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.95; } }
+
+  /* Local-edit affordances on existing views (疑似管理) */
+  .wrow.editable { cursor: pointer; border-radius: 8px; transition: background 0.15s ease; }
+  .wrow.editable:hover { background: var(--card-2); }
+  .wrow.local-edit .day::after { content: " ·編集"; font-size: 0.62rem; color: var(--act); font-weight: 700; }
+  .d-block { position: relative; }
+  .dblk-chk {
+    flex-shrink: 0; align-self: center; font: inherit; font-size: 0.85rem; font-weight: 800;
+    width: 1.55rem; height: 1.55rem; border-radius: 50%;
+    border: 2px solid var(--hair-strong); background: transparent; color: var(--o);
+    cursor: pointer; line-height: 1;
+    transition: transform 0.1s ease-out, background 0.15s ease, border-color 0.15s ease;
+  }
+  .dblk-chk:active { transform: scale(0.92); }
+  .dblk-chk.on { background: var(--o); border-color: var(--o); color: #fff; }
+  .d-block.done-local .head, .d-block.done-local .detail { opacity: 0.5; text-decoration: line-through; text-decoration-thickness: 1px; }
+
+  /* Export modal §12 (dimming scrim + material) */
+  .ov-back {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.42);
+    backdrop-filter: blur(5px) saturate(160%);
+    -webkit-backdrop-filter: blur(5px) saturate(160%);
+    display: flex; align-items: center; justify-content: center; padding: 1.25rem;
+    opacity: 0; animation: ovIn 0.26s ease forwards;
+  }
+  @keyframes ovIn { to { opacity: 1; } }
+  .ov-sheet {
+    width: 100%; max-width: 620px; max-height: 88vh; overflow: auto;
+    background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    padding: 1.4rem 1.5rem 1.5rem;
+    transform: scale(0.96); animation: sheetIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes sheetIn { to { transform: scale(1); } }
+  .ov-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.4rem; }
+  .ov-head h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; }
+  .ov-close {
+    margin-left: auto; flex-shrink: 0; font: inherit; font-size: 0.95rem;
+    width: 2rem; height: 2rem; border-radius: 50%; border: none;
+    background: var(--card-2); color: var(--tx-3); cursor: pointer;
+    transition: transform 0.1s ease-out, background 0.15s ease;
+  }
+  .ov-close:active { transform: scale(0.92); }
+  .ov-desc { font-size: 0.82rem; color: var(--tx-3); margin-bottom: 1rem; line-height: 1.5; }
+  .ov-desc b { color: var(--tx-2); }
+  .export-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.9rem; }
+  .tab {
+    font: inherit; font-size: 0.85rem; font-weight: 700;
+    padding: 0.5rem 0.95rem; border-radius: 999px;
+    border: 1px solid var(--hair-strong); background: var(--card-2);
+    color: var(--tx-2); cursor: pointer;
+    transition: transform 0.1s ease-out, background 0.15s ease, color 0.15s ease;
+  }
+  .tab:active { transform: scale(0.97); }
+  .tab.sel { background: var(--act); color: #fff; border-color: transparent; }
+  .export-text {
+    width: 100%; font-size: 0.82rem; line-height: 1.55;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+    background: var(--card-2); color: var(--tx);
+    border: 1px solid var(--hair); border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem; min-height: 170px; resize: vertical;
+  }
+  .export-note { font-size: 0.79rem; color: var(--tx-3); margin: 0.7rem 0 0; line-height: 1.5; }
+  .export-note b { color: var(--tx-2); }
+  .export-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+  .export-foot { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--hair); }
+
+  /* --- Accessibility parity for the record layer §14 --- */
+  @media (prefers-reduced-motion: reduce) {
+    .rec-panel > summary::after { transition: none; }
+    .rec-panel > summary:active, .mark-btn:active, .btn:active,
+    .rec-del:active, .dblk-chk:active, .tab:active, .ov-close:active { transform: none; }
+    .dot.pending { animation: none; opacity: 0.7; }
+    .ov-back { animation: none; opacity: 1; }
+    .ov-sheet { animation: none; transform: none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .ov-back { background: rgba(0,0,0,0.72); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  }
+  @media (prefers-contrast: more) {
+    .rec-panel, .rec-item, .local-status, .ov-sheet, .export-text { border: 1px solid var(--hair-strong); }
+    .rec-input, .rec-select, .mark-btn, .tab { border-color: var(--hair-strong); }
   }
 </style>
 </head>
@@ -759,6 +1000,563 @@ function section(inner) {
       </div>
       <div class="road-legend">${legend}</div>
     </div>`);
+})();
+
+/* ============================================================
+   Recording mode — 入力→localStorage→エクスポート の疑似管理層
+   ------------------------------------------------------------
+   設計方針（CLAUDE.md / .secretary/CLAUDE.md 準拠）：
+   - exercise-log.md が唯一の正。ここは入力補助＋速報表示のみで
+     復習回数・次回復習日は一切計算/捏造しない。
+   - 確定DATA（stats等）は書き換えず、今日の記録は「+N」で別表示。
+   - ブラウザは直接pushできないため、エクスポートは「記録依頼の
+     指示リスト」を生成し、チャット貼付 or .md ダウンロードで橋渡し。
+   - 完全オフライン（外部リソース参照ゼロ）を維持。
+   ============================================================ */
+(function recordingMode() {
+  "use strict";
+
+  const LS_RECORDS = "boki-dash-records-v1";
+  const LS_OVERLAY = "boki-dash-overlay-v1";
+  const MARKS = new Set(["o", "d", "x"]);
+
+  // 章リスト（セレクト用・テキスト章番号）
+  const SUBJECTS = [
+    { value: "工業", label: "工業/原価計算", chapters: [
+      "第1章 工業簿記・原価計算総論", "第2章 材料費会計", "第3章 労務費会計",
+      "第4章 経費会計", "第5章 製造間接費会計", "第6章 部門別計算",
+      "第7章 個別原価計算", "第8章 単純総合原価計算", "第9章 工程別総合原価計算",
+      "第10章 組別総合原価計算", "第11章 等級別総合原価計算", "第12章 連産品",
+      "第13章 標準原価計算", "第14章 直接原価計算", "第15章 CVP分析",
+      "第16章 予算管理", "第17章 資金管理", "第18章 意思決定会計Ⅰ",
+      "第19章 意思決定会計Ⅱ", "第20章 戦略的原価計算", "第21章 分権組織とグループ経営"
+    ] },
+    { value: "商業", label: "商業/会計", chapters: [
+      "第1章 簿記の全体像", "第2章 企業会計原則等", "第3章 現金預金",
+      "第4章 有形固定資産", "第5章 無形固定資産・投資その他・繰延資産",
+      "第6章 引当金", "第7章 商品売買", "第8章 棚卸資産", "第9章 経過勘定",
+      "第10章 有価証券", "第11章 債権債務・貸倒引当金", "第12章 デリバティブ取引",
+      "第13章 リース会計"
+    ] }
+  ];
+  const SUBJECT_VALUES = new Set(SUBJECTS.map(s => s.value));
+
+  // ---- helpers ----
+  const pad2 = (n) => String(n).padStart(2, "0");
+  const dateStr = (ms) => { const d = new Date(ms); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; };
+  const timeStr = (ms) => { const d = new Date(ms); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
+  const todayStr = () => dateStr(Date.now());
+  const chapterNum = (s) => { const m = String(s).match(/第\s*\d+\s*章/); return m ? m[0].replace(/\s+/g, "") : null; };
+
+  // ---- localStorage (robust / fail-closed §4.6) ----
+  function isValidRecord(r) {
+    return r && typeof r === "object"
+      && SUBJECT_VALUES.has(r.subject)
+      && typeof r.chapter === "string" && r.chapter
+      && typeof r.example === "string" && r.example
+      && MARKS.has(r.mark)
+      && typeof r.ts === "number" && isFinite(r.ts);
+  }
+  function loadRecords() {
+    let raw;
+    try { raw = localStorage.getItem(LS_RECORDS); } catch (e) { return []; }
+    if (!raw) return [];
+    let parsed;
+    try { parsed = JSON.parse(raw); } catch (e) { return []; }
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(isValidRecord).map(r => ({
+      id: (typeof r.id === "string" && r.id) ? r.id : newId(),
+      subject: r.subject, chapter: r.chapter, example: r.example,
+      subtitle: typeof r.subtitle === "string" ? r.subtitle : "",
+      memo: typeof r.memo === "string" ? r.memo : "",
+      mark: r.mark, ts: r.ts
+    })).sort((a, b) => a.ts - b.ts);
+  }
+  function saveRecords() {
+    try { localStorage.setItem(LS_RECORDS, JSON.stringify(records)); } catch (e) { /* quota/disabled: non-fatal */ }
+  }
+  function loadOverlay() {
+    const empty = { week: {}, dir: {} };
+    let raw;
+    try { raw = localStorage.getItem(LS_OVERLAY); } catch (e) { return empty; }
+    if (!raw) return empty;
+    let p;
+    try { p = JSON.parse(raw); } catch (e) { return empty; }
+    if (!p || typeof p !== "object") return empty;
+    return {
+      week: (p.week && typeof p.week === "object") ? p.week : {},
+      dir: (p.dir && typeof p.dir === "object") ? p.dir : {}
+    };
+  }
+  function saveOverlay() {
+    try { localStorage.setItem(LS_OVERLAY, JSON.stringify(overlay)); } catch (e) { /* non-fatal */ }
+  }
+  const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+  let records = loadRecords();
+  const overlay = loadOverlay();
+  let selectedMark = null;
+
+  // ---- build panel (insert after 今日の指令) ----
+  const sec = document.createElement("section");
+  sec.className = "reveal";
+  sec.style.setProperty("--rd", "20ms");
+  sec.innerHTML = `
+    <div class="sec-title">記録モード — この端末で管理（localStorage）</div>
+    <details class="rec-panel" id="recPanel" open>
+      <summary>
+        <span>
+          <span class="rp-title">📝 記録を入力</span>
+          <span class="rp-sub">　解いたら1問ずつ</span>
+        </span>
+        <span class="rp-badge" id="recBadge" hidden></span>
+      </summary>
+      <div class="rec-body">
+        <div class="rec-note">入力はこの端末に保存されます（リロードで消えません）。<b>exercise-log.md が唯一の正</b>のため、ここでは復習回数・次回復習日は計算せず、下の「エクスポート」を<b>チャットに貼る</b>か <b>.md をエージェントに渡す</b>と正しく記録されます。確定数値は上書きせず、今日の分は「+N」で速報表示します。</div>
+        <div class="rec-form">
+          <div class="rec-field">
+            <label for="recSubject">科目</label>
+            <select class="rec-select" id="recSubject"></select>
+          </div>
+          <div class="rec-field">
+            <label for="recChapter">章</label>
+            <select class="rec-select" id="recChapter"></select>
+          </div>
+          <div class="rec-field">
+            <label for="recExample">例題番号</label>
+            <input class="rec-input" id="recExample" type="text" placeholder="例: 例5 / 例12 / 練習1" autocomplete="off">
+          </div>
+          <div class="rec-field">
+            <label for="recSubtitle">副題（任意）</label>
+            <input class="rec-input" id="recSubtitle" type="text" placeholder="例: 回収期間法" autocomplete="off">
+          </div>
+          <div class="rec-field full">
+            <label>理解度</label>
+            <div class="mark-btns" id="recMarks">
+              <button type="button" class="mark-btn o" data-mark="o">○<span class="mk-lbl">完全理解</span></button>
+              <button type="button" class="mark-btn d" data-mark="d">△<span class="mk-lbl">解説で理解</span></button>
+              <button type="button" class="mark-btn x" data-mark="x">✕<span class="mk-lbl">理解不足</span></button>
+            </div>
+          </div>
+          <div class="rec-field full">
+            <label for="recMemo">メモ（任意）</label>
+            <input class="rec-input" id="recMemo" type="text" placeholder="詰まった点 / 3分ルール使用 など" autocomplete="off">
+          </div>
+        </div>
+        <div class="rec-err" id="recErr" aria-live="polite"></div>
+        <button type="button" class="btn o wide" id="recAdd">＋ 記録に追加</button>
+
+        <div class="local-status" id="localStatus" hidden>
+          <span id="localStatusText"></span>
+          <button type="button" class="btn ghost sm" id="localReset">ローカル変更をリセット</button>
+        </div>
+
+        <div class="rec-tally" id="recTally"></div>
+        <div class="rec-warn" id="recWarn" hidden></div>
+        <div class="rec-list" id="recList"></div>
+
+        <div class="rec-actions">
+          <button type="button" class="btn primary wide" id="recExport">📤 リポジトリ反映用にエクスポート</button>
+        </div>
+      </div>
+    </details>`;
+  // 今日の指令(app.children[0]) の直後、6カードボードの前へ挿入
+  if (app.children.length > 1) app.insertBefore(sec, app.children[1]);
+  else app.appendChild(sec);
+
+  // ---- form wiring ----
+  const elSubject = $("recSubject");
+  const elChapter = $("recChapter");
+  const elExample = $("recExample");
+  const elSubtitle = $("recSubtitle");
+  const elMemo = $("recMemo");
+  const elErr = $("recErr");
+  const elMarks = $("recMarks");
+
+  SUBJECTS.forEach(s => {
+    const o = document.createElement("option");
+    o.value = s.value; o.textContent = s.label;
+    elSubject.appendChild(o);
+  });
+  function populateChapters(subjectValue) {
+    const s = SUBJECTS.find(x => x.value === subjectValue) || SUBJECTS[0];
+    elChapter.innerHTML = "";
+    s.chapters.forEach(ch => {
+      const o = document.createElement("option");
+      o.value = ch; o.textContent = ch;
+      elChapter.appendChild(o);
+    });
+  }
+  populateChapters(elSubject.value);
+  elSubject.addEventListener("change", () => populateChapters(elSubject.value));
+
+  elMarks.addEventListener("click", (e) => {
+    const btn = e.target.closest(".mark-btn");
+    if (!btn) return;
+    selectedMark = btn.dataset.mark;
+    elMarks.querySelectorAll(".mark-btn").forEach(b => b.classList.toggle("sel", b === btn));
+    elErr.textContent = "";
+  });
+
+  $("recAdd").addEventListener("click", addRecord);
+  elMemo.addEventListener("keydown", (e) => { if (e.key === "Enter") addRecord(); });
+
+  function addRecord() {
+    const example = elExample.value.trim();
+    if (!MARKS.has(selectedMark)) { elErr.textContent = "理解度（○ / △ / ✕）を選んでください。"; return; }
+    if (!example) { elErr.textContent = "例題番号を入力してください（例: 例5）。"; elExample.focus(); return; }
+    elErr.textContent = "";
+    records.push({
+      id: newId(),
+      subject: elSubject.value,
+      chapter: elChapter.value,
+      example,
+      subtitle: elSubtitle.value.trim(),
+      memo: elMemo.value.trim(),
+      mark: selectedMark,
+      ts: Date.now()
+    });
+    records.sort((a, b) => a.ts - b.ts);
+    saveRecords();
+    // 連続入力しやすいよう科目・章は保持、それ以外をクリア
+    elExample.value = ""; elSubtitle.value = ""; elMemo.value = "";
+    selectedMark = null;
+    elMarks.querySelectorAll(".mark-btn").forEach(b => b.classList.remove("sel"));
+    renderList();
+    applyLiveOverlay();
+    elExample.focus();
+  }
+
+  // ---- today's record list ----
+  const elList = $("recList");
+  const elTally = $("recTally");
+  const elWarn = $("recWarn");
+  const elBadge = $("recBadge");
+
+  elList.addEventListener("click", (e) => {
+    const del = e.target.closest(".rec-del");
+    if (!del) return;
+    const id = del.dataset.id;
+    records = records.filter(r => r.id !== id);
+    saveRecords();
+    renderList();
+    applyLiveOverlay();
+  });
+
+  function counts() {
+    return {
+      o: records.filter(r => r.mark === "o").length,
+      d: records.filter(r => r.mark === "d").length,
+      x: records.filter(r => r.mark === "x").length,
+      total: records.length
+    };
+  }
+
+  function renderList() {
+    const c = counts();
+    elTally.innerHTML =
+      `<span class="big tnum">今日の記録 ${c.total}問</span>` +
+      `<span class="brk">（<span class="co">○${c.o}</span> ／ <span class="cd">△${c.d}</span> ／ <span class="cx">✕${c.x}</span>）</span>`;
+
+    const today = todayStr();
+    const stale = records.filter(r => dateStr(r.ts) !== today).length;
+    if (stale > 0) {
+      elWarn.hidden = false;
+      elWarn.textContent = `⚠ 前日以前の未エクスポート記録が ${stale}件 あります。エクスポートして反映してください。`;
+    } else {
+      elWarn.hidden = true;
+    }
+
+    if (!records.length) {
+      elList.innerHTML = `<div class="rec-empty">まだ記録がありません。上のフォームから追加してください。</div>`;
+    } else {
+      elList.innerHTML = records.map(r => {
+        const sub = r.subtitle ? `「${esc(r.subtitle)}」` : "";
+        const memo = r.memo ? `<div class="memo">📝 ${esc(r.memo)}</div>` : "";
+        return `
+          <div class="rec-item ${r.mark}">
+            <div class="rm">${markSym(r.mark)}</div>
+            <div class="info">
+              <div class="ttl">${esc(r.subject)} ${esc(r.chapter)} ${esc(r.example)}${sub}</div>
+              <div class="sub2">${dateStr(r.ts)} ${timeStr(r.ts)}</div>
+              ${memo}
+            </div>
+            <button type="button" class="rec-del" data-id="${esc(r.id)}" aria-label="この記録を削除" title="削除">✕</button>
+          </div>`;
+      }).join("");
+    }
+    updateBadge();
+  }
+
+  function updateBadge() {
+    const n = records.length;
+    if (n > 0) { elBadge.hidden = false; elBadge.textContent = `未反映 ${n}件`; }
+    else { elBadge.hidden = true; }
+    updateLocalStatus();
+  }
+
+  // ---- live overlay: 確定値に「+N」加算、ボードに pending ドット ----
+  function applyLiveOverlay() {
+    const c = counts();
+    setStatLive(".stat.tot", c.total);
+    setStatLive(".stat.o", c.o);
+    setStatLive(".stat.d", c.d);
+    setStatLive(".stat.x", c.x);
+    applyPendingDots();
+  }
+  function setStatLive(sel, n) {
+    const stat = document.querySelector(sel);
+    if (!stat) return;
+    let badge = stat.querySelector(".stat-live");
+    if (n <= 0) { if (badge) badge.remove(); return; }
+    if (!badge) {
+      badge = document.createElement("div");
+      badge.className = "stat-live";
+      const nEl = stat.querySelector(".n");
+      if (nEl) nEl.insertAdjacentElement("afterend", badge); else stat.appendChild(badge);
+    }
+    badge.textContent = `+${n} 今日`;
+  }
+  function applyPendingDots() {
+    document.querySelectorAll(".dot.pending").forEach(el => el.remove());
+    const pcards = Array.from(document.querySelectorAll(".pcard"));
+    records.forEach(r => {
+      if (r.subject !== "工業") return;          // ボードは管理会計(工業)章のみ
+      const num = chapterNum(r.chapter);
+      if (!num) return;
+      const card = pcards.find(pc => {
+        const chEl = pc.querySelector(".chap");
+        return chEl && chapterNum(chEl.textContent) === num;
+      });
+      if (!card) return;
+      const dots = card.querySelector(".dots");
+      if (!dots) return;
+      const dot = document.createElement("span");
+      dot.className = `dot pending ${r.mark}`;
+      dot.title = `${r.example} ${markSym(r.mark)}（今日の入力・未確定）`;
+      dots.appendChild(dot);
+    });
+  }
+
+  // ---- 疑似管理: 週間予定チェック / 今日の指令チェック（ローカル） ----
+  function wireWeekPlan() {
+    const rows = Array.from(document.querySelectorAll(".wrow"));
+    rows.forEach((row, i) => {
+      row.dataset.defaultDone = row.classList.contains("done") ? "1" : "0";
+      row.classList.add("editable");
+      row.setAttribute("role", "button");
+      row.tabIndex = 0;
+      const key = String(i);
+      const apply = () => {
+        const def = row.dataset.defaultDone === "1";
+        const done = Object.hasOwn(overlay.week, key) ? !!overlay.week[key] : def;
+        row.classList.toggle("done", done);
+        row.classList.toggle("local-edit", Object.hasOwn(overlay.week, key) && (!!overlay.week[key] !== def));
+        const st = row.querySelector(".st");
+        if (st) { st.textContent = done ? "✅" : "◻︎"; st.classList.toggle("ok", done); }
+      };
+      const toggle = () => {
+        const def = row.dataset.defaultDone === "1";
+        const cur = Object.hasOwn(overlay.week, key) ? !!overlay.week[key] : def;
+        overlay.week[key] = !cur;
+        saveOverlay(); apply(); updateLocalStatus();
+      };
+      apply();
+      row.addEventListener("click", toggle);
+      row.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+    });
+  }
+  function wireDirective() {
+    const blocks = Array.from(document.querySelectorAll(".directive .d-block"));
+    blocks.forEach((b, i) => {
+      const key = String(i);
+      const chk = document.createElement("button");
+      chk.type = "button";
+      chk.className = "dblk-chk";
+      chk.setAttribute("aria-label", "このタスクを完了にする（ローカル）");
+      chk.title = "完了マーク（ローカル）";
+      b.appendChild(chk);
+      const apply = () => {
+        const done = Object.hasOwn(overlay.dir, key) && !!overlay.dir[key];
+        b.classList.toggle("done-local", done);
+        chk.classList.toggle("on", done);
+        chk.textContent = done ? "✓" : "";
+      };
+      chk.addEventListener("click", () => {
+        const cur = Object.hasOwn(overlay.dir, key) && !!overlay.dir[key];
+        overlay.dir[key] = !cur;
+        saveOverlay(); apply(); updateLocalStatus();
+      });
+      apply();
+    });
+  }
+  function overlayDiffs() {
+    let n = 0;
+    document.querySelectorAll(".wrow").forEach((row, i) => {
+      const key = String(i);
+      if (Object.hasOwn(overlay.week, key)) {
+        const def = row.dataset.defaultDone === "1";
+        if (!!overlay.week[key] !== def) n++;
+      }
+    });
+    Object.keys(overlay.dir).forEach(k => { if (overlay.dir[k]) n++; });
+    return n;
+  }
+  function updateLocalStatus() {
+    const ls = $("localStatus");
+    if (!ls) return;
+    const diffs = overlayDiffs();
+    if (diffs > 0) {
+      ls.hidden = false;
+      $("localStatusText").textContent = `ローカル変更あり ${diffs}件（週間予定/指令のチェック）`;
+    } else {
+      ls.hidden = true;
+    }
+  }
+  $("localReset").addEventListener("click", () => {
+    overlay.week = {}; overlay.dir = {};
+    saveOverlay();
+    document.querySelectorAll(".wrow").forEach((row, i) => {
+      const done = row.dataset.defaultDone === "1";
+      row.classList.toggle("done", done);
+      row.classList.remove("local-edit");
+      const st = row.querySelector(".st");
+      if (st) { st.textContent = done ? "✅" : "◻︎"; st.classList.toggle("ok", done); }
+    });
+    document.querySelectorAll(".directive .d-block").forEach(b => {
+      b.classList.remove("done-local");
+      const chk = b.querySelector(".dblk-chk");
+      if (chk) { chk.classList.remove("on"); chk.textContent = ""; }
+    });
+    updateLocalStatus();
+  });
+
+  // ---- export (=疑似push) ----
+  function buildLines() {
+    return records.map(r => {
+      const sym = markSym(r.mark);
+      const sub = r.subtitle ? `「${r.subtitle}」` : "";
+      const memo = r.memo ? ` メモ:${r.memo}` : "";
+      return `- ${r.subject} ${r.chapter} ${r.example}${sub} ${sym}${memo}`;
+    });
+  }
+  const EXPORT_HEADER = "以下を exercise-log.md に記録してください（理解度は下記の通り。復習回数・次回復習日は既存ログのルールで計算し、確定値は上書きしないこと）:";
+  function buildChatText() {
+    if (!records.length) return "（記録がありません）";
+    return EXPORT_HEADER + "\n" + buildLines().join("\n");
+  }
+  function buildFileText() {
+    const body = records.length ? buildLines().join("\n") : "（記録がありません）";
+    return `# 学習記録 ${todayStr()}（ダッシュボード入力分）\n\n${EXPORT_HEADER}\n\n${body}\n`;
+  }
+  function download(filename, text) {
+    let url;
+    try {
+      const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+      url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+    } catch (e) { /* ignore */ }
+    finally { if (url) setTimeout(() => URL.revokeObjectURL(url), 1500); }
+  }
+  async function copyText(text, btn) {
+    let ok = false;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); ok = true; }
+    } catch (e) { ok = false; }
+    if (!ok) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text; ta.style.position = "fixed"; ta.style.top = "-9999px"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        ok = document.execCommand("copy"); ta.remove();
+      } catch (e) { ok = false; }
+    }
+    const orig = btn.dataset.orig || btn.textContent;
+    btn.dataset.orig = orig;
+    btn.textContent = ok ? "✓ コピーしました" : "コピー不可（テキストを手動選択してください）";
+    setTimeout(() => { btn.textContent = orig; }, 1900);
+  }
+
+  let modalOpen = false;
+  function openExport() {
+    if (modalOpen) return;
+    modalOpen = true;
+    const back = document.createElement("div");
+    back.className = "ov-back";
+    back.innerHTML = `
+      <div class="ov-sheet" role="dialog" aria-modal="true" aria-label="リポジトリ反映用エクスポート">
+        <div class="ov-head">
+          <h3>📤 エクスポート</h3>
+          <button type="button" class="ov-close" aria-label="閉じる">✕</button>
+        </div>
+        <div class="ov-desc">この端末の記録を<b>反映用</b>に書き出します。ダッシュボードは直接pushできないため、下記を<b>チャットに貼る</b>か、DLした <b>.md をエージェントに渡す</b>と exercise-log.md に記録されます（復習回数・次回日はログ側で正しく計算）。</div>
+        <div class="export-tabs">
+          <button type="button" class="tab sel" data-tab="chat">チャット貼付用</button>
+          <button type="button" class="tab" data-tab="file">ファイルDL</button>
+        </div>
+        <div class="export-pane" data-pane="chat">
+          <textarea class="export-text" id="exportText" readonly></textarea>
+          <p class="export-note">これをチャットに貼れば記録されます。</p>
+          <div class="export-actions">
+            <button type="button" class="btn primary" id="copyBtn">クリップボードにコピー</button>
+          </div>
+        </div>
+        <div class="export-pane" data-pane="file" hidden>
+          <p class="export-note">同じ内容を <b>study-log-${todayStr()}.md</b> としてダウンロードします。DLした .md をエージェントに渡せば適用されます。</p>
+          <div class="export-actions">
+            <button type="button" class="btn primary" id="dlBtn">⬇︎ .md をダウンロード</button>
+          </div>
+        </div>
+        <div class="export-foot">
+          <button type="button" class="btn danger wide" id="clearBtn">記録をエクスポート済みにする（リストをクリア）</button>
+        </div>
+      </div>`;
+    document.body.appendChild(back);
+    const sheet = back.querySelector(".ov-sheet");
+    back.querySelector("#exportText").value = buildChatText();
+
+    function close() {
+      if (!modalOpen) return;
+      modalOpen = false;
+      back.remove();
+      document.removeEventListener("keydown", onKey);
+    }
+    function onKey(e) { if (e.key === "Escape") close(); }
+    document.addEventListener("keydown", onKey);
+    back.addEventListener("click", (e) => { if (e.target === back) close(); });
+    back.querySelector(".ov-close").addEventListener("click", close);
+
+    back.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const name = tab.dataset.tab;
+        back.querySelectorAll(".tab").forEach(t => t.classList.toggle("sel", t === tab));
+        back.querySelectorAll(".export-pane").forEach(p => { p.hidden = p.dataset.pane !== name; });
+      });
+    });
+    back.querySelector("#copyBtn").addEventListener("click", (e) => copyText(buildChatText(), e.currentTarget));
+    back.querySelector("#dlBtn").addEventListener("click", () => download(`study-log-${todayStr()}.md`, buildFileText()));
+    back.querySelector("#clearBtn").addEventListener("click", () => {
+      if (!records.length) { close(); return; }
+      const ok = window.confirm("今日の記録リストをクリアします。エクスポート（コピー or DL）は済みましたか？\nOKでクリアします。");
+      if (!ok) return;
+      records = [];
+      saveRecords();
+      renderList();
+      applyLiveOverlay();
+      close();
+    });
+    sheet.focus && sheet.focus();
+  }
+  $("recExport").addEventListener("click", openExport);
+
+  // ---- init ----
+  wireWeekPlan();
+  wireDirective();
+  renderList();
+  applyLiveOverlay();
+  updateLocalStatus();
 })();
 </script>
 </body>
