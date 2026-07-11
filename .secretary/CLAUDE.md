@@ -517,3 +517,12 @@
 ```
 
 このフォーマットを忘れずに毎回出力する。ユーザーから「時間どこ？」「今何問目？」と聞かれた時点で、ルール違反。
+
+### ⑫ Obsidian保管庫・型カード運用（2026-07-11 新設）
+
+このリポジトリのルートはObsidian保管庫として開ける（入口: ルートの `ホーム.md`）。`.gitignore` でworkspace系のみ除外済み。
+
+- **型カード** = 要対策6パターンの解法言語化ノート（`.secretary/knowledge/型カード①〜⑥.md`）。構成: 核心1行 → 着手前チェック（callout）→ 型の整理表 → つまずき履歴 → 対象問題
+- **更新タイミング**: 演習で新しい詰まり・気づき（「実際価格でなく推定市価」等）が出たら、exercise-log.mdのメモと同時に**該当型カードのつまずき履歴にも1行追記**する。○化が進んだら frontmatter の`制圧状況`を更新
+- 視覚マップは `.secretary/study/論点マップ.canvas`（実施済/予定の色分け。カード実施日が動いたら色とラベルを更新）
+- ノートはObsidian Flavored Markdown（wikilink・callout・frontmatter）で書く。書式は `.claude/skills/obsidian-markdown/SKILL.md` に従う

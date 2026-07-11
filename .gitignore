@@ -1,0 +1,6 @@
+# Obsidian（端末ごとの作業状態はコミットしない。設定・プラグインは共有する）
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.trash/
+.DS_Store
