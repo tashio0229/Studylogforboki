@@ -1,0 +1,72 @@
+filters:
+  and:
+    - file.inFolder(".secretary/study/問題ノート")
+    - 'grade != "○"'
+    - 'grade != "-"'
+    - 'due <= today()'
+
+formulas:
+  overdue_days: 'if(due, (today() - due).days, "")'
+
+properties:
+  id:
+    displayName: "問題ID"
+  subtitle:
+    displayName: "副題"
+  chapter:
+    displayName: "章"
+  subject:
+    displayName: "科目"
+  grade:
+    displayName: "理解度"
+  due:
+    displayName: "次回復習日"
+  reps:
+    displayName: "復習回数"
+  formula.overdue_days:
+    displayName: "超過日数"
+
+views:
+  - type: table
+    name: "✕ 最優先"
+    filters:
+      and:
+        - 'grade == "✕"'
+    order:
+      - id
+      - subtitle
+      - chapter
+      - due
+      - formula.overdue_days
+
+  - type: table
+    name: "期限到来の△（古い順）"
+    filters:
+      and:
+        - 'grade == "△"'
+    groupBy:
+      property: due
+      direction: ASC
+    order:
+      - id
+      - subtitle
+      - subject
+      - chapter
+      - formula.overdue_days
+      - reps
+
+  - type: table
+    name: "工原だけ（優先科目）"
+    filters:
+      and:
+        - 'grade == "△"'
+        - 'subject == "工原"'
+    groupBy:
+      property: chapter
+      direction: ASC
+    order:
+      - id
+      - subtitle
+      - due
+      - formula.overdue_days
+      - reps
