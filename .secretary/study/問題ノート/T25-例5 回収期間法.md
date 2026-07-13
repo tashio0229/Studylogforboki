@@ -7,7 +7,7 @@ chapter: "第19章 意思決定会計Ⅱ"
 chapter_no: 19
 grade: "△"
 solved: 2026-07-13
-due: 2026-07-18
+due: 2026-07-15
 reps: 8
 flagged: true
 tags:
