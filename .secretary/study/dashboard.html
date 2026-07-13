@@ -736,88 +736,40 @@
    ============================================================ */
 const DATA = {
   meta: {
-    updated: "2026-07-13（月）残業なし・フル枠",
+    updated: "2026-07-13（月）完了・本日87問／翌7/14へ",
     examDate: "2026-11-15", examLabel: "第171回 日商簿記1級",
     phaseADeadline: "2026-07-31", phaseALabel: "商業講義一周"
   },
 
   // 今日の指令 = 月 7/13（残業なしと判明→2時までフル枠）
   directive: {
-    date: "7/13（月）残業なし・〜2:00フル",
-    sub: "重い残業日の想定が外れてフル枠に。今週は業務外AIをやめて簿記に全振りする初週。ラップトップは簿記中は閉じる。",
+    date: "7/14（火）— 前日87問の勢いを止めない",
+    sub: "7/13は商業23＋工業64で通算87問（○昇格16）。ただし意思決定会計Ⅱ後半で✕を9問出した＝ここが最大の穴。今日はまず✕を潰す。",
     items: [
-      { kind: "x", ic: "🔴", head: "最優先：今日期限の2問",
-        detail: "✕ 第11章 例8「金融資産の譲渡」／ △ 第15章 例12「全部原価計算におけるCVP分析」。着手一発目にここで連続ゼロを回避。" },
-      { kind: "lec", ic: "📺", head: "商業講義 #19（できれば #20 まで2コマ）＋例題",
-        detail: "今日のマスト。Phase A（商業講義一周・〜7/31）を前倒し。出た例題は通常どおり○△✕で記録。" },
-      { kind: "rev", ic: "⚠️", head: "明日(火7/14)に戻る △80問を前倒し",
-        detail: "日曜84問の+2日後が火曜に集中。フル枠の今日、工原の要対策から間引いて先に叩くと火曜が楽。全部は追わない。" },
-      { kind: "card", ic: "🃏", head: "余力で過去問1回分",
-        detail: "日曜にやり切れていなければ。時間を計って本番形式で。" }
+      { kind: "x", ic: "🔴", head: "最優先：✕10問を全部",
+        detail: "工原：タックスシールド〜リース購入(第19章 例7-15)の9問＋商業 金融資産の譲渡(第11章 例8)。特にタックスシールドは『減価償却費×税率＝節税額をCFに加算』の一点をまず固定。" },
+      { kind: "d", ic: "🟠", head: "期限到来△2問",
+        detail: "第15章 例12 全部原価計算のCVP／第13章 例7 勘定記入法。✕の後に。" },
+      { kind: "card", ic: "🧠", head: "週末に向けて：工原△の介入○化を仕込む",
+        detail: "6回転以上で止まっている工原△が41問。平日は+2反復で目を慣らし、週末に数問ずつ『解説を書き写す／講義戻り』の介入で確実に○化する運用へ。" }
     ]
   },
 
   // 今日のキュー = 事前記入済み。○△✕とメモを叩くだけ（記録モードから使う）
   // 科目/章は記録フォームのセレクト値と一致させること（subject:"工業"|"商業", chapterは章ラベル完全一致）
   todayQueue: [
-    { subject: "工業", chapter: "第12章 連産品", example: "例4", subtitle: "分離点推定市価基準③", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第12章 連産品", example: "例5", subtitle: "分離点推定価値基準", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例4", subtitle: "製造間接費差異の分析 固定予算", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例6", subtitle: "製造間接費差異の分析〜実査法変動予算", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例7", subtitle: "勘定記入法", note: "🟠期限(火7/14)△・6回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例8", subtitle: "原価差異の会計処理", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例9", subtitle: "材料受入価格差異の会計処理①", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例10", subtitle: "材料受入価格差異の会計処理②", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例11", subtitle: "正常仕損品がある場合", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例12", subtitle: "仕損費差異（異常仕損）", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例14", subtitle: "数量差異の分析①", note: "🟠期限(火7/14)△・9回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例15", subtitle: "数量差異の分析②", note: "🟠期限(火7/14)△・9回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例16", subtitle: "作業時間差異の分析①", note: "🟠期限(火7/14)△・9回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例17", subtitle: "製造間接費差異の分析", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例18", subtitle: "歩留差異総合問題", note: "🟠期限(火7/14)△・9回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例19", subtitle: "工程別標準原価計算・作業点別標準原価計算", note: "🟠期限(火7/14)△・9回目" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例20", subtitle: "作業点別標準原価計算", note: "🟠期限(火7/14)△・9回目" },
-    { subject: "工業", chapter: "第14章 直接原価計算", example: "例3", subtitle: "全部原価計算と直接原価計算の営業利益の差額②", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第14章 直接原価計算", example: "例4", subtitle: "固定費調整", note: "🟠期限(火7/14)△・9回目" },
-    { subject: "工業", chapter: "第14章 直接原価計算", example: "例5", subtitle: "直接標準原価計算における固定費調整", note: "🟠期限(火7/14)△・9回目" },
-    { subject: "工業", chapter: "第15章 CVP分析", example: "例7", subtitle: "資本利益率と資本回収点売上高", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第15章 CVP分析", example: "例8", subtitle: "変動的資本と固定的資本", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第15章 CVP分析", example: "例13", subtitle: "感度分析①", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第15章 CVP分析", example: "例14", subtitle: "感度分析②", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第16章 予算管理", example: "例1", subtitle: "予算編成", note: "🟠期限(火7/14)△・6回目" },
-    { subject: "工業", chapter: "第16章 予算管理", example: "例2", subtitle: "予算実績差異分析①", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第16章 予算管理", example: "例3", subtitle: "予算実績差異分析②", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第16章 予算管理", example: "例4", subtitle: "市場占拠率差異と市場総需要量差異", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第16章 予算管理", example: "例5", subtitle: "売上品構成差異と売上品数量差異", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第17章 資金管理", example: "例1", subtitle: "現金資金の管理", note: "🟠期限(火7/14)△・6回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例4", subtitle: "コストベースの価格決定", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例5", subtitle: "目標を達成する販売価格", note: "🟠期限(火7/14)△・9回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例8", subtitle: "共通の制約条件２つ以上", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例9", subtitle: "自製か購入かの意思決定①", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例10", subtitle: "自製か購入かの意思決定②", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例11", subtitle: "自製か購入かの意思決定③", note: "🟠期限(火7/14)△・8回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例13", subtitle: "受注可否の意思決定①", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例14", subtitle: "受注可否の意思決定②", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例15", subtitle: "受注可否の意思決定③", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例16", subtitle: "追加加工の可否の意思決定", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例17", subtitle: "経済的発注点", note: "🟠期限(火7/14)△・6回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例18", subtitle: "経済的発注量分析①", note: "🟠期限(火7/14)△・6回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例19", subtitle: "経済的発注量分析②", note: "🟠期限(火7/14)△・6回目" },
-    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例20", subtitle: "セグメントの廃止か継続かの意思決定", note: "🟠期限(火7/14)△・6回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例1", subtitle: "加重平均資本コストの算定", note: "🟠期限(火7/14)△・6回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例3", subtitle: "現在価値指数法（収益性指数法）", note: "🟠期限(火7/14)△・6回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例4", subtitle: "内部利益率法（IRR）", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例5", subtitle: "回収期間法", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例6", subtitle: "投下資本利益率法", note: "🟠期限(火7/14)△・7回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例7", subtitle: "タックス・シールド①", note: "🟠期限(火7/14)△・3回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例8", subtitle: "タックス・シールド②", note: "🟠期限(火7/14)△・3回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例9", subtitle: "営業利益とキャッシュ・フロー", note: "🟠期限(火7/14)△・3回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例10", subtitle: "正味運転資本とキャッシュ・フロー", note: "🟠期限(火7/14)△・3回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例11", subtitle: "取替投資①", note: "🟠期限(火7/14)△・3回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例12", subtitle: "取替投資②", note: "🟠期限(火7/14)△・3回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例13", subtitle: "経済的耐用年数と法定耐用年数", note: "🟠期限(火7/14)△・3回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例14", subtitle: "耐用年数が異なる相互排他的投資案", note: "🟠期限(火7/14)△・3回目" },
-    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例15", subtitle: "リースか購入かの意思決定", note: "🟠期限(火7/14)△・3回目" }
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例7", subtitle: "タックス・シールド①", note: "🔴今日期限✕・4回目" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例8", subtitle: "タックス・シールド②", note: "🔴今日期限✕・4回目" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例9", subtitle: "営業利益とキャッシュ・フロー", note: "🔴今日期限✕・4回目" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例10", subtitle: "正味運転資本とキャッシュ・フロー", note: "🔴今日期限✕・4回目" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例11", subtitle: "取替投資①", note: "🔴今日期限✕・4回目" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例12", subtitle: "取替投資②", note: "🔴今日期限✕・4回目" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例13", subtitle: "経済的耐用年数と法定耐用年数", note: "🔴今日期限✕・4回目" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例14", subtitle: "耐用年数が異なる相互排他的投資案", note: "🔴今日期限✕・4回目" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例15", subtitle: "リースか購入かの意思決定", note: "🔴今日期限✕・4回目" },
+    { subject: "商業", chapter: "第11章 債権債務・貸倒引当金", example: "例8", subtitle: "金融資産の譲渡", note: "🔴今日期限✕・3回目" },
+    { subject: "工業", chapter: "第15章 CVP分析", example: "例12", subtitle: "全部原価計算におけるCVP分析", note: "🟠期限到来△・8回目" },
+    { subject: "工業", chapter: "第13章 標準原価計算", example: "例7", subtitle: "勘定記入法", note: "🟠期限到来△・6回目" }
   ],
 
   // 6パターン制圧ボード（marks: [ラベル, o|d|x]）
@@ -837,7 +789,7 @@ const DATA = {
   ],
 
   stats: {
-    recorded: 290, o: 216, d: 73, x: 1,
+    recorded: 297, o: 225, d: 62, x: 10,
     needAction: 33,            // 要対策（現在△/✕のみ）
     subjects: [
       { n: 139, k: "工原 テキスト例題" },
@@ -868,14 +820,14 @@ const DATA = {
   },
 
   reviewQueue: {
-    total: 59, d: 58, x: 1,
+    total: 12, d: 2, x: 10,
     groups: [
-      { crit: true, title: "✕ 最優先", cnt: 1,
-        body: "第11章 例8「金融資産の譲渡」（C11-例8）。7/13も✕継続（言葉が多く講義的）。翌日再挑戦固定。" },
-      { title: "△ 商業は7/13で消化済み", cnt: 22,
-        body: "第10-12章の△22問を処理。うち8問○昇格（例4/7/9/17/18/19・先物例2・保有目的変更）。残りは△継続。" },
-      { title: "⚠️ 工原△ 58問が火7/14期限で残存", cnt: 58,
-        body: "日曜84問grindの折り返し。標準原価(第13章)・意思決定(第18-19章)中心。今日キューの上から潰す。全部は追わず要対策優先。" }
+      { crit: true, title: "✕ 最優先（全部やる）", cnt: 10,
+        body: "第19章 意思決定会計Ⅱ 例7-15（タックスシールド/取替投資/経済的耐用年数/リース購入）＝9問＋第11章 例8 金融資産の譲渡。✕は+1日で毎日戻る。" },
+      { title: "△ 期限到来", cnt: 2,
+        body: "第15章 例12 全部原価計算のCVP（8回転）／第13章 例7 勘定記入法（6回転）。" },
+      { title: "⚠️ 構造課題：工原△41問が6回転+で停滞", cnt: 41,
+        body: "うち32問は8回転超。頻度では割れない実証済み層。週末に介入枠で数問ずつ○化する設計が必要（詳細はチャットの戦略メモ）。" }
     ]
   },
 
