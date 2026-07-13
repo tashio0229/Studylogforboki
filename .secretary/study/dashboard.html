@@ -479,6 +479,41 @@
   }
   .rec-note b { color: var(--tx-2); font-weight: 700; }
 
+  /* --- 今日のキュー（事前記入済み・叩くだけ） --- */
+  .rec-queue { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1rem; }
+  .rq-head {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.82rem; font-weight: 800; color: var(--tx-2); letter-spacing: 0.01em;
+  }
+  .rq-prog { margin-left: auto; font-size: 0.78rem; font-weight: 700; color: var(--tx-3); }
+  .rq-item {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+    padding: 0.7rem 0.8rem; border-radius: var(--radius-sm);
+    border: 1px solid var(--hair-strong); background: var(--card-2);
+  }
+  .rq-item.done { background: var(--o-bg); border-color: color-mix(in srgb, var(--o) 35%, transparent); }
+  .rq-main { flex: 1; min-width: 0; }
+  .rq-ttl { font-size: 0.86rem; font-weight: 700; color: var(--tx); line-height: 1.35; }
+  .rq-note { font-size: 0.72rem; color: var(--tx-3); margin-top: 0.2rem; line-height: 1.4; }
+  .rq-donmemo { display: inline-block; font-size: 0.72rem; color: var(--tx-3); margin-top: 0.25rem; }
+  .rq-glyph { font-weight: 900; }
+  .rq-glyph.o { color: var(--o); } .rq-glyph.d { color: var(--d); } .rq-glyph.x { color: var(--x); }
+  .rq-controls { display: flex; flex-direction: column; gap: 0.4rem; width: min(46%, 15rem); flex-shrink: 0; }
+  .mark-btns.sm { gap: 0.35rem; }
+  .mark-btns.sm .mark-btn { font-size: 1.1rem; padding: 0.35rem 0; border-width: 2px; }
+  .rq-memo { font-size: 0.8rem; padding: 0.45rem 0.6rem; }
+  .rq-undo {
+    font: inherit; font-size: 0.72rem; font-weight: 700; color: var(--tx-3);
+    background: transparent; border: 1px solid var(--hair-strong);
+    border-radius: var(--radius-sm); padding: 0.35rem 0.6rem; cursor: pointer; flex-shrink: 0;
+  }
+  .rq-undo:active { transform: scale(0.97); }
+  .rec-manual-head {
+    font-size: 0.8rem; font-weight: 700; color: var(--tx-3);
+    cursor: pointer; padding: 0.5rem 0; user-select: none;
+  }
+  .rec-manual-head.open { color: var(--tx-2); }
+
   /* --- Form --- */
   .rec-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem 1rem; }
   .rec-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
@@ -721,6 +756,13 @@ const DATA = {
         detail: "日曜にやり切れていなければ。時間を計って本番形式で。" }
     ]
   },
+
+  // 今日のキュー = 事前記入済み。○△✕とメモを叩くだけ（記録モードから使う）
+  // 科目/章は記録フォームのセレクト値と一致させること（subject:"工業"|"商業", chapterは章ラベル完全一致）
+  todayQueue: [
+    { subject: "商業", chapter: "第11章 債権債務・貸倒引当金", example: "例8", subtitle: "金融資産の譲渡", note: "🔴今日期限✕・重要度C" },
+    { subject: "工業", chapter: "第15章 CVP分析", example: "例12", subtitle: "全部原価計算におけるCVP分析", note: "🔴今日期限△・全部vs直接=操業度差異" }
+  ],
 
   // 6パターン制圧ボード（marks: [ラベル, o|d|x]）
   cards: [
@@ -1111,6 +1153,10 @@ function section(inner) {
       </summary>
       <div class="rec-body">
         <div class="rec-note">入力はこの端末に保存されます（リロードで消えません）。<b>exercise-log.md が唯一の正</b>のため、ここでは復習回数・次回復習日は計算せず、下の「エクスポート」を<b>チャットに貼る</b>か <b>.md をエージェントに渡す</b>と正しく記録されます。確定数値は上書きせず、今日の分は「+N」で速報表示します。</div>
+
+        <div class="rec-queue" id="recQueue"></div>
+
+        <div class="rec-manual-head" id="recManualHead">＋ その他の問題を手入力</div>
         <div class="rec-form">
           <div class="rec-field">
             <label for="recSubject">科目</label>
@@ -1199,29 +1245,131 @@ function section(inner) {
   $("recAdd").addEventListener("click", addRecord);
   elMemo.addEventListener("keydown", (e) => { if (e.key === "Enter") addRecord(); });
 
+  // 「その他を手入力」の開閉トグル（キューが主役なので手入力は畳んでおく）
+  const elManualHead = $("recManualHead");
+  const elFormWrap = elManualHead.nextElementSibling; // .rec-form
+  let manualOpen = false;
+  function syncManual() {
+    elFormWrap.hidden = !manualOpen;
+    $("recErr").hidden = !manualOpen;
+    $("recAdd").hidden = !manualOpen;
+    elManualHead.classList.toggle("open", manualOpen);
+    elManualHead.textContent = (manualOpen ? "－" : "＋") + " その他の問題を手入力";
+  }
+  elManualHead.addEventListener("click", () => { manualOpen = !manualOpen; syncManual(); });
+  syncManual();
+
+  // ---- 今日のキュー（事前記入済み・○△✕＋メモを叩くだけ） ----
+  const elQueue = $("recQueue");
+  const QUEUE = Array.isArray(DATA.todayQueue) ? DATA.todayQueue.filter(q =>
+    q && SUBJECT_VALUES.has(q.subject) && typeof q.chapter === "string" && q.chapter
+    && typeof q.example === "string" && q.example
+  ) : [];
+
+  // キュー項目が今日すでに記録済みか（科目＋章＋例題番号の一致・当日分のみ）
+  function queueDone(q) {
+    const today = todayStr();
+    return records.find(r => r.subject === q.subject && r.chapter === q.chapter
+      && r.example === q.example && dateStr(r.ts) === today) || null;
+  }
+
+  const markGlyph = { o: "○", d: "△", x: "✕" };
+  function renderQueue() {
+    if (!QUEUE.length) { elQueue.hidden = true; return; }
+    elQueue.hidden = false;
+    const doneCount = QUEUE.filter(queueDone).length;
+    elQueue.innerHTML =
+      `<div class="rq-head">🎯 今日の予定（叩くだけ）<span class="rq-prog tnum">${doneCount}/${QUEUE.length}</span></div>` +
+      QUEUE.map((q, i) => {
+        const done = queueDone(q);
+        const ch = chapterNum(q.chapter) || q.chapter;
+        const sub = q.subtitle ? `「${esc(q.subtitle)}」` : "";
+        const note = q.note ? `<div class="rq-note">${esc(q.note)}</div>` : "";
+        if (done) {
+          const memo = done.memo ? `<span class="rq-donmemo">📝 ${esc(done.memo)}</span>` : "";
+          return `<div class="rq-item done" data-i="${i}">
+            <div class="rq-main">
+              <div class="rq-ttl"><span class="rq-glyph ${done.mark}">${markGlyph[done.mark]}</span> ${esc(q.subject)}・${esc(ch)} ${esc(q.example)}${sub}</div>
+              ${note}${memo}
+            </div>
+            <button type="button" class="rq-undo" data-i="${i}" data-rid="${esc(done.id)}">取消</button>
+          </div>`;
+        }
+        return `<div class="rq-item" data-i="${i}">
+          <div class="rq-main">
+            <div class="rq-ttl">${esc(q.subject)}・${esc(ch)} ${esc(q.example)}${sub}</div>
+            ${note}
+          </div>
+          <div class="rq-controls">
+            <div class="mark-btns sm" data-i="${i}">
+              <button type="button" class="mark-btn o" data-mark="o" data-i="${i}">○</button>
+              <button type="button" class="mark-btn d" data-mark="d" data-i="${i}">△</button>
+              <button type="button" class="mark-btn x" data-mark="x" data-i="${i}">✕</button>
+            </div>
+            <input class="rec-input rq-memo" data-i="${i}" type="text" placeholder="メモ（任意）" autocomplete="off">
+          </div>
+        </div>`;
+      }).join("");
+  }
+
+  elQueue.addEventListener("click", (e) => {
+    const undo = e.target.closest(".rq-undo");
+    if (undo) {
+      const rid = undo.dataset.rid;
+      records = records.filter(r => r.id !== rid);
+      saveRecords();
+      renderList();
+      renderQueue();
+      applyLiveOverlay();
+      return;
+    }
+    const btn = e.target.closest(".mark-btn");
+    if (!btn) return;
+    const i = Number(btn.dataset.i);
+    const q = QUEUE[i];
+    if (!q || !MARKS.has(btn.dataset.mark)) return;
+    const memoEl = elQueue.querySelector(`.rq-memo[data-i="${i}"]`);
+    pushRecord({
+      subject: q.subject, chapter: q.chapter, example: q.example,
+      subtitle: q.subtitle || "", memo: memoEl ? memoEl.value.trim() : "",
+      mark: btn.dataset.mark
+    });
+  });
+
+  // 記録追加の共通処理（手入力フォームと今日のキューの両方から使う）
+  function pushRecord({ subject, chapter, example, subtitle, memo, mark }) {
+    records.push({
+      id: newId(),
+      subject, chapter, example,
+      subtitle: subtitle || "",
+      memo: memo || "",
+      mark,
+      ts: Date.now()
+    });
+    records.sort((a, b) => a.ts - b.ts);
+    saveRecords();
+    renderList();
+    renderQueue();
+    applyLiveOverlay();
+  }
+
   function addRecord() {
     const example = elExample.value.trim();
     if (!MARKS.has(selectedMark)) { elErr.textContent = "理解度（○ / △ / ✕）を選んでください。"; return; }
     if (!example) { elErr.textContent = "例題番号を入力してください（例: 例5）。"; elExample.focus(); return; }
     elErr.textContent = "";
-    records.push({
-      id: newId(),
+    pushRecord({
       subject: elSubject.value,
       chapter: elChapter.value,
       example,
       subtitle: elSubtitle.value.trim(),
       memo: elMemo.value.trim(),
-      mark: selectedMark,
-      ts: Date.now()
+      mark: selectedMark
     });
-    records.sort((a, b) => a.ts - b.ts);
-    saveRecords();
     // 連続入力しやすいよう科目・章は保持、それ以外をクリア
     elExample.value = ""; elSubtitle.value = ""; elMemo.value = "";
     selectedMark = null;
     elMarks.querySelectorAll(".mark-btn").forEach(b => b.classList.remove("sel"));
-    renderList();
-    applyLiveOverlay();
     elExample.focus();
   }
 
@@ -1238,6 +1386,7 @@ function section(inner) {
     records = records.filter(r => r.id !== id);
     saveRecords();
     renderList();
+    renderQueue();
     applyLiveOverlay();
   });
 
@@ -1542,6 +1691,7 @@ function section(inner) {
       records = [];
       saveRecords();
       renderList();
+      renderQueue();
       applyLiveOverlay();
       close();
     });
@@ -1553,6 +1703,7 @@ function section(inner) {
   wireWeekPlan();
   wireDirective();
   renderList();
+  renderQueue();
   applyLiveOverlay();
   updateLocalStatus();
 })();
