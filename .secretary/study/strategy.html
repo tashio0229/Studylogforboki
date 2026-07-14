@@ -1,0 +1,228 @@
+<style>
+  :root{
+    --bg:#f4f5f7; --surface:#ffffff; --surface-2:#f0f1f4;
+    --ink:#1a1c22; --ink-2:#4a4e5a; --ink-3:#7a7f8c; --hair:#e3e5ea; --hair-2:#d3d6dd;
+    --accent:#4f5bd5; --accent-soft:#eaecfb;
+    --o:#1a8f52; --o-bg:#e3f4ea; --d:#c07a10; --d-bg:#f8efdc; --x:#c8392f; --x-bg:#f8e4e2;
+    --radius:16px; --radius-sm:10px;
+    --shadow:0 1px 2px rgba(20,22,34,.05), 0 8px 28px rgba(20,22,34,.06);
+    --fs-sans:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f1014; --surface:#181a20; --surface-2:#20232b;
+      --ink:#f2f3f6; --ink-2:#b6bac6; --ink-3:#868b99; --hair:#2a2d36; --hair-2:#363a45;
+      --accent:#8b95f0; --accent-soft:#23263a;
+      --o:#4cc27f; --o-bg:#16301f; --d:#e0a53a; --d-bg:#33280f; --x:#e5695f; --x-bg:#361c1a;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f5f7; --surface:#ffffff; --surface-2:#f0f1f4;
+    --ink:#1a1c22; --ink-2:#4a4e5a; --ink-3:#7a7f8c; --hair:#e3e5ea; --hair-2:#d3d6dd;
+    --accent:#4f5bd5; --accent-soft:#eaecfb; --o:#1a8f52; --o-bg:#e3f4ea; --d:#c07a10; --d-bg:#f8efdc; --x:#c8392f; --x-bg:#f8e4e2;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1014; --surface:#181a20; --surface-2:#20232b;
+    --ink:#f2f3f6; --ink-2:#b6bac6; --ink-3:#868b99; --hair:#2a2d36; --hair-2:#363a45;
+    --accent:#8b95f0; --accent-soft:#23263a;
+    --o:#4cc27f; --o-bg:#16301f; --d:#e0a53a; --d-bg:#33280f; --x:#e5695f; --x-bg:#361c1a;
+  }
+  *{box-sizing:border-box}
+  body,.wrap{margin:0}
+  .wrap{
+    font-family:var(--fs-sans); background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased; line-height:1.7; padding:clamp(1rem,4vw,2.5rem) 1rem 4rem;
+  }
+  .page{max-width:730px; margin:0 auto; display:flex; flex-direction:column; gap:1.15rem}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  /* header */
+  .head{padding:.4rem .2rem 0}
+  .eyebrow{font-size:.72rem; font-weight:800; letter-spacing:.14em; color:var(--accent); text-transform:uppercase}
+  h1{font-size:clamp(1.7rem,6vw,2.35rem); line-height:1.15; margin:.35rem 0 .5rem; letter-spacing:-.02em; text-wrap:balance; font-weight:850}
+  .sub{color:var(--ink-2); font-size:.98rem; max-width:60ch}
+  .countdown{display:inline-flex; align-items:baseline; gap:.5rem; margin-top:.9rem; padding:.4rem .85rem; background:var(--surface); border:1px solid var(--hair); border-radius:99px; box-shadow:var(--shadow)}
+  .countdown b{font-size:1.15rem; font-weight:850; color:var(--x)}
+  .countdown span{font-size:.8rem; color:var(--ink-3); font-weight:700}
+
+  /* verdict banner */
+  .verdict{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%, #7b3fd4)); color:#fff; border-radius:var(--radius); padding:1.2rem 1.3rem; box-shadow:var(--shadow)}
+  .verdict .k{font-size:.72rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; opacity:.85}
+  .verdict p{margin:.35rem 0 0; font-size:1.12rem; font-weight:750; line-height:1.5; text-wrap:balance}
+  .verdict em{font-style:normal; background:rgba(255,255,255,.22); padding:.05em .3em; border-radius:5px}
+
+  /* generic card */
+  .card{background:var(--surface); border:1px solid var(--hair); border-radius:var(--radius); padding:1.2rem 1.3rem; box-shadow:var(--shadow)}
+  .card h2{font-size:1.18rem; margin:0 0 .2rem; letter-spacing:-.01em; font-weight:800; display:flex; align-items:center; gap:.5rem}
+  .card h2 .n{font-size:.7rem; font-weight:800; color:var(--accent); background:var(--accent-soft); border-radius:6px; padding:.15rem .45rem; letter-spacing:.02em}
+  .lead{color:var(--ink-2); font-size:.93rem; margin:.15rem 0 0}
+
+  /* stat row */
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:.7rem}
+  .stat{background:var(--surface); border:1px solid var(--hair); border-radius:var(--radius-sm); padding:.85rem .7rem; text-align:center; box-shadow:var(--shadow)}
+  .stat .big{font-size:1.7rem; font-weight:850; line-height:1; letter-spacing:-.02em}
+  .stat .lbl{font-size:.72rem; color:var(--ink-3); font-weight:700; margin-top:.3rem; line-height:1.3}
+  .stat.warn{border-color:color-mix(in srgb,var(--d) 40%,transparent); background:var(--d-bg)}
+  .stat.warn .big{color:var(--d)}
+  .oax{display:inline-flex; gap:.5rem; font-weight:800; font-size:.82rem; margin-top:.15rem}
+  .oax .co{color:var(--o)} .oax .cd{color:var(--d)} .oax .cx{color:var(--x)}
+
+  /* role split */
+  .split{display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-top:.9rem}
+  .role{border-radius:var(--radius-sm); padding:1rem; border:1px solid var(--hair-2)}
+  .role.maint{background:var(--surface-2)}
+  .role.up{background:var(--accent-soft); border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+  .role .tag{font-size:.7rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
+  .role.maint .tag{color:var(--ink-3)} .role.up .tag{color:var(--accent)}
+  .role .ttl{font-size:1.02rem; font-weight:800; margin:.25rem 0 .35rem}
+  .role p{margin:0; font-size:.86rem; color:var(--ink-2); line-height:1.55}
+
+  /* math callout */
+  .math{margin-top:1rem; background:var(--surface-2); border-radius:var(--radius-sm); padding:1rem 1.1rem; border:1px dashed var(--hair-2)}
+  .math .row{display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:.55rem; font-weight:800; font-size:1.05rem; line-height:1.9}
+  .math .chip{background:var(--surface); border:1px solid var(--hair); border-radius:8px; padding:.15rem .6rem; box-shadow:var(--shadow)}
+  .math .op{color:var(--ink-3)}
+  .math .res{color:var(--o); font-size:1.2rem}
+  .math .note{text-align:center; font-size:.8rem; color:var(--ink-3); margin-top:.5rem; font-weight:600}
+
+  /* bullets */
+  ul.clean{list-style:none; padding:0; margin:.7rem 0 0; display:flex; flex-direction:column; gap:.6rem}
+  ul.clean li{display:flex; gap:.6rem; font-size:.9rem; color:var(--ink-2); line-height:1.55}
+  ul.clean li b{color:var(--ink)}
+  .dot{flex:none; width:.5rem; height:.5rem; border-radius:50%; margin-top:.5rem; background:var(--accent)}
+  .dot.o{background:var(--o)} .dot.d{background:var(--d)} .dot.x{background:var(--x)}
+
+  /* roadmap */
+  .road{display:flex; flex-direction:column; gap:0; margin-top:.6rem}
+  .leg{display:grid; grid-template-columns:80px 1fr; gap:.9rem; padding:.7rem 0; border-top:1px solid var(--hair)}
+  .leg:first-child{border-top:none}
+  .leg .when{font-size:.82rem; font-weight:800; color:var(--accent); padding-top:.1rem; letter-spacing:.01em}
+  .leg .what{font-size:.9rem; color:var(--ink-2); line-height:1.5}
+  .leg .what b{color:var(--ink)}
+  .leg.crit .when{color:var(--x)}
+
+  /* next action */
+  .next{background:var(--x-bg); border:1px solid color-mix(in srgb,var(--x) 40%,transparent); border-radius:var(--radius); padding:1.1rem 1.3rem}
+  .next .k{font-size:.72rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--x)}
+  .next p{margin:.3rem 0 0; font-size:1rem; font-weight:700; color:var(--ink)}
+  .next p span{font-weight:500; color:var(--ink-2); font-size:.9rem}
+
+  .foot{text-align:center; color:var(--ink-3); font-size:.76rem; padding-top:.5rem}
+
+  @media (max-width:560px){
+    .split{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(3,1fr)}
+    .stat .big{font-size:1.4rem}
+    .leg{grid-template-columns:64px 1fr; gap:.6rem}
+  }
+</style>
+
+<div class="wrap">
+  <div class="page">
+
+    <header class="head">
+      <div class="eyebrow">簿記1級 · 逆算戦略メモ</div>
+      <h1>「薄く広く」で終わらせない。<br>本丸だけ、厚く割る。</h1>
+      <p class="sub">現状の進捗データから逆算した、残り期間の勝ち筋。結論から言うと——今の戦略は正しい。足りないのは仕組みひとつだけ。</p>
+      <div class="countdown"><b class="tnum">あと125日</b><span>第171回 本番 2026-11-15</span></div>
+    </header>
+
+    <section class="verdict">
+      <div class="k">結論</div>
+      <p>あなたの戦略は正しい。データも裏付けている。足りないのは <em>「昇格の仕組み化」</em> だけ。</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="n">現在地</span>データが語る事実</h2>
+      <p class="lead">297問を記録済み。全体像はこの3つの数字に出ている。</p>
+      <div class="stats" style="margin-top:.9rem">
+        <div class="stat">
+          <div class="big tnum">225</div>
+          <div class="oax"><span class="co">○</span></div>
+          <div class="lbl">○（再認できる）</div>
+        </div>
+        <div class="stat warn">
+          <div class="big tnum">41</div>
+          <div class="lbl">工原△が<br><b>6回転超</b>で停滞</div>
+        </div>
+        <div class="stat">
+          <div class="big tnum">10</div>
+          <div class="lbl">✕（本日の穴・<br>タックスシールド系）</div>
+        </div>
+      </div>
+      <ul class="clean">
+        <li><span class="dot d"></span><span>工原△41問のうち <b>32問は8回転超</b>。8回も回して△のまま＝<b>頻度を上げるだけでは○にならない</b>ことが実証済み。あなたの「バツより△が多い」という体感は、数字で正しい。</span></li>
+        <li><span class="dot o"></span><span>商会△は21問すべて低回転＝<b>健全</b>。既習の貯金が効いていて、薄く広くで回せている証拠。</span></li>
+        <li><span class="dot"></span><span>○復習の待ち行列は116問。多いが、○＝もう再認できる問題。ここは"維持"であって"最優先"ではない。</span></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="n">核心</span>「維持」と「昇格」を分ける</h2>
+      <p class="lead">薄く広くは目を慣らす=<b>維持</b>。じっくり介入は割る=<b>昇格</b>。この2つは別物。混ぜると、本丸がいつまでも△のまま残る。</p>
+      <div class="split">
+        <div class="role maint">
+          <div class="tag">平日 — 維持</div>
+          <div class="ttl">薄く広く +2反復</div>
+          <p>期限が来た△・✕を短間隔でとにかく回す。頭に入りきらなくてOK、目を慣らすのが目的。○も+7→+14→+30でこの流れに混ぜて維持。</p>
+        </div>
+        <div class="role up">
+          <div class="tag">週末 — 昇格</div>
+          <div class="ttl">介入して ○化</div>
+          <p>停滞している工原△を、解説を書き写す／講義該当箇所に戻る／型カードに解法を言語化。頻度では割れない層を、じっくりで割る。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span class="n">仕組み</span>週末に「固定枠」を置く</h2>
+      <p class="lead">感覚の"じっくり"を、締切付きのタスクに変える。これだけが唯一の追加。</p>
+      <div class="math">
+        <div class="row">
+          <span class="chip tnum">6〜8問/週末</span>
+          <span class="op">×</span>
+          <span class="chip tnum">残り約17週</span>
+          <span class="op">=</span>
+          <span class="res tnum">100問超</span>
+        </div>
+        <div class="note">→ 工原△41問は <b>8月中に一掃</b>できる計算。全部を週末にやる必要はない。</div>
+      </div>
+      <ul class="clean">
+        <li><span class="dot"></span><span><b>1週末＝工原△を6〜8問「○化」にコミット</b>。数値目標にする。残りの△・✕は平日の+2反復で維持するだけでいい。</span></li>
+        <li><span class="dot"></span><span>「20周・薄く広く」の体力の一部を、この<b>41問の介入</b>に振り替える。全部を薄くではなく、<b>本丸だけ厚く・残りは薄く</b>のメリハリ。</span></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="n">配分</span>125日のロードマップ</h2>
+      <p class="lead">骨格は既存計画のままで問題ない。追加は1点だけ——工原△の週末介入を"今から"並行で始めること。</p>
+      <div class="road">
+        <div class="leg">
+          <div class="when">〜7/31</div>
+          <div class="what"><b>Phase A：商会講義一周</b>（#20〜#60）。<b>＋ 工原△の週末介入を開始</b>（←唯一の追加）。</div>
+        </div>
+        <div class="leg">
+          <div class="when">8〜9月</div>
+          <div class="what"><b>工原△41問を介入で殲滅</b>。並行して○を薄く維持。中間決算クランチ（8/20〜9/12）は量を落として連続ゼロだけ回避。</div>
+        </div>
+        <div class="leg">
+          <div class="when">10月</div>
+          <div class="what"><b>過去問3回転</b>。時間計測・本番形式。商業簿記の計算スピードはここで詰める。</div>
+        </div>
+        <div class="leg crit">
+          <div class="when">11/15</div>
+          <div class="what"><b>第171回 本番</b>。合計70点以上 かつ 各科目10点以上。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="next">
+      <div class="k">明日の一手</div>
+      <p>✕10問を全部 — まずタックスシールドから。<br><span>「減価償却費 × 税率 ＝ 節税額をCFに足す」の一点を固定してから、取替投資・リース購入へ。</span></p>
+    </section>
+
+    <p class="foot">記録の正は exercise-log.md。この戦略メモはその要約 · 2026-07-13 時点</p>
+
+  </div>
+</div>
