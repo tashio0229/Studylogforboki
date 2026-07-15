@@ -1,0 +1,182 @@
+<style>
+  :root{
+    --bg:#f4f5f7; --surface:#ffffff; --surface-2:#f0f1f4;
+    --ink:#1a1c22; --ink-2:#4a4e5a; --ink-3:#7a7f8c; --hair:#e3e5ea; --hair-2:#d3d6dd;
+    --accent:#4f5bd5; --accent-soft:#eaecfb;
+    --o:#1a8f52; --o-bg:#e3f4ea; --d:#c07a10; --d-bg:#f8efdc; --x:#c8392f; --x-bg:#f8e4e2;
+    --radius:16px; --radius-sm:10px;
+    --shadow:0 1px 2px rgba(20,22,34,.05), 0 8px 28px rgba(20,22,34,.06);
+    --fs-sans:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#0f1014; --surface:#181a20; --surface-2:#20232b; --ink:#f2f3f6; --ink-2:#b6bac6; --ink-3:#868b99; --hair:#2a2d36; --hair-2:#363a45; --accent:#8b95f0; --accent-soft:#23263a; --o:#4cc27f; --o-bg:#16301f; --d:#e0a53a; --d-bg:#33280f; --x:#e5695f; --x-bg:#361c1a; --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"]{ --bg:#f4f5f7; --surface:#ffffff; --surface-2:#f0f1f4; --ink:#1a1c22; --ink-2:#4a4e5a; --ink-3:#7a7f8c; --hair:#e3e5ea; --hair-2:#d3d6dd; --accent:#4f5bd5; --accent-soft:#eaecfb; --o:#1a8f52; --o-bg:#e3f4ea; --d:#c07a10; --d-bg:#f8efdc; --x:#c8392f; --x-bg:#f8e4e2; --shadow:0 1px 2px rgba(20,22,34,.05), 0 8px 28px rgba(20,22,34,.06); }
+  :root[data-theme="dark"]{ --bg:#0f1014; --surface:#181a20; --surface-2:#20232b; --ink:#f2f3f6; --ink-2:#b6bac6; --ink-3:#868b99; --hair:#2a2d36; --hair-2:#363a45; --accent:#8b95f0; --accent-soft:#23263a; --o:#4cc27f; --o-bg:#16301f; --d:#e0a53a; --d-bg:#33280f; --x:#e5695f; --x-bg:#361c1a; --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4); }
+  *{box-sizing:border-box}
+  body{ margin:0; font-family:var(--fs-sans); background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; line-height:1.7; padding:clamp(1rem,4vw,2.5rem) 1rem 4rem; }
+  .page{max-width:780px; margin:0 auto; display:flex; flex-direction:column; gap:1.15rem}
+  .tnum{font-variant-numeric:tabular-nums}
+  .head{padding:.4rem .2rem 0}
+  .eyebrow{font-size:.72rem; font-weight:800; letter-spacing:.14em; color:var(--accent); text-transform:uppercase}
+  h1{font-size:clamp(1.55rem,6vw,2.2rem); line-height:1.18; margin:.35rem 0 .5rem; letter-spacing:-.02em; text-wrap:balance; font-weight:850}
+  .sub{color:var(--ink-2); font-size:.96rem; max-width:64ch}
+  .pills{display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.9rem}
+  .pill{display:inline-flex; align-items:baseline; gap:.45rem; padding:.4rem .85rem; background:var(--surface); border:1px solid var(--hair); border-radius:99px; box-shadow:var(--shadow)}
+  .pill b{font-size:1.1rem; font-weight:850}
+  .pill span{font-size:.78rem; color:var(--ink-3); font-weight:700}
+  .pill .crit{color:var(--x)} .pill .warn{color:var(--d)} .pill .acc{color:var(--accent)}
+  .verdict{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%, #7b3fd4)); color:#fff; border-radius:var(--radius); padding:1.2rem 1.3rem; box-shadow:var(--shadow)}
+  .verdict .k{font-size:.72rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; opacity:.85}
+  .verdict p{margin:.35rem 0 0; font-size:1.08rem; font-weight:750; line-height:1.55; text-wrap:balance}
+  .verdict em{font-style:normal; background:rgba(255,255,255,.22); padding:.05em .3em; border-radius:5px}
+  .card{background:var(--surface); border:1px solid var(--hair); border-radius:var(--radius); padding:1.2rem 1.3rem; box-shadow:var(--shadow)}
+  .card h2{font-size:1.16rem; margin:0 0 .55rem; letter-spacing:-.01em; font-weight:800; display:flex; align-items:center; gap:.5rem}
+  .card h2 .n{font-size:.7rem; font-weight:800; color:var(--accent); background:var(--accent-soft); border-radius:6px; padding:.15rem .45rem; letter-spacing:.02em; white-space:nowrap}
+  .lead{color:var(--ink-2); font-size:.92rem; margin:.15rem 0 .6rem}
+  ul.tight{margin:.3rem 0 0; padding-left:1.25rem; font-size:.9rem; color:var(--ink-2)}
+  ul.tight li{margin:.32rem 0} ul.tight b{color:var(--ink)}
+  .chg{display:flex; gap:.7rem; align-items:flex-start; padding:.7rem .85rem; border-radius:var(--radius-sm); border:1px solid var(--hair-2); margin:.5rem 0; background:var(--surface-2); font-size:.9rem}
+  .chg .ar{color:var(--accent); font-weight:850; white-space:nowrap}
+  /* milestone timeline */
+  .ms{position:relative; margin:.6rem 0 0; padding-left:1.4rem}
+  .ms::before{content:""; position:absolute; left:.42rem; top:.3rem; bottom:.3rem; width:2px; background:var(--hair-2)}
+  .mstone{position:relative; margin:0 0 1rem}
+  .mstone::before{content:""; position:absolute; left:-1.18rem; top:.35rem; width:.7rem; height:.7rem; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .mstone.fin::before{background:var(--x); box-shadow:0 0 0 3px var(--x-bg)}
+  .mstone .when{font-weight:850; font-size:.96rem; color:var(--accent)}
+  .mstone.fin .when{color:var(--x)}
+  .mstone .goal{font-weight:800; font-size:.98rem; margin:.1rem 0 .15rem}
+  .mstone .why{font-size:.85rem; color:var(--ink-3)}
+  .crit-row{font-size:.83rem; color:var(--ink-2); margin-top:.25rem; background:var(--surface-2); border:1px dashed var(--hair-2); border-radius:8px; padding:.4rem .6rem}
+  .crit-row b{color:var(--o)}
+  table{width:100%; border-collapse:collapse; font-size:.87rem; margin:.4rem 0}
+  th,td{text-align:left; padding:.5rem .55rem; border-bottom:1px solid var(--hair); vertical-align:top}
+  th{font-size:.73rem; color:var(--ink-3); font-weight:800}
+  tr:last-child td{border-bottom:none}
+  .tblwrap{overflow-x:auto}
+  .note{font-size:.82rem; color:var(--ink-3); margin:.5rem 0 0}
+  .next{background:var(--surface); border:2px solid var(--accent); border-radius:var(--radius); padding:1.1rem 1.3rem; box-shadow:var(--shadow)}
+  .next .k{font-size:.72rem; font-weight:800; letter-spacing:.12em; color:var(--accent); text-transform:uppercase}
+  .next p{margin:.35rem 0 0; font-weight:750; font-size:1.02rem}
+  .next span{font-weight:500; font-size:.88rem; color:var(--ink-2)}
+  .foot{color:var(--ink-3); font-size:.78rem; text-align:center; margin-top:.5rem}
+  @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important; transition:none!important; scroll-behavior:auto!important} }
+  @media (prefers-contrast: more){ :root{--hair:#9aa0ad; --hair-2:#818899; --ink-2:#2c2f38; --ink-3:#4a4e5a} .card,.chg,.mstone .crit-row{border-width:2px} }
+  @media (prefers-contrast: more) and (prefers-color-scheme: dark){ :root{--hair:#6b7180; --hair-2:#828a9b; --ink-2:#dfe2ea; --ink-3:#b6bac6} }
+</style>
+
+<div class="page">
+
+  <header class="head">
+    <div class="eyebrow">Macro → Milestones · 2026-07-16</div>
+    <h1>マクロゴール逆算 中間マイルストーン</h1>
+    <p class="sub">7/14-15でマクロゴールを大きく更新（過去問4回転・例題1周目を全章7月中・予想模試・理論問題集・鉄板論点）。それを本番11/15から逆算し、要所ごとの中間ゴールと「達成の判定基準」に落とし込む。数値は exercise-log.md / boki1-plan.md 準拠。</p>
+    <div class="pills">
+      <div class="pill"><b class="crit tnum" id="cd-exam">—</b><span>日 → 11/15 本番</span></div>
+      <div class="pill"><b class="warn tnum" id="cd-a">—</b><span>日 → 7/31 Phase A</span></div>
+      <div class="pill"><b class="acc tnum" id="cd-c">—</b><span>日 → 10/1 過去問専念</span></div>
+    </div>
+  </header>
+
+  <section class="verdict">
+    <div class="k">この計画の背骨</div>
+    <p>合格（70点以上・各科目10点以上）から逆算すると、鍵は<em>「9/30までに個別論点を○化し切る」</em>こと。ここが崩れると<em>10月の過去問4回転が3回転に縮む</em>。逆に9/30を守れれば、Phase Cは過去問だけに専念できる。</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">1</span>7/14-15 で変わったマクロゴール</h2>
+    <p class="lead">合格体験記（第168回合格・note）の精査と本人希望を反映。旧→新の差分：</p>
+    <div class="chg"><div class="ar">過去問 3回転 →<br>4回転</div><div>本人希望＝「第○○回の問題だと分かる暗記レベル」。ただし記事は「周回より予想模試」と指摘＝<b>週末の過去問回転は落とし、大原予想模試を8月中旬から週1で追加</b>する折衷。回転数＞網羅数（週末を落とすほど対象を12→10回分に絞る）。</div></div>
+    <div class="chg"><div class="ar">例題 単元順 →<br>全章7月中</div><div>本人指示（7/15）＝<b>講義スキップ章（減損・税効果等）も例題1周目は7月中に全章</b>。スキップ章は「流し読み＝既習の解答フロー確認」の低負荷パス。講義視聴とは別軸で管理。</div></div>
+    <div class="chg"><div class="ar">純資産<br>skip → 視聴</div><div>記事著者が唯一不合格になった回の敗因が純資産系の切り＝<b>#30-31純資産をスキップ撤回・視聴へ</b>。</div></div>
+    <div class="chg"><div class="ar">理論<br>0 → 導入</div><div>会計学理論の記録が現状0件＝最大の構造的な穴。<b>8月までに理論問題集（大原）を調達し隙間反復開始</b>。</div></div>
+    <div class="chg"><div class="ar">直前期<br>仕組み追加</div><div><b>鉄板論点リスト</b>（出たら必ず取る10論点）＋<b>ミス・不安論点シート</b>（模試余白・直前1周確認）を新設。</div></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">2</span>逆算マイルストーン（11/15 → 現在）</h2>
+    <p class="lead">後ろ（本番）から前へ。各ゴールに「機械で測れる判定基準」を付けた。</p>
+    <div class="ms">
+
+      <div class="mstone fin">
+        <div class="when">11/15（日）本番</div>
+        <div class="goal">第171回 日商簿記1級 合格</div>
+        <div class="why">合格基準＝合計70点以上 かつ 各科目10点以上（＝足切り回避が最優先）。傾斜配点前提で「基本問題を落とさない」勝負。</div>
+      </div>
+
+      <div class="mstone">
+        <div class="when">10/1〜11/14　Phase C：過去問専念（約6週）</div>
+        <div class="goal">過去問12回分×4回転＋予想模試の仕上げ</div>
+        <div class="why">例題・問題集は完成済みが前提。本番形式・時間計測で弱点の△✕だけ集中回転。</div>
+        <div class="crit-row">判定：<b>過去問の記録が延べ48セッション（12回分×4）に到達</b>／各回2周目以降は採点込み3h前後／ミス不安論点シートが埋まっている</div>
+      </div>
+
+      <div class="mstone">
+        <div class="when">9/30（火）　Phase B 完了＝ヤマの終わり</div>
+        <div class="goal">個別論点を○化し切る（△→○）＋商業問題集完了＋理論8割</div>
+        <div class="why">ここが<b>全体の分水嶺</b>。過去問4回転が成立する唯一の前提。中間決算クランチ（8/20-9/12）は量減でもゼロにしない。</div>
+        <div class="crit-row">判定：<b>○率85%以上（現在64%）</b>／商業問題集41問の記録が出現／理論問題集の記録が蓄積／要対策△（現在47）が一桁</div>
+      </div>
+
+      <div class="mstone">
+        <div class="when">8/16（お盆）　スリップ吸収期限</div>
+        <div class="goal">例題1周目の遅れを完全回収＋理論・鉄板論点を起動</div>
+        <div class="why">7/31に間に合わなかった連結・企業結合の例題1周目をここで回収。Phase B前半の緩衝材。</div>
+        <div class="crit-row">判定：<b>例題1周目 第41章まで全記録</b>／理論問題集の最初の記録／鉄板論点リスト確定</div>
+      </div>
+
+      <div class="mstone">
+        <div class="when">7/31（木）　Phase A 完了</div>
+        <div class="goal">商業講義 一周完了 ＋ 商業例題1周目 全章（第14〜41章）</div>
+        <div class="why">本丸＝商業講義60本（視聴41・スキップ5・例題は全章）。工原インプットは既に完了。</div>
+        <div class="crit-row">判定：<b>講義トラッカー全チェック</b>／exercise-log に C20〜C41 が全記録／残タスク約166問（第20-41章）÷16日＝約10問/日</div>
+      </div>
+
+      <div class="mstone">
+        <div class="when">7/19（日）　過去問デビュー</div>
+        <div class="goal">過去問1回分を本番形式・時間計測（推奨：第168回）</div>
+        <div class="why">週末軸の起点。以降<b>毎週末1回分</b>を落とさない＝○の維持装置にもなる。</div>
+        <div class="crit-row">判定：三連休（7/18-20）で講義前倒し＋過去問1回＋採点→穴を工原△介入へ</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">3</span>週次リズム（7/19〜のエンジン）</h2>
+    <div class="tblwrap"><table>
+      <tr><th>枠</th><th>内容</th><th>狙い</th></tr>
+      <tr><td><b>平日</b></td><td>①例題1周目の続き（〜7/31）→ ②○化反復（8月〜）＋ 理論の隙間反復</td><td>インプット完了と△→○</td></tr>
+      <tr><td><b>毎週末</b></td><td>過去問1回分（本番形式・時間計測）＋ 採点→穴を平日の介入枠へ</td><td>本番慣れ＋○の維持装置</td></tr>
+      <tr><td><b>8月中旬〜</b></td><td>大原予想模試を日曜に週1追加（TACは難しすぎるため大原軸）</td><td>本試験に近い難度で標準合わせ</td></tr>
+    </table></div>
+    <p class="note">週末を1回落とすごとに、過去問の対象を「12回分×4回転」→「10回分×4回転」へ絞って<b>回転数を守る</b>（回転数＞網羅数）。</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">4</span>律速とリスク（ここが崩れると全部ずれる）</h2>
+    <ul class="tight">
+      <li><b>連結・企業結合が新規論点で重い</b>（既習は連結CFまで）。資本連結の段階取得・持分変動、企業結合・事業分離は実質新規＝<b>2倍速視聴7本(#38-44)を7/21週までに前倒しできるかが7/31達成の分水嶺</b>。</li>
+      <li><b>理論の記録0件</b>。会計学は最も足切りをくらいやすい科目。8月着手は計画通りだが、着手が遅れるほど9/30の「理論8割」が危うくなる。</li>
+      <li><b>過去問がまだ未着手</b>（週末軸は7/19開始）。9月末までに1周目12回分を終えないとPhase Cの4回転が数字上入らない。</li>
+      <li><b>○の定期復習が178問滞留</b>。戦略上は週末過去問が○の維持装置だが、過去問に出にくい細目は減衰する＝週末採点後に薄く回す運用が要る。</li>
+      <li><b>Phase A（7/31）はアグレッシブ</b>。スリップの吸収先はお盆（〜8/16）まで。ただし過去問（週末）だけは落とさない。</li>
+    </ul>
+  </section>
+
+  <section class="next">
+    <div class="k">直近マイルストーン</div>
+    <p>7/31：商業講義一周＋例題1周目 全章（第20〜41章の約166問）。<br><span>今の実績（3日で第14〜19章54問＝好ペース）を保てば射程内。ただし後半の連結が律速。三連休で連結の2倍速視聴を前倒しできれば7/31達成の確度が大きく上がる。</span></p>
+  </section>
+
+  <p class="foot">逆算の正：boki1-plan.md（Phase A/B/C・戦略ビジョン） · 数値：exercise-log.md 機械集計 · 2026-07-16 作成</p>
+
+</div>
+<script>
+(function(){ var MS=86400000; function days(to){return Math.max(0,Math.ceil((new Date(to)-new Date())/MS));}
+  document.getElementById('cd-exam').textContent=days('2026-11-15T00:00:00+09:00');
+  document.getElementById('cd-a').textContent=days('2026-07-31T00:00:00+09:00');
+  document.getElementById('cd-c').textContent=days('2026-10-01T00:00:00+09:00');
+})();
+</script>
