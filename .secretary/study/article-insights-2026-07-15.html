@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>合格者の知見レビュー 2026-07-15 — 簿記1級</title>
+<style>
+  :root{
+    --bg:#f4f5f7; --surface:#ffffff; --surface-2:#f0f1f4;
+    --ink:#1a1c22; --ink-2:#4a4e5a; --ink-3:#7a7f8c; --hair:#e3e5ea; --hair-2:#d3d6dd;
+    --accent:#4f5bd5; --accent-soft:#eaecfb;
+    --o:#1a8f52; --o-bg:#e3f4ea; --d:#c07a10; --d-bg:#f8efdc; --x:#c8392f; --x-bg:#f8e4e2;
+    --radius:16px; --radius-sm:10px;
+    --shadow:0 1px 2px rgba(20,22,34,.05), 0 8px 28px rgba(20,22,34,.06);
+    --fs-sans:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f1014; --surface:#181a20; --surface-2:#20232b;
+      --ink:#f2f3f6; --ink-2:#b6bac6; --ink-3:#868b99; --hair:#2a2d36; --hair-2:#363a45;
+      --accent:#8b95f0; --accent-soft:#23263a;
+      --o:#4cc27f; --o-bg:#16301f; --d:#e0a53a; --d-bg:#33280f; --x:#e5695f; --x-bg:#361c1a;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f5f7; --surface:#ffffff; --surface-2:#f0f1f4;
+    --ink:#1a1c22; --ink-2:#4a4e5a; --ink-3:#7a7f8c; --hair:#e3e5ea; --hair-2:#d3d6dd;
+    --accent:#4f5bd5; --accent-soft:#eaecfb; --o:#1a8f52; --o-bg:#e3f4ea; --d:#c07a10; --d-bg:#f8efdc; --x:#c8392f; --x-bg:#f8e4e2;
+    --shadow:0 1px 2px rgba(20,22,34,.05), 0 8px 28px rgba(20,22,34,.06);
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1014; --surface:#181a20; --surface-2:#20232b;
+    --ink:#f2f3f6; --ink-2:#b6bac6; --ink-3:#868b99; --hair:#2a2d36; --hair-2:#363a45;
+    --accent:#8b95f0; --accent-soft:#23263a;
+    --o:#4cc27f; --o-bg:#16301f; --d:#e0a53a; --d-bg:#33280f; --x:#e5695f; --x-bg:#361c1a;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:var(--fs-sans); background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased; line-height:1.7; padding:clamp(1rem,4vw,2.5rem) 1rem 4rem;
+  }
+  .page{max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:1.15rem}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  .head{padding:.4rem .2rem 0}
+  .eyebrow{font-size:.72rem; font-weight:800; letter-spacing:.14em; color:var(--accent); text-transform:uppercase}
+  h1{font-size:clamp(1.6rem,6vw,2.25rem); line-height:1.18; margin:.35rem 0 .5rem; letter-spacing:-.02em; text-wrap:balance; font-weight:850}
+  .sub{color:var(--ink-2); font-size:.96rem; max-width:62ch}
+  .src{font-size:.8rem; color:var(--ink-3); margin-top:.4rem}
+  .src a{color:var(--accent); text-decoration:none; font-weight:700}
+  .pills{display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.9rem}
+  .pill{display:inline-flex; align-items:baseline; gap:.45rem; padding:.4rem .85rem; background:var(--surface); border:1px solid var(--hair); border-radius:99px; box-shadow:var(--shadow)}
+  .pill b{font-size:1.1rem; font-weight:850}
+  .pill span{font-size:.78rem; color:var(--ink-3); font-weight:700}
+  .pill .crit{color:var(--x)} .pill .warn{color:var(--d)}
+
+  .verdict{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%, #7b3fd4)); color:#fff; border-radius:var(--radius); padding:1.2rem 1.3rem; box-shadow:var(--shadow)}
+  .verdict .k{font-size:.72rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; opacity:.85}
+  .verdict p{margin:.35rem 0 0; font-size:1.06rem; font-weight:750; line-height:1.55; text-wrap:balance}
+  .verdict p + p{margin-top:.55rem}
+  .verdict em{font-style:normal; background:rgba(255,255,255,.22); padding:.05em .3em; border-radius:5px}
+
+  .card{background:var(--surface); border:1px solid var(--hair); border-radius:var(--radius); padding:1.2rem 1.3rem; box-shadow:var(--shadow)}
+  .card h2{font-size:1.16rem; margin:0 0 .55rem; letter-spacing:-.01em; font-weight:800; display:flex; align-items:center; gap:.5rem}
+  .card h2 .n{font-size:.7rem; font-weight:800; color:var(--accent); background:var(--accent-soft); border-radius:6px; padding:.15rem .45rem; letter-spacing:.02em; white-space:nowrap}
+  .lead{color:var(--ink-2); font-size:.92rem; margin:.15rem 0 .6rem}
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:.7rem}
+  @media (max-width:560px){ .stats{grid-template-columns:repeat(2,1fr)} }
+  .stat{background:var(--surface); border:1px solid var(--hair); border-radius:var(--radius-sm); padding:.85rem .6rem; text-align:center; box-shadow:var(--shadow)}
+  .stat .big{font-size:1.55rem; font-weight:850; line-height:1.15; letter-spacing:-.02em}
+  .stat .lbl{font-size:.71rem; color:var(--ink-3); font-weight:700; margin-top:.3rem; line-height:1.35}
+  .stat.good .big{color:var(--o)} .stat.warn{border-color:color-mix(in srgb,var(--d) 40%,transparent); background:var(--d-bg)} .stat.warn .big{color:var(--d)}
+  .co{color:var(--o); font-weight:800} .cd{color:var(--d); font-weight:800} .cx{color:var(--x); font-weight:800}
+
+  .judge{display:flex; gap:.7rem; align-items:flex-start; padding:.85rem .95rem; border-radius:var(--radius-sm); border:1px solid var(--hair-2); margin:.55rem 0; background:var(--surface-2)}
+  .judge .ic{font-size:1.05rem; line-height:1.5}
+  .judge .ttl{font-weight:800; font-size:.97rem}
+  .judge p{margin:.28rem 0 0; font-size:.88rem; color:var(--ink-2)}
+  .judge p b.tag{color:var(--ink); font-weight:800}
+  .judge.ng{background:var(--x-bg); border-color:color-mix(in srgb,var(--x) 35%,transparent)}
+  .judge.ok{background:var(--o-bg); border-color:color-mix(in srgb,var(--o) 35%,transparent)}
+  .judge.care{background:var(--d-bg); border-color:color-mix(in srgb,var(--d) 35%,transparent)}
+
+  table{width:100%; border-collapse:collapse; font-size:.88rem; margin:.4rem 0}
+  th,td{text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--hair); vertical-align:top}
+  th{font-size:.74rem; color:var(--ink-3); font-weight:800; letter-spacing:.04em}
+  tr:last-child td{border-bottom:none}
+  .tblwrap{overflow-x:auto}
+
+  ul.tight{margin:.3rem 0 0; padding-left:1.25rem; font-size:.9rem; color:var(--ink-2)}
+  ul.tight li{margin:.3rem 0}
+  ul.tight b{color:var(--ink)}
+  .note{font-size:.82rem; color:var(--ink-3); margin:.5rem 0 0}
+
+  .next{background:var(--surface); border:2px solid var(--accent); border-radius:var(--radius); padding:1.1rem 1.3rem; box-shadow:var(--shadow)}
+  .next .k{font-size:.72rem; font-weight:800; letter-spacing:.12em; color:var(--accent); text-transform:uppercase}
+  .next ol{margin:.5rem 0 0; padding-left:1.3rem}
+  .next li{margin:.35rem 0; font-weight:700; font-size:1rem}
+  .next li span{font-weight:500; font-size:.88rem; color:var(--ink-2)}
+
+  .foot{color:var(--ink-3); font-size:.78rem; text-align:center; margin-top:.5rem}
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+  }
+  @media (prefers-contrast: more){
+    :root{--hair:#9aa0ad; --hair-2:#818899; --ink-2:#2c2f38; --ink-3:#4a4e5a}
+    .card,.stat,.judge,.leg{border-width:2px}
+  }
+  @media (prefers-contrast: more) and (prefers-color-scheme: dark){
+    :root{--hair:#6b7180; --hair-2:#828a9b; --ink-2:#dfe2ea; --ink-3:#b6bac6}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="head">
+    <div class="eyebrow">Article Review · 2026-07-15</div>
+    <h1>合格者の知見レビュー</h1>
+    <p class="sub">本人提供の合格体験記（第168回合格・総勉強時間3000h・4回受験の実体験）を精査し、勉強計画に取り入れる要素を確定する。採用6項目は boki1-plan.md に反映済み。</p>
+    <p class="src">出典：note.com/dandy_fox5822「ろぼ」氏 第168回合格体験記</p>
+    <div class="pills">
+      <div class="pill"><b class="crit tnum" id="cd-exam">—</b><span>日 → 11/15 本命試験</span></div>
+      <div class="pill"><b class="warn tnum" id="cd-phaseb">—</b><span>日 → 8/1 Phase B開始</span></div>
+    </div>
+  </header>
+
+  <section class="verdict">
+    <div class="k">結論</div>
+    <p>記事の最大の示唆＝<em>過去問は「周回」より「予想模試」</em>。同一問題は出ないため、4回転暗記しても本試験を解ける保証にはならない。</p>
+    <p><em>純資産講義（#30-31）のスキップは危険域だった</em> — 著者が唯一不合格になった回の敗因が、まさにこの論点を切っていたこと。</p>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><div class="big tnum">3000<span style="font-size:.6em">h</span></div><div class="lbl">著者の総勉強時間<br>（目安800hの約4倍）</div></div>
+    <div class="stat"><div class="big tnum">4<span style="font-size:.6em">回</span></div><div class="lbl">受験回数<br>❌36→❌36→❌50→⭕️77</div></div>
+    <div class="stat good"><div class="big tnum">77<span style="font-size:.6em">点</span></div><div class="lbl">最終合格<br>商14 会25 工20 原18</div></div>
+    <div class="stat"><div class="big tnum">6</div><div class="lbl">計画へ採用した<br>提案の数</div></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">1</span>記事の背景</h2>
+    <ul class="tight">
+      <li>筆者「ろぼ」氏。大学1〜3年で <b>4回受験</b>（❌36点 → ❌36点 → ❌50点 → <span class="co">⭕️77点</span>）。総勉強時間 <b>3000h</b>＝一般的な目安（約800h）の約4倍を投じている。</li>
+      <li>予備校は <b>CPA会計学院</b>（このユーザーと同じ教材ソース＝CPAラーニング系列）。教材・講師の前提が一致するため指摘の再現性が高い。</li>
+      <li>最終合格の内訳：<b>商14・会25・工20・原18 ＝ 77点</b>。<span class="co">会計学で満点</span>を取り切ったのが合格の柱。</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">2</span>採用した提案 <span class="n" style="background:var(--o-bg); color:var(--o)">6項目・反映済み</span></h2>
+    <p class="lead">各項目は「記事の指摘」→「このユーザーへの適用」の2段。すべて boki1-plan.md に反映済み。</p>
+
+    <div class="judge ok"><div class="ic">📺</div><div>
+      <div class="ttl">1 · 過去問と予想模試の役割分担</div>
+      <p><b class="tag">記事</b>：過去問は10年分を1周すれば十分。同一問題は出ないため周回しても本試験を解ける保証にはならない（例外＝商業簿記のみ出題形式が固定的で2〜3周が有効）。むしろ大原の予想模試を試験3ヶ月前から毎週1回のほうが本試験に近い。</p>
+      <p><b class="tag">適用</b>：折衷案として本人確認済み・採用（過去問2〜3回転＋予想模試を8月中旬から週1追加）。前回分析で「毎週末を1回も落とせない綱渡り」だった週末過去問枠に、回転数を落とした分の余裕が生まれる。</p>
+    </div></div>
+
+    <div class="judge ok"><div class="ic">📺</div><div>
+      <div class="ttl">2 · 純資産講義（#30-31）のスキップ撤回</div>
+      <p><b class="tag">記事</b>：著者が唯一不合格になった回の敗因は、一株当たり純利益・純資産・分配可能額を論点ごと切っていたこと。</p>
+      <p><b class="tag">適用</b>：このユーザーの元計画は #30-31 純資産を<b>まさにスキップ予定</b>だった。記事の失敗談と直撃する具体的リスクだったため、講義トラッカーを視聴へ変更済み。自己株式処分差損益・新株予約権等の細目を確認する。</p>
+    </div></div>
+
+    <div class="judge ok"><div class="ic">🧠</div><div>
+      <div class="ttl">3 · 理論問題集の導入</div>
+      <p><b class="tag">記事</b>：会計学は最も足切りをくらいやすい科目。理論を8割取れれば安定する。</p>
+      <p><b class="tag">適用</b>：exercise-log.md に理論問題の記録が現状 <b>0件</b>（計算・仕訳のみ）＝記録・反復の仕組みが無い構造的な穴。Phase B開始（8月）までに大原等の理論問題集を1冊調達し、隙間時間反復を開始する。</p>
+    </div></div>
+
+    <div class="judge ok"><div class="ic">📌</div><div>
+      <div class="ttl">4 · 鉄板論点リストの新設</div>
+      <p><b class="tag">記事</b>：出たら絶対に解ける論点（減損・減価償却・退職給付・連結全論点・資産除去債務・研究開発費・ソフトウェア・商品売買・純資産・ストックオプション）を作っておく。</p>
+      <p><b class="tag">適用</b>：既存の型カードシステムと親和性が高い。Phase B開始時に本人と一緒に確定し、○維持を最優先でトラッキングする。</p>
+    </div></div>
+
+    <div class="judge ok"><div class="ic">🔁</div><div>
+      <div class="ttl">5 · 停滞クラスタへの固定回数介入</div>
+      <p><b class="tag">記事</b>：苦手論点は1日2問固定で当たり続け、1ヶ月5周で克服（問題集9問を5周）。</p>
+      <p><b class="tag">適用</b>：スペース反復（△+2日固定）で6〜11回転しても○化しない工原△47問、特に7/15に<span class="cx">✕へ2度目の降格</span>をした予算管理グラフ系（第16章 例2・3・5）に、間隔反復とは別軸の短期集中介入として追加オプション化する。</p>
+    </div></div>
+
+    <div class="judge ok"><div class="ic">📋</div><div>
+      <div class="ttl">6 · ミス・不安論点シート</div>
+      <p><b class="tag">記事</b>：模試解説の余白ページに不安論点をまとめ、試験3日前から1日1周・試験会場でも1周確認する。</p>
+      <p><b class="tag">適用</b>：計画の Phase C（直前仕上げ）に具体策が欠けていた。そのギャップを埋める形で、余白へ詰まった論点を書き溜め・直前1周確認する運用を追加する。</p>
+    </div></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">3</span>確認して決着した対立点</h2>
+    <p class="lead">記事の主張（過去問4回転は非推奨）は、前夜の本人の希望（過去問12回分×4回転・暗記レベルまで）と正反対だった。判断が割れるため本人に確認 → <b>折衷案（秘書推奨）を選択</b>。</p>
+    <div class="judge care"><div class="ic">🟡</div><div>
+      <div class="ttl">決定事項</div>
+      <p>過去問は 2〜3回転（商業簿記のみ +1周＝3〜4回転可）。○3連続でなく「時間配分・雰囲気に慣れる」ことを主目的とする。予想模試（大原軸）を8月中旬から毎週日曜に1回追加する（TACは本試験より難しく設計されすぎとの記事指摘があるため大原を軸とする）。</p>
+      <p>本人希望と正反対の提案を採用した以上、週末の過去問回転が薄くなる分は予想模試で本番慣れを担保する。回転数を落とした判断の当否は<b>9月末までの得点推移で検証する</b>。</p>
+    </div></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">4</span>見送った／参考程度の指摘</h2>
+    <p class="lead">深追いしない。現行設計との整合か、現局面での費用対効果で切っている。</p>
+    <div class="tblwrap"><table>
+      <tr><th>項目</th><th>判断・理由</th></tr>
+      <tr><td><b>高速回転法</b><br>テキストを1問1分で見て思い出す・まとめノートは作らない</td><td>現行のスペース反復システムと設計思想が異なるため今回は見送り。参考情報として記録のみ</td></tr>
+      <tr><td><b>広範囲解き</b><br>1論点1問×10論点/日</td><td>既存の複数章並行復習キュー自体が既にこれに近い効果を持つため見送り</td></tr>
+      <tr><td><b>コンプリートトレーニング</b><br>CPA会計士講座の連結会計問題集・¥20,000+・想定40h</td><td>Phase A講義遅延が課題な現状で新規教材投入は逆効果（記事自身も「教材は広げすぎるな」と警告）。今は見送り、Phase B以降の連結総合力強化オプションとして記録のみ</td></tr>
+      <tr><td><b>栄養ドリンク・写真反復</b><br>試験当日のアリナミン等／論点を写真化しスマホで隙間反復</td><td>軽微な参考。通勤5分と短い生活パターンには隙間反復の効果は限定的、と正直に評価。当日の栄養ドリンクは直前期に一言添える程度</td></tr>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">5</span>クロスチェック（設計の外部検証）</h2>
+    <div class="judge ok"><div class="ic">🟢</div><div>
+      <div class="ttl">所要時間の見積もりが合格者の目安と一致</div>
+      <p>記事の一般的な必要学習時間の目安 <b>約800h</b> に対し、本計画の所要時間試算 <b>約752h</b>（boki1-plan.md §2）が近似一致。合格者の実感値と独立に積み上げた容量見積もりが揃っている＝設計の妥当性が外部データで裏取りされている。</p>
+      <p class="note">ただし著者はその800hを超えて3000h投じ4回目で合格している。「試算に収まる＝安全」ではなく、<b>試算どおり40問/日を死守できるか</b>が依然として合否の分水嶺である点は変わらない。</p>
+    </div></div>
+  </section>
+
+  <section class="next">
+    <div class="k">次の一手（Phase B開始・8/1 まで）</div>
+    <ol>
+      <li>理論問題集の調達 <span>— 大原等の会計学理論問題集を1冊。exercise-log.md の理論記録0件という穴を、Phase B着手と同時に埋める。</span></li>
+      <li>鉄板論点リストの本人との確定 <span>— 記事の10論点を叩き台に、型カードシステムに載せる形で本人と確定し、○維持の最優先トラッキング対象にする。</span></li>
+    </ol>
+  </section>
+
+  <p class="foot">出典 note.com/dandy_fox5822 · 記録の正は exercise-log.md · 計画反映は boki1-plan.md · 2026-07-15 分析</p>
+
+</div>
+<script>
+(function(){
+  var MS = 86400000;
+  function days(to){ return Math.max(0, Math.ceil((new Date(to) - new Date()) / MS)); }
+  document.getElementById('cd-exam').textContent = days('2026-11-15T00:00:00+09:00');
+  document.getElementById('cd-phaseb').textContent = days('2026-08-01T00:00:00+09:00');
+})();
+</script>
+</body>
+</html>
