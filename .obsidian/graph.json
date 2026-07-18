@@ -4,23 +4,24 @@
   "showTags": false,
   "showAttachments": false,
   "hideUnresolved": false,
-  "showOrphans": true,
+  "showOrphans": false,
   "collapse-color-groups": false,
   "colorGroups": [
-    { "query": "path:\"型カード\"", "color": { "a": 1, "rgb": 14434821 } },
-    { "query": "file:\"exercise-log\"", "color": { "a": 1, "rgb": 14914309 } },
-    { "query": "path:\"問題ノート\"", "color": { "a": 1, "rgb": 5431509 } }
+    { "query": "tag:#科目", "color": { "a": 1, "rgb": 15119104 } },
+    { "query": "tag:#章", "color": { "a": 1, "rgb": 15237163 } },
+    { "query": "path:\"型カード\"", "color": { "a": 1, "rgb": 14692657 } },
+    { "query": "tag:#問題", "color": { "a": 1, "rgb": 5014230 } }
   ],
   "collapse-display": false,
   "showArrow": false,
-  "textFadeMultiplier": 0,
+  "textFadeMultiplier": -0.5,
   "nodeSizeMultiplier": 1,
   "lineSizeMultiplier": 1,
   "collapse-forces": false,
-  "centerStrength": 0.5,
-  "repelStrength": 10,
+  "centerStrength": 0.4,
+  "repelStrength": 12,
   "linkStrength": 1,
-  "linkDistance": 250,
-  "scale": 1,
+  "linkDistance": 220,
+  "scale": 0.6,
   "close": false
 }
