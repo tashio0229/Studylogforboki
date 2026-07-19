@@ -205,6 +205,24 @@
   .d-block .head { font-weight: 700; font-size: 0.95rem; letter-spacing: -0.01em; margin-bottom: 0.15rem; }
   .d-block .detail { font-size: 0.86rem; color: var(--tx-2); line-height: 1.45; }
   .d-block.x    { box-shadow: inset 3px 0 0 var(--x); background: var(--x-bg); }
+
+  /* 週次プラン（マクロ逆算） */
+  .wm-goal { font-size: 0.95rem; margin-bottom: 0.85rem; padding: 0.6rem 0.75rem;
+    background: var(--act-bg); border-radius: var(--radius-sm); box-shadow: inset 3px 0 0 var(--act); }
+  .wm-h { font-weight: 700; font-size: 0.8rem; color: var(--tx-3); letter-spacing: 0.02em; margin: 0 0 0.4rem; }
+  .wm-musts { margin-bottom: 0.85rem; }
+  .wm-musts ul { margin: 0; padding: 0; list-style: none; }
+  .wm-musts li { position: relative; padding: 0.35rem 0 0.35rem 1.4rem; font-size: 0.88rem;
+    color: var(--tx-2); border-bottom: 1px solid var(--hair); }
+  .wm-musts li:last-child { border-bottom: 0; }
+  .wm-musts li::before { content: "✓"; position: absolute; left: 0.15rem; color: var(--o); font-weight: 800; }
+  .wm-road { display: flex; gap: 0.4rem; overflow-x: auto; padding: 0.2rem 0 0.3rem; }
+  .wm-seg { flex: 1 0 8.5rem; padding: 0.6rem 0.65rem; border-radius: var(--radius-sm);
+    background: var(--card-2); border: 1px solid var(--hair); }
+  .wm-seg.now { border-color: var(--act); box-shadow: inset 0 0 0 1px var(--act); background: var(--act-bg); }
+  .wm-seg .sp { font-weight: 800; font-size: 0.85rem; }
+  .wm-seg .ph { font-size: 0.7rem; color: var(--tx-3); margin: 0.1rem 0 0.25rem; }
+  .wm-seg .mi { font-size: 0.78rem; color: var(--tx-2); line-height: 1.35; }
   .d-block.card { box-shadow: inset 3px 0 0 var(--act); }
   .d-block.lec  { box-shadow: inset 3px 0 0 var(--o); }
   .d-block.rev  { box-shadow: inset 3px 0 0 var(--d); }
@@ -826,6 +844,31 @@ const DATA = {
     maxims: ["金曜=最小ラインでゼロ回避（仕事PCは持ち帰らない）", "土日=最小＋バッファを先に設計", "圧勝合格が見えている・9月末まで耐える"]
   },
 
+  // 週次プラン（マクロ逆算）＝ 突発予定が出たときに「週単位でどう吸収するか」を見える化
+  weekMacro: {
+    title: "週次プラン（マクロ逆算）— 例外時の週内調整",
+    thisWeek: {
+      label: "今週 7/20-26（Phase A 締めの入り）",
+      goal: "Phase A（7/31）完走へ：工原input完了＋商会の連結講義に着手＋過去問リズムを確立",
+      musts: [
+        "工原 #27-28 視聴＝管理会計input 100%完了（月祝7/20）",
+        "商会 連結講義 #38-44 に着手（Phase A 残22本の主戦場・2倍速）",
+        "過去問 1回（本番形式・時間計測）＝週末ルーティン化",
+        "✕ を毎日ゼロ維持（+1日固定・外出日でも死守）",
+        "△143 を平日昼＋夜で消化開始（今週 目安 −60〜80問）"
+      ],
+      buffer: "月祝7/20の約12h ＋ 平日昼講義1h×5 ＋ 次の週末 ＝ 週内バッファ 約20h。今日(日)外出で失った分は月祝12hで丸ごと吸収可能＝マクロは無傷。",
+      adjustRule: "突発予定が出たら上から順に：①✕だけは毎日死守（唯一の絶対ライン）→②失った量は同じ週の最大枠（祝・週末）へ寄せる→③それでも溢れたら『講義優先・△繰延』（講義はPhase A期限あり／△は+2日で待てる）→④週内で吸収不能なときだけ、翌週の過去問を1回に減らす（最後の弁）。マクロ（11/15）は週バッファで守る設計。"
+    },
+    roadmap: [
+      { span: "〜7/31", phase: "Phase A", milestone: "商会講義 完走＋例題1周（連結が本丸）", now: true },
+      { span: "8月", phase: "Phase B①", milestone: "管理会計・商業を○化（テキスト例題＋問題集）" },
+      { span: "9月", phase: "Phase B②", milestone: "○化の完璧化＋会計学理論（8/20-9/12クランチは量減）" },
+      { span: "10月", phase: "過去問", milestone: "過去問3回転（本格・時間計測・週回）" },
+      { span: "11/15", phase: "本番", milestone: "第171回 日商簿記1級 受験" }
+    ]
+  },
+
   reviewQueue: {
     total: 146, d: 143, x: 3,
     groups: [
@@ -1029,6 +1072,34 @@ function section(inner) {
     </div>`);
 })();
 
+// 5.5 週次プラン（マクロ逆算）— 例外時の週内調整を見える化
+(function weekMacro() {
+  const w = DATA.weekMacro;
+  if (!w) return;
+  const musts = w.thisWeek.musts.map(m => `<li>${esc(m)}</li>`).join("");
+  const road = w.roadmap.map(r => `
+    <div class="wm-seg ${r.now ? "now" : ""}">
+      <div class="sp">${esc(r.span)}</div>
+      <div class="ph">${esc(r.phase)}</div>
+      <div class="mi">${esc(r.milestone)}</div>
+    </div>`).join("");
+  section(`
+    <div class="sec-title" style="color:var(--act)">${esc(w.title)}</div>
+    <div class="card">
+      <div class="wm-goal"><b>${esc(w.thisWeek.label)}</b> ｜ ${esc(w.thisWeek.goal)}</div>
+      <div class="wm-musts">
+        <div class="wm-h">今週の必達（マクロ死守ライン）</div>
+        <ul>${musts}</ul>
+      </div>
+      <div class="d-block"><div class="ic">🟢</div><div class="body">
+        <div class="head">バッファ（吸収余力）</div><div class="detail">${esc(w.thisWeek.buffer)}</div></div></div>
+      <div class="d-block"><div class="ic">⚙️</div><div class="body">
+        <div class="head">例外予定が出たときの週内調整ルール</div><div class="detail">${esc(w.thisWeek.adjustRule)}</div></div></div>
+      <div class="wm-h" style="margin-top:0.9rem">本番までの週次ロードマップ</div>
+      <div class="wm-road">${road}</div>
+    </div>`);
+})();
+
 // 6. 復習キュー
 (function reviewQueue() {
   const q = DATA.reviewQueue;
@@ -1038,7 +1109,7 @@ function section(inner) {
       <div class="rq-body">${esc(g.body)}</div>
     </details>`).join("");
   section(`
-    <div class="sec-title">復習キュー — 明日 7/10 期限</div>
+    <div class="sec-title">復習キュー — 今日の期限</div>
     <div class="card">
       <div class="rq-head">
         <span class="big tnum">${q.total}</span>
