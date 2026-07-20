@@ -746,7 +746,7 @@
    ============================================================ */
 const DATA = {
   meta: {
-    updated: "2026-07-20（月祝）— ✕ゼロ達成（3問全回復）・12hの本体進行中（○250/△158/✕0＝408）",
+    updated: "2026-07-20（月祝）— 差異分析の型が繋がる・✕ゼロ維持・記録モード整理（○250/△158/✕0＝408）",
     examDate: "2026-11-15", examLabel: "第171回 日商簿記1級",
     phaseADeadline: "2026-07-31", phaseALabel: "商業講義一周"
   },
@@ -1403,6 +1403,7 @@ function section(inner) {
 
         <div class="rec-actions">
           <button type="button" class="btn primary wide" id="recExport">📤 リポジトリ反映用にエクスポート</button>
+          <button type="button" class="btn ghost wide" id="recClear">🧹 記録をクリア（反映済みを消去）</button>
         </div>
       </div>
     </details>`;
@@ -1592,12 +1593,27 @@ function section(inner) {
     applyLiveOverlay();
   });
 
+  // 記録をクリア：この端末のlocalStorageバッファを全消去（exercise-log.md には無影響）
+  const elClear = $("recClear");
+  if (elClear) elClear.addEventListener("click", () => {
+    if (!records.length) return;
+    if (!confirm(`この端末に溜まった記録 ${records.length}件を全て消去します。\nexercise-log.md（サーバー側の正本）には影響しません。よろしいですか？`)) return;
+    records = [];
+    saveRecords();
+    renderList();
+    renderQueue();
+    applyLiveOverlay();
+  });
+
+  // 「今日の記録」は当日分のみカウント（別日の溜まりは含めない）
   function counts() {
+    const today = todayStr();
+    const t = records.filter(r => dateStr(r.ts) === today);
     return {
-      o: records.filter(r => r.mark === "o").length,
-      d: records.filter(r => r.mark === "d").length,
-      x: records.filter(r => r.mark === "x").length,
-      total: records.length
+      o: t.filter(r => r.mark === "o").length,
+      d: t.filter(r => r.mark === "d").length,
+      x: t.filter(r => r.mark === "x").length,
+      total: t.length
     };
   }
 
@@ -1608,18 +1624,19 @@ function section(inner) {
       `<span class="brk">（<span class="co">○${c.o}</span> ／ <span class="cd">△${c.d}</span> ／ <span class="cx">✕${c.x}</span>）</span>`;
 
     const today = todayStr();
-    const stale = records.filter(r => dateStr(r.ts) !== today).length;
+    const todayRecs = records.filter(r => dateStr(r.ts) === today);
+    const stale = records.length - todayRecs.length;
     if (stale > 0) {
       elWarn.hidden = false;
-      elWarn.textContent = `⚠ 前日以前の未エクスポート記録が ${stale}件 あります。エクスポートして反映してください。`;
+      elWarn.textContent = `🧹 別日の記録が ${stale}件 残っています。エージェントに記録済みなら「記録をクリア」で消去してください（exercise-log.md には影響しません）。`;
     } else {
       elWarn.hidden = true;
     }
 
-    if (!records.length) {
-      elList.innerHTML = `<div class="rec-empty">まだ記録がありません。上のフォームから追加してください。</div>`;
+    if (!todayRecs.length) {
+      elList.innerHTML = `<div class="rec-empty">今日の記録はまだありません。上のフォームから追加してください。</div>`;
     } else {
-      elList.innerHTML = records.map(r => {
+      elList.innerHTML = todayRecs.map(r => {
         const sub = r.subtitle ? `「${esc(r.subtitle)}」` : "";
         const memo = r.memo ? `<div class="memo">📝 ${esc(r.memo)}</div>` : "";
         return `
@@ -1638,7 +1655,8 @@ function section(inner) {
   }
 
   function updateBadge() {
-    const n = records.length;
+    const today = todayStr();
+    const n = records.filter(r => dateStr(r.ts) === today).length;
     if (n > 0) { elBadge.hidden = false; elBadge.textContent = `未反映 ${n}件`; }
     else { elBadge.hidden = true; }
     updateLocalStatus();
