@@ -1,0 +1,55 @@
+name: sync-obsidian-vault
+
+# 目的: 本線（PDF入り・重い）に push があるたび、PDFを除いた中身を
+#       obsidian-vault ブランチ（軽量ミラー）へ自動反映する。
+# 効果: Obsidianは obsidian-vault を見れば、126MBの教科書PDFを落とさずに
+#       保管庫（ノート・グラフ・復習キュー）を常に最新で参照できる。
+#       本線側はPDFを保持したまま。両者は同一リポジトリなので特別な鍵は不要。
+
+on:
+  push:
+    branches:
+      - claude/fix-conversation-history-BCgiU
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-obsidian-vault
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 本線を取得
+        uses: actions/checkout@v4
+        with:
+          ref: claude/fix-conversation-history-BCgiU
+          fetch-depth: 0
+
+      - name: PDFを除いた中身を obsidian-vault へミラー
+        run: |
+          set -e
+          MAIN_SHA=$(git rev-parse HEAD)
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # 軽量ブランチを用意（無ければ独立履歴で新規）
+          if git ls-remote --exit-code --heads origin claude/obsidian-vault >/dev/null 2>&1; then
+            git fetch origin claude/obsidian-vault
+            git checkout -B mirror origin/claude/obsidian-vault
+          else
+            git checkout --orphan mirror
+          fi
+          # 中身を本線の最新に総入れ替え → PDFだけ除去（追加・変更・削除すべて追従）
+          git rm -rf . >/dev/null 2>&1 || true
+          git checkout "$MAIN_SHA" -- .
+          git ls-files -z '*.pdf' '*.PDF' | xargs -0 --no-run-if-empty git rm -q --
+          git add -A
+          if git diff --cached --quiet; then
+            echo "PDF以外に差分なし。ミラー不要。"
+            exit 0
+          fi
+          git commit -m "vault mirror (PDF抜き) @ ${MAIN_SHA:0:7} [skip ci]"
+          git push origin mirror:claude/obsidian-vault
