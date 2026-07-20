@@ -810,6 +810,25 @@ const DATA = {
     rule: "失った『量』は日単位で慌てず、週内の最大枠（祝・週末）へ寄せてマクロ(11/15)を守る＝週次プランの調整ルール②。"
   },
 
+  // 過去問プロトコル＝毎週の型（解き方＋①②③の仕分け）。今の目的は「解けること」でなく本番慣れ＋穴の特定
+  kakomonProtocol: {
+    title: "過去問プロトコル（毎週の型）",
+    note: "今の段階の目的は「解けること」ではなく“本番慣れ＋穴の特定”。点数は捨てる。工原はガチ、商会は割り切り。",
+    tiers: [
+      { ic: "🎯", label: "STEP1 解く（何も見ない・飛ばす）",
+        body: "Ⅱ 工簿・原計＝本番形式90分ガチ計測（3分手が止まったら即飛ばす）。Ⅰ 商簿・会計学＝時間は測るが“拾い読み”：連結大問は最初から捨て問、解ける基礎論点＋会計学の知識問題だけ拾う。テキストも答えも一切見ない。" },
+      { ic: "📖", label: "STEP2 即・全問の解説を読む（当日中・ここが本番）",
+        body: "解けた問題も含め全大問、模範解答＋解説を通す。“じっくり6時間”は自力で唸るのでなく、この解説潰しに注ぐ＝最も伸びる。" },
+      { ic: "🗂️", label: "STEP3 大問を①②③に仕分け→秘書に報告",
+        body: "各大問を下の①②③に分類して報告。私が過去問セクションに記録し、②を今週の△介入対象に直結（過去問の穴→例題の弱点を1本の線に）。" }
+    ],
+    buckets: [
+      { n: "①", label: "未習", body: "連結など。今は手を出さない・印だけ付けて放置（8-9月の講義待ち）" },
+      { n: "②", label: "既習なのに落とした", body: "★本命。例題の△に戻って潰す＝今週の介入対象にする" },
+      { n: "③", label: "ケアレス", body: "手順を型カード化して再発防止" }
+    ]
+  },
+
   // 今日のキュー = 事前記入済み。○△✕とメモを叩くだけ（記録モードから使う）
   // 科目/章は記録フォームのセレクト値と一致させること（subject:"工業"|"商業", chapterは章ラベル完全一致）
   todayQueue: [
@@ -1072,6 +1091,36 @@ function section(inner) {
       <p class="sub">${esc(b.note)}</p>
       ${tiers}
       <div class="detail" style="margin-top:10px;opacity:.85">🗓️ ${esc(b.rule)}</div>
+    </div>`);
+})();
+
+// 1.7 過去問プロトコル — 毎週の型（解き方＋①②③の仕分け）
+(function kakomonProtocol() {
+  const b = DATA.kakomonProtocol;
+  if (!b) return;
+  const tiers = b.tiers.map(t => `
+    <div class="d-block">
+      <div class="ic">${t.ic}</div>
+      <div class="body">
+        <div class="head">${esc(t.label)}</div>
+        <div class="detail">${esc(t.body)}</div>
+      </div>
+    </div>`).join("");
+  const buckets = b.buckets.map(k => `
+    <div class="d-block">
+      <div class="ic">${esc(k.n)}</div>
+      <div class="body">
+        <div class="head">${esc(k.label)}</div>
+        <div class="detail">${esc(k.body)}</div>
+      </div>
+    </div>`).join("");
+  section(`
+    <div class="sec-title" style="color:var(--act)">${esc(b.title)}</div>
+    <div class="card">
+      <p class="sub">${esc(b.note)}</p>
+      ${tiers}
+      <div class="wm-h" style="margin-top:0.9rem">仕分け（STEP3の①②③）</div>
+      ${buckets}
     </div>`);
 })();
 
