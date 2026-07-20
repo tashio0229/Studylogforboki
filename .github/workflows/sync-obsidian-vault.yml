@@ -45,7 +45,7 @@ jobs:
           # 中身を本線の最新に総入れ替え → PDFだけ除去（追加・変更・削除すべて追従）
           git rm -rf . >/dev/null 2>&1 || true
           git checkout "$MAIN_SHA" -- .
-          git ls-files -z '*.pdf' '*.PDF' | xargs -0 --no-run-if-empty git rm -q --
+          git ls-files -z '*.pdf' '*.PDF' | xargs -0 --no-run-if-empty rm -f --
           git add -A
           if git diff --cached --quiet; then
             echo "PDF以外に差分なし。ミラー不要。"
