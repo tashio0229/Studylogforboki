@@ -785,6 +785,23 @@ const DATA = {
     rule: "処理順は不変：✕全問 → 期限切れ△（古い順）→ 当日△ → 新規例題。間隔：✕=+1日／△=+2日／○=+7→14→30。要対策△（4回目以降）は間隔を空けず介入を1回挟む。"
   },
 
+  // イレギュラー回復プロトコル＝イベント（友達/ランニング/ラーメン）翌日のカスケード対策
+  recoveryProtocol: {
+    title: "イレギュラー回復プロトコル（イベントが入った日）",
+    note: "イベント自体はOK。問題は翌日の回復カスケード（起床14時→実働16時→1日が溶ける）。レバーは気合でなく起床アンカー。",
+    tiers: [
+      { ic: "⏰", label: "① 起床アンカーを固定（最重要）",
+        body: "どんなに遅く寝ても翌日は11〜12時に1本アラーム（14時まで寝ない）。寝溜めは1サイクルだけ・不足は昼寝(タイマー付き)で補うと総量が増える。" },
+      { ic: "🎬", label: "② 起きて30分以内に『動き出しの1問』",
+        body: "✕1問 or 講義5分を、リフレッシュ/YouTubeより先に。『体が動くまで2h』の空白を微小タスクで埋めて始動を前倒し。" },
+      { ic: "🎁", label: "③ YouTube・仮眠は『ブロック後のご褒美』にゲート化",
+        body: "禁止はしない。勉強1ブロック→YouTube20分→次、の順。先に休むと動けない。仮眠はタイマー30〜45分で必ず区切る。" },
+      { ic: "🏃", label: "④ ランニング日（22-2拘束）は前倒し型",
+        body: "勉強はランニング前（〜21:30）に寄せる＝ランニングを夜のカットオフに。深夜2時以降に勉強を足さない（翌日カスケードの起点）。" }
+    ],
+    rule: "失った『量』は日単位で慌てず、週内の最大枠（祝・週末）へ寄せてマクロ(11/15)を守る＝週次プランの調整ルール②。"
+  },
+
   // 今日のキュー = 事前記入済み。○△✕とメモを叩くだけ（記録モードから使う）
   // 科目/章は記録フォームのセレクト値と一致させること（subject:"工業"|"商業", chapterは章ラベル完全一致）
   todayQueue: [
@@ -800,7 +817,53 @@ const DATA = {
     { subject: "工業", chapter: "第13章 標準原価計算", example: "例17", subtitle: "製造間接費差異の分析", note: "🎯差異分析・3分法/4分法" },
     { subject: "工業", chapter: "第13章 標準原価計算", example: "例18", subtitle: "歩留差異総合問題", note: "🎯差異分析・仕上げ総合" },
     { subject: "工業", chapter: "第13章 標準原価計算", example: "例19", subtitle: "工程別標準原価計算・作業点別標準原価計算", note: "🎯第8節・前工程費は数量差異を出さない" },
-    { subject: "工業", chapter: "第13章 標準原価計算", example: "例20", subtitle: "作業点別標準原価計算", note: "🎯第8節・工程別の細分化" }
+    { subject: "工業", chapter: "第13章 標準原価計算", example: "例20", subtitle: "作業点別標準原価計算", note: "🎯第8節・工程別の細分化" },
+    // ===== ④ Block4：△消化（期限切れ・要対策/回転数の多い順45問・古い順に時間ベースで）=====
+    { subject: "工業", chapter: "第12章 連産品", example: "例5", subtitle: "分離点推定価値基準", note: "🔥要対策△・連産品（T15-例5・12回転）" },
+    { subject: "工業", chapter: "第14章 直接原価計算", example: "例5", subtitle: "直接標準原価計算における固定費調整", note: "🔥要対策△・直接原価計算（T19-例5・12回転）" },
+    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例5", subtitle: "目標を達成する販売価格", note: "🔥要対策△・意思決定会計Ⅰ（T23-例5・12回転）" },
+    { subject: "工業", chapter: "第13章 標準原価計算", example: "例12", subtitle: "仕損費差異（異常仕損）", note: "🔥要対策△・標準原価計算（T17-例12・11回転）" },
+    { subject: "工業", chapter: "第15章 CVP分析", example: "例7", subtitle: "資本利益率と資本回収点売上高", note: "🔥要対策△・CVP分析（T20-例7・11回転）" },
+    { subject: "工業", chapter: "第16章 予算管理", example: "例2", subtitle: "予算実績差異分析①", note: "🔥要対策△・予算管理（T21-例2・11回転）" },
+    { subject: "工業", chapter: "第16章 予算管理", example: "例3", subtitle: "予算実績差異分析②", note: "🔥要対策△・予算管理（T21-例3・11回転）" },
+    { subject: "工業", chapter: "第16章 予算管理", example: "例5", subtitle: "売上品構成差異と売上品数量差異", note: "🔥要対策△・予算管理（T21-例5・11回転）" },
+    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例4", subtitle: "コストベースの価格決定", note: "🔥要対策△・意思決定会計Ⅰ（T23-例4・11回転）" },
+    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例8", subtitle: "共通の制約条件２つ以上", note: "🔥要対策△・意思決定会計Ⅰ（T23-例8・11回転）" },
+    { subject: "工業", chapter: "第15章 CVP分析", example: "例13", subtitle: "感度分析①", note: "🔥要対策△・CVP分析（T20-例13・10回転）" },
+    { subject: "工業", chapter: "第15章 CVP分析", example: "例14", subtitle: "感度分析②", note: "🔥要対策△・CVP分析（T20-例14・10回転）" },
+    { subject: "工業", chapter: "第16章 予算管理", example: "例4", subtitle: "市場占拠率差異と市場総需要量差異", note: "🔥要対策△・予算管理（T21-例4・10回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例4", subtitle: "内部利益率法（IRR）", note: "🔥要対策△・意思決定会計Ⅱ（T25-例4・10回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例5", subtitle: "回収期間法", note: "🔥要対策△・意思決定会計Ⅱ（T25-例5・10回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例6", subtitle: "投下資本利益率法", note: "🔥要対策△・意思決定会計Ⅱ（T25-例6・10回転）" },
+    { subject: "工業", chapter: "第16章 予算管理", example: "例1", subtitle: "予算編成", note: "🔥要対策△・予算管理（T21-例1・9回転）" },
+    { subject: "工業", chapter: "第17章 資金管理", example: "例1", subtitle: "現金資金の管理", note: "🔥要対策△・資金管理（T22-例1・9回転）" },
+    { subject: "工業", chapter: "第18章 意思決定会計Ⅰ", example: "例18", subtitle: "経済的発注量分析①", note: "🔥要対策△・意思決定会計Ⅰ（T24-例18・9回転）" },
+    { subject: "工業", chapter: "第13章 標準原価計算", example: "例7", subtitle: "勘定記入法", note: "🔥要対策△・標準原価計算（T16-例7・8回転）" },
+    { subject: "工業", chapter: "第13章 標準原価計算", example: "例13", subtitle: "減損が生じる場合の製品原価計算", note: "🔥要対策△・標準原価計算（T18-例13・8回転）" },
+    { subject: "商業", chapter: "第11章 債権債務・貸倒引当金", example: "例2", subtitle: "保証債務", note: "🔥要対策△・債権債務・貸倒引当金（C11-例2・5回転）" },
+    { subject: "商業", chapter: "第11章 債権債務・貸倒引当金", example: "例14", subtitle: "貸倒実績率の算定②", note: "🔥要対策△・債権債務・貸倒引当金（C11-例14・5回転）" },
+    { subject: "商業", chapter: "第11章 債権債務・貸倒引当金", example: "例16", subtitle: "貸倒懸念債権②（キャッシュ・フロー見積法）", note: "🔥要対策△・債権債務・貸倒引当金（C11-例16・5回転）" },
+    { subject: "商業", chapter: "第12章 デリバティブ取引", example: "例1", subtitle: "商品先物取引①（買建）", note: "🔥要対策△・デリバティブ取引（C12-例1・5回転）" },
+    { subject: "商業", chapter: "第12章 デリバティブ取引", example: "例3", subtitle: "債券先物取引①（売建）", note: "🔥要対策△・デリバティブ取引（C12-例3・5回転）" },
+    { subject: "商業", chapter: "第12章 デリバティブ取引", example: "例4", subtitle: "債券先物取引②（売建）", note: "🔥要対策△・デリバティブ取引（C12-例4・5回転）" },
+    { subject: "商業", chapter: "第12章 デリバティブ取引", example: "例5", subtitle: "通貨オプション取引（コール・オプション）", note: "🔥要対策△・デリバティブ取引（C12-例5・5回転）" },
+    { subject: "商業", chapter: "第12章 デリバティブ取引", example: "例6", subtitle: "金利スワップ取引", note: "🔥要対策△・デリバティブ取引（C12-例6・5回転）" },
+    { subject: "商業", chapter: "第12章 デリバティブ取引", example: "例7", subtitle: "ヘッジ会計①（先物取引）", note: "🔥要対策△・デリバティブ取引（C12-例7・5回転）" },
+    { subject: "商業", chapter: "第12章 デリバティブ取引", example: "例8", subtitle: "ヘッジ会計②（金利スワップ）", note: "🔥要対策△・デリバティブ取引（C12-例8・5回転）" },
+    { subject: "工業", chapter: "第15章 CVP分析", example: "例12", subtitle: "全部原価計算におけるCVP分析", note: "📚△・CVP分析（T20-例12・10回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例7", subtitle: "タックス・シールド①", note: "📚△・意思決定会計Ⅱ（T26-例7・6回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例8", subtitle: "タックス・シールド②", note: "📚△・意思決定会計Ⅱ（T26-例8・6回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例10", subtitle: "正味運転資本とキャッシュ・フロー", note: "📚△・意思決定会計Ⅱ（T26-例10・6回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例12", subtitle: "取替投資②", note: "📚△・意思決定会計Ⅱ（T26-例12・6回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例13", subtitle: "経済的耐用年数と法定耐用年数", note: "📚△・意思決定会計Ⅱ（T26-例13・6回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例14", subtitle: "耐用年数が異なる相互排他的投資案", note: "📚△・意思決定会計Ⅱ（T26-例14・6回転）" },
+    { subject: "工業", chapter: "第19章 意思決定会計Ⅱ", example: "例15", subtitle: "リースか購入かの意思決定", note: "📚△・意思決定会計Ⅱ（T26-例15・6回転）" },
+    { subject: "商業", chapter: "第11章 債権債務・貸倒引当金", example: "例8", subtitle: "金融資産の譲渡", note: "📚△・債権債務・貸倒引当金（C11-例8・5回転）" },
+    { subject: "商業", chapter: "第13章 リース会計", example: "例1", subtitle: "ファイナンス・リース取引の判定", note: "📚△・リース会計（C13-例1・3回転）" },
+    { subject: "商業", chapter: "第13章 リース会計", example: "例3", subtitle: "貸手の購入価額が判明しない場合・所有権移転外FL", note: "📚△・リース会計（C13-例3・3回転）" },
+    { subject: "商業", chapter: "第13章 リース会計", example: "例4", subtitle: "貸手の購入価額が判明しない場合・所有権移転FL", note: "📚△・リース会計（C13-例4・3回転）" },
+    { subject: "商業", chapter: "第13章 リース会計", example: "例5", subtitle: "リース料の半年払い", note: "📚△・リース会計（C13-例5・3回転）" },
+    { subject: "商業", chapter: "第13章 リース会計", example: "例6", subtitle: "維持管理費用相当額", note: "📚△・リース会計（C13-例6・3回転）" },
     // Block1 過去問デビュー＋採点／Block2 工原#27-28視聴／Block4 △消化(古い順・時間ベース) は指令カード参照
   ],
 
@@ -979,6 +1042,27 @@ function section(inner) {
       <p class="sub">${esc(b.note)}</p>
       ${tiers}
       <div class="detail" style="margin-top:10px;opacity:.85">📏 ${esc(b.rule)}</div>
+    </div>`);
+})();
+
+// 1.6 イレギュラー回復プロトコル — イベント翌日のカスケード対策
+(function recoveryProtocol() {
+  const b = DATA.recoveryProtocol;
+  if (!b) return;
+  const tiers = b.tiers.map(t => `
+    <div class="d-block">
+      <div class="ic">${t.ic}</div>
+      <div class="body">
+        <div class="head">${esc(t.label)}</div>
+        <div class="detail">${esc(t.body)}</div>
+      </div>
+    </div>`).join("");
+  section(`
+    <div class="sec-title" style="color:var(--d)">${esc(b.title)}</div>
+    <div class="card">
+      <p class="sub">${esc(b.note)}</p>
+      ${tiers}
+      <div class="detail" style="margin-top:10px;opacity:.85">🗓️ ${esc(b.rule)}</div>
     </div>`);
 })();
 
