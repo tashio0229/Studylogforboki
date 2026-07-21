@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><title>第164回 過去問 解説</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Yu Gothic", sans-serif;
+    color: #1a1a1a; line-height: 1.65; font-size: 10.5pt; margin: 0; }
+  h1 { font-size: 19pt; margin: 0 0 2mm; letter-spacing: .02em; }
+  .lead { color: #555; font-size: 9.5pt; margin: 0 0 6mm; border-bottom: 2px solid #0a5; padding-bottom: 3mm; }
+  h2 { font-size: 13.5pt; margin: 8mm 0 3mm; padding: 2mm 3mm; background: #0a5; color: #fff;
+    border-radius: 3px; letter-spacing: .02em; page-break-after: avoid; }
+  h2 .tag { float: right; font-size: 8.5pt; font-weight: 400; opacity: .92; }
+  .box { border: 1.4px solid #ddd; border-radius: 5px; padding: 3mm 4mm; margin: 3mm 0; page-break-inside: avoid; }
+  .box.essence { border-color: #0a5; background: #f2fbf6; }
+  .box.kata    { border-color: #0a84ff; background: #eef6ff; }
+  .box.exam    { border-color: #ff9500; background: #fff8ec; }
+  .box.miss    { border-color: #ff3b30; background: #fff1f0; }
+  .lab { display: inline-block; font-weight: 800; font-size: 9pt; margin-right: 2mm;
+    padding: 0 2mm; border-radius: 3px; color: #fff; }
+  .essence .lab { background: #0a5; } .kata .lab { background: #0a84ff; }
+  .exam .lab { background: #ff9500; } .miss .lab { background: #ff3b30; }
+  b { color: #000; }
+  .k { color: #0a84ff; font-weight: 700; }
+  .num { font-variant-numeric: tabular-nums; font-weight: 700; }
+  ul { margin: 1mm 0 1mm; padding-left: 5mm; } li { margin: .6mm 0; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0; font-size: 9.5pt; }
+  th, td { border: 1px solid #ccc; padding: 1.4mm 2mm; text-align: left; }
+  th { background: #f4f4f6; }
+  .foot { margin-top: 8mm; padding-top: 3mm; border-top: 1px solid #ddd; color: #888; font-size: 8.5pt; }
+  .sec { page-break-inside: avoid; }
+</style></head>
+<body>
+
+<h1>第164回 過去問 解説 ― 本質を掴む</h1>
+<p class="lead">落としたのは「解けない」からではなく「既習なのに本番で組めなかった」＝<b>②</b>。ここで型を掴み直し、対応する例題の△を○へ。数字の再現より<b>「なぜそうなるか」</b>を持ち帰ること。（連結＝会計学第2問は①未習・8-9月講義後）</p>
+
+<div class="sec">
+<h2>1. 固定費調整（全部 vs 直接原価計算）<span class="tag">工簿 第2問 ／ 第14章 例5</span></h2>
+<div class="box essence"><span class="lab">本質</span>営業利益が全部と直接で違う理由は、たった1つ ―― <b>固定製造原価が「在庫（期末仕掛品・製品）」に乗るかどうか</b>。
+<ul>
+<li><b>全部原価計算</b>：固定製造原価も製品原価に含める → <b>期末在庫に固定費が繰り延べられる</b> → その分だけ当期費用が減り、営業利益は<b>大きく</b>なる（在庫が増える期）。</li>
+<li><b>直接原価計算</b>：固定製造原価は全額を当期の期間原価 → <b>在庫には乗らない</b>。</li>
+</ul></div>
+<div class="box kata"><span class="lab">型</span><span class="k">固定費調整 ＝ 全部の営業利益 − 直接の営業利益 ＝ 期末在庫に含まれる固定製造原価 − 期首在庫に含まれる固定製造原価</span>
+<ul><li>在庫が<b>増える</b>期 → 全部 <b>＞</b> 直接　／　在庫が<b>減る</b>期 → 全部 <b>＜</b> 直接</li></ul></div>
+<div class="box exam"><span class="lab">第164回</span>第1期：全部 <span class="num">11,800,000</span>円 ／ 直接 <span class="num">9,800,000</span>円 → 差 <span class="num">2,000,000</span>円。<br>これが<b>「期末在庫に乗った固定製造原価」</b>そのもの（第1期は生産＞販売で在庫増 → 全部が大きい）。</div>
+<div class="box miss"><span class="lab">②あなた</span>空欄。＝「固定費が在庫に乗る／乗らない」という<b>1点の型</b>が本番で出せなかった。第14章 例1（全部と直接のP/L）→ 例5（固定費調整）を、白紙から型を書いて再現する。</div>
+</div>
+
+<div class="sec">
+<h2>2. 品質原価計算（正誤問題）<span class="tag">原計 第1問 ／ #27 例3・4</span></h2>
+<div class="box essence"><span class="lab">本質</span>品質原価は<b>4分類</b>。「自発的に防ぐ」か「失敗して発生した」かで分ける。
+<table>
+<tr><th>区分</th><th>性質</th><th>中身</th></tr>
+<tr><td><b>予防原価</b></td><td>自発的・管理可能</td><td>教育訓練・品質サークル ＝ 不良を<b>未然に</b>防ぐ</td></tr>
+<tr><td><b>評価原価</b></td><td>自発的</td><td>検査・テスト</td></tr>
+<tr><td><b>内部失敗原価</b></td><td>非自発的</td><td><b>仕損</b>など、社内で発見された不良のコスト</td></tr>
+<tr><td><b>外部失敗原価</b></td><td>非自発的</td><td><b>リコール</b>等、顧客に渡った後に発見。レピュテーション毀損で損失最大</td></tr>
+</table>
+ポイント：日本企業は<b>自発的原価（予防＋評価）にコストをかけて外部失敗を防ぐ</b>のを重視。また品質原価計算は<b>「適合品質」に焦点</b>（設計品質ではない）。</div>
+<div class="box exam"><span class="lab">第164回</span>正解は <b>①と④</b>（正しいものを<b>すべて</b>選ぶ）。
+<ul>
+<li><b>①○</b>（あなたが落とした）：品質原価の正しい記述。</li>
+<li>②×：リコール費用は<b>外部</b>失敗、仕損費は<b>内部</b>失敗 ―― 区分が逆・混同だと×。</li>
+<li>③×：品質原価計算は<b>適合品質</b>に焦点（「設計品質」と書いてあるので×）。</li>
+</ul></div>
+<div class="box miss"><span class="lab">②あなた</span>④は取れた（<b>昨日の#27学習が即効いた＝テスト効果</b>）。だが①を「正しい」と言い切れず ＝ あと一歩。<b>内部/外部失敗の線引き</b>と<b>「適合品質」</b>の2語を詰めれば満点だった。</div>
+</div>
+
+<div class="sec">
+<h2>3. 仕損費（正常 / 異常）<span class="tag">原計 第2問</span></h2>
+<div class="box essence"><span class="lab">本質</span>仕損は「通常起こる範囲か否か」で扱いが正反対。
+<ul>
+<li><b>正常仕損</b>：通常発生する範囲 → <b>良品が負担</b>（製品原価に含める）。</li>
+<li><b>異常仕損</b>：通常あり得ない → <b>非原価項目</b>（製品原価に含めず、営業外費用／特別損失へ）。</li>
+</ul></div>
+<div class="box exam"><span class="lab">第164回</span>正常仕損費 <span class="num">6,076</span>円 ／ 異常仕損費 <span class="num">5,500</span>円。<br><b>機械の整備不良による仕損</b>は「非原価項目」かつ「管理可能」→ <b>営業外費用</b>に該当（＝異常仕損の扱い）。</div>
+<div class="box miss"><span class="lab">②あなた</span>空欄。まず<b>正常／異常の線引き</b>を判断できるか、次に良品負担の計算。総合原価計算の仕損・減損の例題で型を再現。</div>
+</div>
+
+<div class="sec">
+<h2>4. 決算整理の総合問題（“連結じゃない”）<span class="tag">商簿 第1問</span></h2>
+<div class="box essence"><span class="lab">本質</span>商簿第1問は<b>連結ではなく、単一会社の決算整理総合</b>。中身は全部あなたの<b>既習△論点</b>。1つずつは分かる。<b>一気に組む練習が足りないだけ</b>。
+<table>
+<tr><th>論点</th><th>押さえどころ（型）</th></tr>
+<tr><td>退職給付</td><td><span class="k">引当金 ＝ 退職給付債務 − 年金資産 −（未認識差異）</span>。債務・資産・引当金の3点を図解で</td></tr>
+<tr><td>税効果</td><td>将来減算一時差異（退職給付引当金・貸倒引当金 等）<span class="k">× 税率 ＝ 繰延税金資産</span></td></tr>
+<tr><td>外貨建満期保有目的債券</td><td>外貨で償却原価法 → 期末は<b>CR（決算日レート）</b>で換算 → 為替差損益</td></tr>
+<tr><td>商品売買</td><td>原価率・売上原価の算定（期首＋仕入−期末）</td></tr>
+</table></div>
+<div class="box miss"><span class="lab">②あなた</span>空欄。＝各論点が△のまま＋総合問題として組む力の不足。<b>退職給付・税効果・外貨の例題を先に○化</b> → その後に決算整理総合を1問通す。連結じゃないので、逃げる理由はない。</div>
+</div>
+
+<p class="foot">出典：第164回問題冊子（模範解答・解説：学校法人高橋学園／東京CPA会計学院）を基に、本質・型を再構成。数字の細かい導出は付属の公式解説PDFを参照。この解説は「なぜそうなるか」を持ち帰るための副読本。</p>
+
+</body></html>
