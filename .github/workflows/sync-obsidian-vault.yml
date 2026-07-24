@@ -65,11 +65,23 @@ jobs:
             done
           fi
 
-          # 4) 最新ログから保管庫を再生成
+          # 4) Obsidian可視化: ドット始まりのフォルダはObsidianが読まないため .secretary → secretary へ
+          if [ -d .secretary ]; then
+            rm -rf secretary
+            mv .secretary secretary
+          fi
+          # 生成器とBasesビューの参照パスを可視フォルダへ揃える
+          sed -i 's|REPO / "\.secretary/study|REPO / "secretary/study|g' tools/generate_vault_views.py
+          for f in secretary/study/*.base; do
+            [ -e "$f" ] && sed -i 's|\.secretary/study/問題ノート|secretary/study/問題ノート|g' "$f"
+          done
+
+          # 5) 最新ログから保管庫を再生成
           python3 tools/generate_vault_views.py
 
-          # 5) PDFを除いて軽量化し、保管庫ブランチへ反映
+          # 6) PDFと開発用ファイルを除いて軽量化し、保管庫ブランチへ反映
           git ls-files -z '*.pdf' '*.PDF' | xargs -0 --no-run-if-empty rm -f --
+          rm -rf .claude .claude-plugin plugins
           git add -A
           if git diff --cached --quiet; then
             echo "差分なし。保管庫は既に最新。"
