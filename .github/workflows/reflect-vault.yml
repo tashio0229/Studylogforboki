@@ -1,0 +1,61 @@
+name: reflect-vault
+
+# 目的: exercise-log.md（演習記録の唯一の正）が push されたら、
+#       tools/generate_vault_views.py で問題ノート（Obsidian保管庫）を自動再生成し、
+#       変化があればコミットして押し返す。
+# 効果: 「ログは更新したがノート再生成を忘れて保管庫が古くなる」事故を構造的に防ぐ。
+#       誰が・どのセッションがログを更新しても、保管庫は常に最新ログと一致する。
+
+on:
+  push:
+    branches:
+      - claude/fix-conversation-history-BCgiU   # 勉強本線（既定ブランチ）。名前を変えたらここも変える
+    paths:
+      - '.secretary/study/exercise-log.md'       # ログが変わった時だけ走る（ノート再生成の押し返しでは再発火しない）
+  workflow_dispatch: {}                           # 手動実行も可能
+
+permissions:
+  contents: write   # 再生成したノートを押し返すために必要
+
+concurrency:
+  group: reflect-vault-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  reflect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリを取得（ブランチをチェックアウト＝押し返せる状態）
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: 問題ノートを演習ログから再生成
+        run: python3 tools/generate_vault_views.py
+
+      - name: 変化があればコミットして押し返す（競合時は取り込んで再生成）
+        run: |
+          set -e
+          NOTES='.secretary/study/問題ノート'
+          if [ -z "$(git status --porcelain -- "$NOTES")" ]; then
+            echo "保管庫は既に最新ログと一致。コミット不要。"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "$NOTES"
+          git commit -m "保管庫を演習ログへ自動反映（問題ノート再生成）[skip ci]"
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:${{ github.ref_name }}"; then
+              echo "push 成功（試行 $attempt）"
+              exit 0
+            fi
+            echo "push 競合 — 別の更新を取り込んで再生成し直す"
+            git pull --rebase --autostash origin "${{ github.ref_name }}"
+            python3 tools/generate_vault_views.py
+            git add -- "$NOTES"
+            git diff --cached --quiet || git commit --amend --no-edit
+          done
+          echo "3回試しても push できず。手動確認が必要。"
+          exit 1

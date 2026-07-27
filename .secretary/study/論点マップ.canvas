@@ -1,0 +1,22 @@
+{
+	"nodes": [
+		{"id":"center","type":"text","text":"# 🎴 工原 要対策6パターン\n\n**全体 5/31 ○化**\n\n要対策△47問を6概念に還元。\n1セッション＝1パターンの集中連続演習で制圧する。","x":-230,"y":-80,"width":460,"height":180,"color":"6"},
+		{"id":"card1","type":"file","file":".secretary/knowledge/型カード① 差額原価の意思決定.md","x":-780,"y":-560,"width":460,"height":380,"color":"4"},
+		{"id":"card2","type":"file","file":".secretary/knowledge/型カード② 全部vs直接・固定費調整.md","x":-230,"y":-560,"width":460,"height":380,"color":"4"},
+		{"id":"card3","type":"file","file":".secretary/knowledge/型カード③ 標準原価の差異と会計処理.md","x":320,"y":-560,"width":460,"height":380,"color":"4"},
+		{"id":"card4","type":"file","file":".secretary/knowledge/型カード④ 連産品の推定市価按分.md","x":-780,"y":200,"width":460,"height":380,"color":"2"},
+		{"id":"card5","type":"file","file":".secretary/knowledge/型カード⑤ 販売数量差異の分解.md","x":-230,"y":200,"width":460,"height":380,"color":"2"},
+		{"id":"card6","type":"file","file":".secretary/knowledge/型カード⑥ CVP応用.md","x":320,"y":200,"width":460,"height":380,"color":"2"},
+		{"id":"legend","type":"text","text":"🟢 実施済（①7/7 ②7/8 ③7/9）\n🟠 これから（④⑤=土7/11 ⑥=日7/12）","x":860,"y":-80,"width":320,"height":180}
+	],
+	"edges": [
+		{"id":"e1","fromNode":"center","fromSide":"top","toNode":"card1","toSide":"bottom","label":"7/7 実施済"},
+		{"id":"e2","fromNode":"center","fromSide":"top","toNode":"card2","toSide":"bottom","label":"7/8 実施済"},
+		{"id":"e3","fromNode":"center","fromSide":"top","toNode":"card3","toSide":"bottom","label":"7/9 実施済"},
+		{"id":"e4","fromNode":"center","fromSide":"bottom","toNode":"card4","toSide":"top","label":"土 7/11"},
+		{"id":"e5","fromNode":"center","fromSide":"bottom","toNode":"card5","toSide":"top","label":"土 7/11"},
+		{"id":"e6","fromNode":"center","fromSide":"bottom","toNode":"card6","toSide":"top","label":"日 7/12"},
+		{"id":"e35","fromNode":"card3","fromSide":"right","toNode":"card5","toSide":"right","label":"長方形分割の図法が同型"},
+		{"id":"e26","fromNode":"card2","fromSide":"left","toNode":"card6","toSide":"left","label":"全部原価CVPの土台"}
+	]
+}

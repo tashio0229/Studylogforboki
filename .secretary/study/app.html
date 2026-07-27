@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BOKI COMMAND — 簿記1級作戦司令室</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --bg2: #111831;
+    --card: rgba(255,255,255,0.045);
+    --card-line: rgba(255,255,255,0.09);
+    --txt: #e9eefb;
+    --sub: #93a3c4;
+    --accent: #5b8cff;
+    --accent2: #8b5bff;
+    --ok: #34d77b;
+    --mid: #ffb938;
+    --bad: #ff5d75;
+    --frozen: #5d748f;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Hiragino Sans', 'Helvetica Neue', Arial, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(91,140,255,0.18), transparent 60%),
+      radial-gradient(900px 500px at -10% 30%, rgba(139,91,255,0.14), transparent 60%),
+      var(--bg);
+    color: var(--txt);
+    font-size: 14px;
+    line-height: 1.55;
+    padding-bottom: 86px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 18px 14px 30px; }
+
+  /* ===== header ===== */
+  .appbar { display: flex; align-items: center; gap: 10px; padding: 4px 2px 14px; }
+  .logo {
+    width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; box-shadow: 0 6px 18px rgba(91,140,255,0.35);
+  }
+  .appbar h1 { font-size: 17px; letter-spacing: 0.5px; }
+  .appbar .sub { font-size: 11px; color: var(--sub); }
+  .appbar .right { margin-left: auto; text-align: right; font-size: 11px; color: var(--sub); }
+
+  /* ===== tabs ===== */
+  .tabbar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+    background: rgba(13,18,38,0.92); backdrop-filter: blur(14px);
+    border-top: 1px solid var(--card-line);
+    display: flex; justify-content: space-around;
+    padding: 8px 6px calc(10px + env(safe-area-inset-bottom));
+  }
+  .tabbtn {
+    background: none; border: none; color: var(--sub); font-size: 10.5px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 4px 10px; border-radius: 12px; cursor: pointer; transition: all .18s;
+    font-family: inherit;
+  }
+  .tabbtn .ico { font-size: 19px; }
+  .tabbtn.active { color: #fff; }
+  .tabbtn.active .ico { transform: translateY(-2px) scale(1.12); }
+  .tabbtn.active::after { content:''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); margin-top: 1px; }
+
+  .page { display: none; animation: fadein .25s ease; }
+  .page.active { display: block; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: none;} }
+
+  /* ===== cards ===== */
+  .card {
+    background: var(--card); border: 1px solid var(--card-line);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
+    backdrop-filter: blur(6px);
+  }
+  .card h2 { font-size: 13px; color: var(--sub); font-weight: 600; letter-spacing: 1px; margin-bottom: 12px; display:flex; align-items:center; gap:6px; }
+  .card h2 .spark { color: var(--accent); }
+
+  /* ===== countdown hero ===== */
+  .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .cd {
+    border-radius: var(--radius); padding: 16px 14px; position: relative; overflow: hidden;
+    border: 1px solid var(--card-line);
+  }
+  .cd.recon { background: linear-gradient(160deg, rgba(255,93,117,0.16), rgba(255,93,117,0.04)); }
+  .cd.main  { background: linear-gradient(160deg, rgba(255,185,56,0.16), rgba(255,185,56,0.03)); }
+  .cd .label { font-size: 11px; color: var(--sub); margin-bottom: 4px; }
+  .cd .num { font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -1px; }
+  .cd .num small { font-size: 13px; font-weight: 600; color: var(--sub); margin-left: 3px; }
+  .cd.recon .num { color: #ff8298; }
+  .cd.main .num { color: #ffd166; }
+  .cd .date { font-size: 11px; color: var(--sub); margin-top: 5px; }
+  .cd .flag { position: absolute; top: 12px; right: 12px; font-size: 22px; opacity: .8; }
+
+  /* ===== rings ===== */
+  .rings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .ringbox { text-align: center; }
+  .ring { width: 86px; height: 86px; margin: 0 auto 6px; position: relative; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring .val b { font-size: 17px; }
+  .ring .val span { font-size: 9.5px; color: var(--sub); }
+  .ringbox .cap { font-size: 11px; color: var(--sub); }
+
+  /* ===== mission list ===== */
+  .mission { display: flex; align-items: flex-start; gap: 10px; padding: 11px 12px; border-radius: 14px; margin-bottom: 8px; border: 1px solid var(--card-line); background: rgba(255,255,255,0.03); transition: all .2s; }
+  .mission.done { opacity: 0.45; }
+  .mission.done .mtitle { text-decoration: line-through; }
+  .mission .chk {
+    width: 22px; height: 22px; border-radius: 8px; border: 2px solid var(--sub);
+    flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: transparent; transition: all .15s; margin-top: 1px; background: none; font-family: inherit;
+  }
+  .mission.done .chk { background: var(--ok); border-color: var(--ok); color: #06280f; }
+  .mission .mtitle { font-size: 13px; font-weight: 600; }
+  .mission .mdesc { font-size: 11.5px; color: var(--sub); margin-top: 2px; }
+  .pri { display: inline-block; font-size: 9.5px; padding: 1px 8px; border-radius: 20px; font-weight: 700; margin-right: 6px; vertical-align: 1px; }
+  .pri.p1 { background: rgba(255,93,117,0.2); color: #ff8298; }
+  .pri.p2 { background: rgba(255,185,56,0.18); color: #ffd166; }
+  .pri.p3 { background: rgba(91,140,255,0.18); color: #9db9ff; }
+
+  /* ===== KPI ===== */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .kpi { border-radius: 14px; padding: 12px 8px; text-align: center; border: 1px solid var(--card-line); background: rgba(255,255,255,0.03); }
+  .kpi .n { font-size: 22px; font-weight: 800; }
+  .kpi .l { font-size: 10px; color: var(--sub); margin-top: 2px; }
+  .kpi.k-o .n { color: var(--ok); }
+  .kpi.k-d .n { color: var(--mid); }
+  .kpi.k-x .n { color: var(--bad); }
+
+  .donutwrap { display: flex; align-items: center; gap: 18px; }
+  .legend { flex: 1; }
+  .legend .li { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 4px 0; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 3px; }
+  .legend b { margin-left: auto; font-size: 13px; }
+
+  .chaprow { margin-bottom: 11px; }
+  .chaprow .ct { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 4px; }
+  .chaprow .ct .nm { color: var(--txt); font-weight: 600; }
+  .chaprow .ct .st { color: var(--sub); }
+  .stack { height: 9px; border-radius: 5px; overflow: hidden; display: flex; background: rgba(255,255,255,0.06); }
+  .stack .s-o { background: var(--ok); }
+  .stack .s-d { background: var(--mid); }
+  .stack .s-x { background: var(--bad); }
+  .stack .s-n { background: rgba(255,255,255,0.10); }
+
+  .insight { border-left: 3px solid var(--accent); background: rgba(91,140,255,0.08); padding: 10px 13px; border-radius: 10px; font-size: 12px; margin-bottom: 8px; }
+  .insight b { color: #b9ccff; }
+  .insight.warn { border-color: var(--bad); background: rgba(255,93,117,0.08); }
+  .insight.warn b { color: #ff9cae; }
+  .insight.good { border-color: var(--ok); background: rgba(52,215,123,0.08); }
+  .insight.good b { color: #7fe8ad; }
+
+  /* ===== problems ===== */
+  .toolrow { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .search {
+    flex: 1; min-width: 160px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-line);
+    border-radius: 12px; padding: 9px 13px; color: var(--txt); font-size: 13px; outline: none; font-family: inherit;
+  }
+  .search:focus { border-color: var(--accent); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .chip {
+    border: 1px solid var(--card-line); background: rgba(255,255,255,0.04); color: var(--sub);
+    font-size: 11.5px; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .15s; font-family: inherit; font-weight: 600;
+  }
+  .chip.on { color: #fff; border-color: transparent; }
+  .chip.c-all.on { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+  .chip.c-o.on { background: rgba(52,215,123,0.25); color: #7fe8ad; }
+  .chip.c-d.on { background: rgba(255,185,56,0.22); color: #ffd166; }
+  .chip.c-x.on { background: rgba(255,93,117,0.22); color: #ff8298; }
+  .chip.c-due.on { background: rgba(255,93,117,0.3); color: #ffb3c0; }
+
+  .prob { border: 1px solid var(--card-line); background: rgba(255,255,255,0.03); border-radius: 14px; padding: 11px 13px; margin-bottom: 8px; }
+  .prob .top { display: flex; align-items: center; gap: 8px; }
+  .prob .mk { font-size: 15px; font-weight: 800; width: 22px; text-align: center; }
+  .mk.m-o { color: var(--ok); } .mk.m-d { color: var(--mid); } .mk.m-x { color: var(--bad); } .mk.m-n { color: var(--sub); }
+  .prob .pid { font-size: 11px; color: var(--accent); font-weight: 700; }
+  .prob .pt { font-size: 13px; font-weight: 600; flex: 1; }
+  .prob .meta { font-size: 10.5px; color: var(--sub); margin-top: 4px; padding-left: 30px; }
+  .prob .meta .due-late { color: var(--bad); font-weight: 700; }
+  .prob .meta .due-today { color: var(--mid); font-weight: 700; }
+  .prob .memo { font-size: 11px; color: var(--sub); margin-top: 3px; padding-left: 30px; }
+  .count-note { font-size: 11.5px; color: var(--sub); margin: 4px 2px 10px; }
+
+  /* ===== review ===== */
+  .rgroup { margin-bottom: 16px; }
+  .rhead { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; border-radius: 12px; margin-bottom: 8px; }
+  .rhead.late { background: rgba(255,93,117,0.14); color: #ff8298; }
+  .rhead.today { background: rgba(255,185,56,0.13); color: #ffd166; }
+  .rhead.soon { background: rgba(91,140,255,0.12); color: #9db9ff; }
+  .rhead .cnt { margin-left: auto; font-size: 11px; background: rgba(255,255,255,0.08); border-radius: 10px; padding: 1px 9px; }
+
+  /* ===== lectures ===== */
+  .lecsec { margin-bottom: 6px; }
+  .barlabel { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+  .barlabel b { color: var(--txt); }
+  .bigbar { height: 12px; border-radius: 7px; background: rgba(255,255,255,0.07); overflow: hidden; margin-bottom: 12px; }
+  .bigbar .fill { height: 100%; border-radius: 7px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .6s; }
+  .bigbar .fill.g { background: linear-gradient(90deg, #2bb673, #34d77b); }
+  .lec { display: flex; align-items: center; gap: 9px; padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12.5px; }
+  .lec:last-child { border-bottom: none; }
+  .lec .st { width: 20px; text-align: center; flex-shrink: 0; }
+  .lec.done { color: var(--sub); }
+  .lec.done .nm { text-decoration: line-through; opacity: .75; }
+  .lec .no { color: var(--accent); font-weight: 700; font-size: 11px; width: 30px; flex-shrink: 0; }
+  .lec .min { margin-left: auto; font-size: 10.5px; color: var(--sub); }
+  .lec.next { background: rgba(91,140,255,0.1); border-radius: 10px; border-bottom-color: transparent; }
+  .lec.next .nm { font-weight: 700; }
+  .nextbadge { font-size: 9px; background: var(--accent); color: #fff; border-radius: 8px; padding: 1px 7px; margin-left: 6px; font-weight: 700; }
+
+  .footer { text-align: center; color: var(--sub); font-size: 10.5px; margin-top: 18px; opacity: .8; }
+  @media (max-width: 560px) {
+    .rings { grid-template-columns: repeat(3, 1fr); }
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .hero { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="appbar">
+    <div class="logo">⚔️</div>
+    <div>
+      <h1>BOKI COMMAND</h1>
+      <div class="sub">簿記1級 作戦司令室</div>
+    </div>
+    <div class="right" id="nowdate"></div>
+  </div>
+
+  <!-- ================= HOME ================= -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="cd recon">
+        <div class="flag">🔭</div>
+        <div class="label">6月試験（偵察）</div>
+        <div class="num" id="cd-recon">–<small>日</small></div>
+        <div class="date">2026/06/14 (日) 第170回</div>
+      </div>
+      <div class="cd main">
+        <div class="flag">🏆</div>
+        <div class="label">11月試験（本命）</div>
+        <div class="num" id="cd-main">–<small>日</small></div>
+        <div class="date">2026/11/23 (日) 第171回</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="spark">◈</span> 戦力ゲージ</h2>
+      <div class="rings" id="rings"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="spark">◈</span> 今日のミッション</h2>
+      <div id="missions"></div>
+      <div class="footer" style="margin-top:8px;">チェックは端末に保存されます ✓</div>
+    </div>
+
+    <div class="card">
+      <h2><span class="spark">◈</span> 司令部メモ</h2>
+      <div class="insight good"><b>戦略決定（6/11）:</b> 講義#26〜#28は6/15以降へ。残り3日は✕潰し＋過去問データ取りに全振り。</div>
+      <div class="insight"><b>6/12（金）:</b> 過去問1回 本番形式・時間計測 → 崩れた論点をリスト化。</div>
+      <div class="insight"><b>6/13（土）:</b> 商業過去問で10点確保の確認 ＋ ✕最終チェック → 22時就寝。</div>
+      <div class="insight warn"><b>🧊 封印中:</b> T18歩留・配合差異（例15〜20）。偵察では捨て。11月本命でじっくり潰す。</div>
+    </div>
+  </div>
+
+  <!-- ================= KPI ================= -->
+  <div class="page" id="page-kpi">
+    <div class="kpis" id="kpicards"></div>
+
+    <div class="card">
+      <h2><span class="spark">◈</span> 理解度分布</h2>
+      <div class="donutwrap">
+        <svg id="donut" width="130" height="130" viewBox="0 0 130 130"></svg>
+        <div class="legend" id="donutlegend"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="spark">◈</span> 単元別 制圧マップ（緑=○ 黄=△ 赤=✕）</h2>
+      <div id="chapters"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="spark">◈</span> AI分析インサイト</h2>
+      <div id="insights"></div>
+    </div>
+  </div>
+
+  <!-- ================= PROBLEMS ================= -->
+  <div class="page" id="page-prob">
+    <div class="toolrow">
+      <input class="search" id="q" placeholder="🔍 問題名・番号・メモで検索…">
+    </div>
+    <div class="chips">
+      <button class="chip c-all on" data-f="all">すべて</button>
+      <button class="chip c-due" data-f="due">⏰ 復習期限</button>
+      <button class="chip c-x" data-f="x">✕</button>
+      <button class="chip c-d" data-f="d">△</button>
+      <button class="chip c-o" data-f="o">○</button>
+    </div>
+    <div class="count-note" id="probcount"></div>
+    <div id="problist"></div>
+  </div>
+
+  <!-- ================= REVIEW ================= -->
+  <div class="page" id="page-rev">
+    <div class="card" style="padding:13px 16px;">
+      <div style="font-size:12px; color:var(--sub);">エビングハウス復習キュー — 期限が来た問題から自動で並びます。✕は+1日 / △は+3日 / ○は+7日。</div>
+    </div>
+    <div id="revlist"></div>
+  </div>
+
+  <!-- ================= LECTURES ================= -->
+  <div class="page" id="page-lec">
+    <div class="card">
+      <h2><span class="spark">◈</span> 工業簿記・原価計算（登川）</h2>
+      <div class="barlabel"><span>進捗 <b id="kouLabel"></b></span><span id="kouPct"></span></div>
+      <div class="bigbar"><div class="fill" id="kouBar"></div></div>
+      <div id="kouList"></div>
+    </div>
+    <div class="card">
+      <h2><span class="spark">◈</span> 商業簿記・会計学（登川）</h2>
+      <div class="barlabel"><span>進捗 <b>0 / 60</b></span><span>Phase 1（6/15〜）で開始</span></div>
+      <div class="bigbar"><div class="fill g" style="width:0%"></div></div>
+      <div style="font-size:12px; color:var(--sub); padding:4px 2px;">
+        CPA財務会計（連結CFまで）既習のため「復習・強化」扱い。核心は連結・税効果・退職給付・企業結合と会計学の理論。6/15以降、#26〜#28完走後に着手。
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">BOKI COMMAND v1.0 — データ: exercise-log.md より自動生成</div>
+</div>
+
+<!-- ===== tab bar ===== -->
+<div class="tabbar">
+  <button class="tabbtn active" data-page="home"><span class="ico">🏠</span>ホーム</button>
+  <button class="tabbtn" data-page="kpi"><span class="ico">📊</span>KPI</button>
+  <button class="tabbtn" data-page="prob"><span class="ico">✏️</span>問題</button>
+  <button class="tabbtn" data-page="rev"><span class="ico">🔁</span>復習</button>
+  <button class="tabbtn" data-page="lec"><span class="ico">📚</span>講義</button>
+</div>
+
+<script>
+/*DATA_START*/
+const PROBLEMS = [
+ {
+  "id": "T02-例1-問1",
+  "title": "材料副費の処理 問1",
+  "subject": "工業 #02 材料費会計①",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T02-例1-問2",
+  "title": "材料副費の処理 問2",
+  "subject": "工業 #02 材料費会計①",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T02-例1-問3",
+  "title": "材料副費の処理 問3",
+  "subject": "工業 #02 材料費会計①",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T02-例1-問4",
+  "title": "材料副費の処理 問4",
+  "subject": "工業 #02 材料費会計①",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T02-例2",
+  "title": "値引き・割戻の処理",
+  "subject": "工業 #02 材料費会計①",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "P02-2-1",
+  "title": "材料副費（練習問題）",
+  "subject": "工業 #02 材料費会計①",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "P02-2-2",
+  "title": "予定消費価格と予定受入価格",
+  "subject": "工業 #03 材料費会計②",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "P02-2-3",
+  "title": "非原価項目",
+  "subject": "工業 #03 材料費会計②",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T03-例3",
+  "title": "予定受入価格",
+  "subject": "工業 #03 材料費会計②",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T03-例4",
+  "title": "予定価格法",
+  "subject": "工業 #03 材料費会計②",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T04-例1",
+  "title": "賃金（未払いなし）",
+  "subject": "工業 #04 第3章 労務費会計",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T04-例2",
+  "title": "賃金（未払いあり）",
+  "subject": "工業 #04 第3章 労務費会計",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T04-例3",
+  "title": "賃金（予定消費賃率の使用）",
+  "subject": "工業 #04 第3章 労務費会計",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "P03-3-1",
+  "title": "予定消費賃率",
+  "subject": "工業 #04 第3章 労務費会計",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "P03-3-2",
+  "title": "賃率差異",
+  "subject": "工業 #04 第3章 労務費会計",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "P03-3-3",
+  "title": "未払賃金",
+  "subject": "工業 #04 第3章 労務費会計",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T05-例1",
+  "title": "経費の消費額の計算",
+  "subject": "工業 #05 第4章 経費会計",
+  "mark": "○",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 2,
+  "memo": "○継続(6/1)"
+ },
+ {
+  "id": "T05-例2",
+  "title": "外注加工賃（無償支給）",
+  "subject": "工業 #05 第4章 経費会計",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 3,
+  "memo": "△継続(5/26)"
+ },
+ {
+  "id": "T08-例5",
+  "title": "補助部門費の予定配賦",
+  "subject": "工業 #08 第6章 部門別計算②",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-08",
+  "count": 3,
+  "memo": "△継続(6/1)"
+ },
+ {
+  "id": "T08-例6",
+  "title": "補助部門費の予算許容額配賦",
+  "subject": "工業 #08 第6章 部門別計算②",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 3,
+  "memo": "△継続(6/1)"
+ },
+ {
+  "id": "P07/08-6-1",
+  "title": "第一次集計",
+  "subject": "工業 #07/#08 部門別計算",
+  "mark": "○",
+  "date": "2026-05-25",
+  "next": "2026-06-08",
+  "count": 1,
+  "memo": "○(5/25)"
+ },
+ {
+  "id": "P07/08-6-2",
+  "title": "補助部門相互間の用役授受",
+  "subject": "工業 #07/#08 部門別計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)"
+ },
+ {
+  "id": "P07/08-6-3",
+  "title": "単一基準と複数基準",
+  "subject": "工業 #07/#08 部門別計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)"
+ },
+ {
+  "id": "P07/08-6-4",
+  "title": "第二次集計と第三次集計",
+  "subject": "工業 #07/#08 部門別計算",
+  "mark": "△",
+  "date": "2026-05-23",
+  "next": "2026-06-06",
+  "count": 3,
+  "memo": "初回✕(5/18)→2回目✕(5/19)→3回目△(5/20)。5/23 罰よりの△継続"
+ },
+ {
+  "id": "P07/08-6-5",
+  "title": "第二次集計方法の判断",
+  "subject": "工業 #07/#08 部門別計算",
+  "mark": "△",
+  "date": "2026-05-23",
+  "next": "2026-06-06",
+  "count": 3,
+  "memo": "初回✕(5/18)→2回目✕(5/19)→3回目△(5/20)。5/23 △継続"
+ },
+ {
+  "id": "T09-例1",
+  "title": "個別原価計算（基本）",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)"
+ },
+ {
+  "id": "T09-例2",
+  "title": "仕損費の直接経費処理①",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-15",
+  "count": 3,
+  "memo": "△継続(6/1)"
+ },
+ {
+  "id": "T09-例3",
+  "title": "仕損費の直接経費処理②",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)"
+ },
+ {
+  "id": "T09-例4",
+  "title": "仕損費の間接経費処理",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-08",
+  "count": 2,
+  "memo": "△継続(6/1)"
+ },
+ {
+  "id": "T09-例5",
+  "title": "作業屑の処理",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)。ほぼ丸"
+ },
+ {
+  "id": "T09-例6",
+  "title": "ロット別個別原価計算",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)。一度忘れていた"
+ },
+ {
+  "id": "P09-7-1",
+  "title": "個別原価計算表（仕損費の直接経費処理）",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)"
+ },
+ {
+  "id": "P09-7-2",
+  "title": "仕損費の処理（間接経費処理）",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)"
+ },
+ {
+  "id": "P09-7-3",
+  "title": "異常仕損費",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)"
+ },
+ {
+  "id": "P09-7-4",
+  "title": "作業屑の処理",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)"
+ },
+ {
+  "id": "P09-7-5",
+  "title": "ロット別個別原価計算",
+  "subject": "工業 #09 第7章 個別原価計算",
+  "mark": "△",
+  "date": "2026-05-26",
+  "next": "2026-06-02",
+  "count": 2,
+  "memo": "△継続(5/26)。罰より△"
+ },
+ {
+  "id": "T10-例1",
+  "title": "完成品総合原価の算定",
+  "subject": "工業 #10 第8章 単純総合原価計算①",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "T10-例2",
+  "title": "月末仕掛品の評価方法",
+  "subject": "工業 #10 第8章 単純総合原価計算①",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "T10-例3",
+  "title": "簡便法としての度外視法①",
+  "subject": "工業 #10 第8章 単純総合原価計算①",
+  "mark": "△",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△継続(5/28)。仕損負担先の判断理解"
+ },
+ {
+  "id": "T10-例4",
+  "title": "簡便法としての度外視法②",
+  "subject": "工業 #10 第8章 単純総合原価計算①",
+  "mark": "△",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△継続(5/28)。括弧なし=終点発生の理解が課題"
+ },
+ {
+  "id": "T10-例5",
+  "title": "進捗度を加味した度外視法①",
+  "subject": "工業 #10 第8章 単純総合原価計算①",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-08",
+  "count": 2,
+  "memo": "△継続(6/1)"
+ },
+ {
+  "id": "T10-例6",
+  "title": "進捗度を加味した度外視法②",
+  "subject": "工業 #10 第8章 単純総合原価計算①",
+  "mark": "△",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 2,
+  "memo": "△継続(5/28)"
+ },
+ {
+  "id": "T10-例7",
+  "title": "非度外視法①",
+  "subject": "工業 #10 第8章 単純総合原価計算①",
+  "mark": "△",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 2,
+  "memo": "△継続(5/28)。先入先出×非度外視のボックス複雑"
+ },
+ {
+  "id": "T10-例8",
+  "title": "非度外視法②",
+  "subject": "工業 #10 第8章 単純総合原価計算①",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "T11-例9",
+  "title": "異常仕損の処理①",
+  "subject": "工業 #11 第8章 単純総合原価計算②",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-08",
+  "count": 2,
+  "memo": "△継続(6/1)"
+ },
+ {
+  "id": "T11-例10",
+  "title": "異常仕損の処理②",
+  "subject": "工業 #11 第8章 単純総合原価計算②",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-08",
+  "count": 2,
+  "memo": "△継続(6/1)"
+ },
+ {
+  "id": "T11-例11",
+  "title": "副産物の処理",
+  "subject": "工業 #11 第8章 単純総合原価計算②",
+  "mark": "△",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 2,
+  "memo": "△継続(5/28)"
+ },
+ {
+  "id": "T11-例12",
+  "title": "材料の平均的投入",
+  "subject": "工業 #11 第8章 単純総合原価計算②",
+  "mark": "△",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 2,
+  "memo": "△継続(5/28)"
+ },
+ {
+  "id": "T11-例13",
+  "title": "減損の安定的発生",
+  "subject": "工業 #11 第8章 単純総合原価計算②",
+  "mark": "△",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 2,
+  "memo": "△継続(5/28)"
+ },
+ {
+  "id": "T11-例14",
+  "title": "純粋先入先出法における仕損費の処理",
+  "subject": "工業 #11 第8章 単純総合原価計算②",
+  "mark": "△",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 2,
+  "memo": "△継続(5/28)"
+ },
+ {
+  "id": "P08-8-1",
+  "title": "先入先出法・平均法",
+  "subject": "工業 #10/#11 第8章 単純総合原価計算",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "P08-8-2",
+  "title": "度外視法と非度外視法①",
+  "subject": "工業 #10/#11 第8章 単純総合原価計算",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "P08-8-3",
+  "title": "度外視法と非度外視法②",
+  "subject": "工業 #10/#11 第8章 単純総合原価計算",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "P08-8-4",
+  "title": "度外視法と非度外視法③",
+  "subject": "工業 #10/#11 第8章 単純総合原価計算",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "P08-8-5",
+  "title": "異常仕損費の処理①",
+  "subject": "工業 #10/#11 第8章 単純総合原価計算",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "P08-8-6",
+  "title": "異常仕損費の処理②",
+  "subject": "工業 #10/#11 第8章 単純総合原価計算",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "P08-8-7",
+  "title": "副産物",
+  "subject": "工業 #10/#11 第8章 単純総合原価計算",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "P08-8-8",
+  "title": "減損の安定的発生",
+  "subject": "工業 #10/#11 第8章 単純総合原価計算",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "P08-8-9",
+  "title": "純粋先入先出法",
+  "subject": "工業 #10/#11 第8章 単純総合原価計算",
+  "mark": "○",
+  "date": "2026-05-28",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "△→○昇格(5/28)"
+ },
+ {
+  "id": "T12-例1",
+  "title": "累加法①",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-08",
+  "count": 2,
+  "memo": "△継続(6/1)。借方合計-評価額=貸方合計の等式で完全理解"
+ },
+ {
+  "id": "T12-例2",
+  "title": "累加法・工程完了入庫品がある場合",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-08",
+  "count": 2,
+  "memo": "△継続(6/1)。工程完了仕掛品の単価計算ステップ理解"
+ },
+ {
+  "id": "T12-例3",
+  "title": "累加法・予定原価による振替",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-08",
+  "count": 2,
+  "memo": "△継続(6/1)"
+ },
+ {
+  "id": "T12-例7",
+  "title": "追加材料（増加しない場合・定点投入）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 3,
+  "memo": "✕→△昇格(6/6)"
+ },
+ {
+  "id": "T12-例8",
+  "title": "追加材料（増加しない場合・平均的投入）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 3,
+  "memo": "✕→△昇格(6/6)"
+ },
+ {
+  "id": "T12-例9",
+  "title": "追加材料（増加する場合・定点投入①）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 3,
+  "memo": "✕→△昇格(6/6)"
+ },
+ {
+  "id": "T12-例10",
+  "title": "追加材料（増加する場合・定点投入②）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 3,
+  "memo": "✕→△昇格(6/6)。割合を把握すれば通常の度外視法と同じ構造"
+ },
+ {
+  "id": "T12-例11",
+  "title": "追加材料（増加する場合・平均的投入）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 3,
+  "memo": "✕→△昇格(6/6)。割合の理解で追加材料の計算が腑に落ちた"
+ },
+ {
+  "id": "T14-例1",
+  "title": "単純総合原価計算に近い方法①",
+  "subject": "工業 #14 等級別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "△継続(6/2)"
+ },
+ {
+  "id": "T14-例2",
+  "title": "単純総合原価計算に近い方法②",
+  "subject": "工業 #14 等級別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "△継続(6/2)"
+ },
+ {
+  "id": "T14-例3",
+  "title": "単純総合原価計算に近い方法③",
+  "subject": "工業 #14 等級別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "✕→△昇格(6/1)。当月費用按分→等級別独立計算の構造理解"
+ },
+ {
+  "id": "T14-例4",
+  "title": "組別総合原価計算に近い方法",
+  "subject": "工業 #14 等級別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "✕→△昇格(6/1)。材料費=数量按分／加工費=換算量按分の区別理解"
+ },
+ {
+  "id": "P04-4-1",
+  "title": "支払経費・月割経費・測定経費・発生経費",
+  "subject": "工業 #05 第4章 経費会計",
+  "mark": "-",
+  "date": "",
+  "next": "2026-06-01",
+  "count": 0,
+  "memo": "未解答・要実施"
+ },
+ {
+  "id": "P04-4-2",
+  "title": "直接経費",
+  "subject": "工業 #05 第4章 経費会計",
+  "mark": "-",
+  "date": "",
+  "next": "2026-06-01",
+  "count": 0,
+  "memo": "未解答・要実施"
+ },
+ {
+  "id": "P05-5-1",
+  "title": "基準操業度",
+  "subject": "工業 #06 第5章 製造間接費会計",
+  "mark": "-",
+  "date": "",
+  "next": "2026-06-01",
+  "count": 0,
+  "memo": "未解答・要実施"
+ },
+ {
+  "id": "P05-5-2",
+  "title": "差異分析",
+  "subject": "工業 #06 第5章 製造間接費会計",
+  "mark": "-",
+  "date": "",
+  "next": "2026-06-01",
+  "count": 0,
+  "memo": "未解答・要実施"
+ },
+ {
+  "id": "P09-9-1",
+  "title": "累加法",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "初回△(6/1)"
+ },
+ {
+  "id": "P09-9-2",
+  "title": "予定振替価格",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "初回△(6/1)"
+ },
+ {
+  "id": "P09-9-3",
+  "title": "非累加法（通常の非累加法）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "初回△(6/1)"
+ },
+ {
+  "id": "P09-9-4",
+  "title": "非累加法（改正計算方式）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-05",
+  "count": 2,
+  "memo": "✕→△昇格(6/2)。動画復習後に加工費の概念理解"
+ },
+ {
+  "id": "P09-9-5",
+  "title": "加工費工程別総合原価計算",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-05",
+  "count": 2,
+  "memo": "✕→△昇格(6/2)。動画復習後に理解"
+ },
+ {
+  "id": "P09-9-6",
+  "title": "追加材料（増量しない場合）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-05",
+  "count": 2,
+  "memo": "✕→△昇格(6/2)"
+ },
+ {
+  "id": "P09-9-7",
+  "title": "追加材料（増量する場合・始点投入）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-05",
+  "count": 2,
+  "memo": "✕→△昇格(6/2)"
+ },
+ {
+  "id": "P09-9-8",
+  "title": "追加材料（増量する場合・途中点投入）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-05",
+  "count": 2,
+  "memo": "✕→△昇格(6/2)"
+ },
+ {
+  "id": "P09-9-9",
+  "title": "追加材料（増量する場合・平均的投入）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-05",
+  "count": 2,
+  "memo": "✕→△昇格(6/2)"
+ },
+ {
+  "id": "P10-10-1",
+  "title": "組別総合原価計算",
+  "subject": "工業 #13 組別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "初回△(6/1)"
+ },
+ {
+  "id": "P11-11-1",
+  "title": "完成品原価按分法",
+  "subject": "工業 #14 等級別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "初回△(6/1)"
+ },
+ {
+  "id": "P11-11-2",
+  "title": "プール計算法①",
+  "subject": "工業 #14 等級別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "初回△(6/1)"
+ },
+ {
+  "id": "P11-11-3",
+  "title": "プール計算法②",
+  "subject": "工業 #14 等級別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "初回△(6/1)"
+ },
+ {
+  "id": "P11-11-4",
+  "title": "当月製造費用按分法",
+  "subject": "工業 #14 等級別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-04",
+  "count": 1,
+  "memo": "初回△(6/1)"
+ },
+ {
+  "id": "T13-例1",
+  "title": "組別総合原価計算",
+  "subject": "工業 #13 組別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "△継続(6/2)"
+ },
+ {
+  "id": "T15-例1",
+  "title": "生産量・物量・正常市価基準",
+  "subject": "工業 #15 連産品",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-05",
+  "count": 2,
+  "memo": "✕→△昇格(6/2)"
+ },
+ {
+  "id": "T15-例2",
+  "title": "分離点推定市価基準①",
+  "subject": "工業 #15 連産品",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)"
+ },
+ {
+  "id": "T15-例3",
+  "title": "分離点推定市価基準②",
+  "subject": "工業 #15 連産品",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)"
+ },
+ {
+  "id": "T15-例4",
+  "title": "分離点推定市価基準③",
+  "subject": "工業 #15 連産品",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)"
+ },
+ {
+  "id": "T15-例5",
+  "title": "分離点推定価値基準",
+  "subject": "工業 #15 連産品",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)"
+ },
+ {
+  "id": "T15-例6",
+  "title": "副産物とみなす場合",
+  "subject": "工業 #15 連産品",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)"
+ },
+ {
+  "id": "T13-例2",
+  "title": "工程別組別総合原価計算",
+  "subject": "工業 #13 組別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "△継続(6/2)"
+ },
+ {
+  "id": "T16-例1",
+  "title": "完成品・月末仕掛品標準原価",
+  "subject": "工業 #16 標準原価計算①",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-05",
+  "count": 1,
+  "memo": "初回△(6/2)"
+ },
+ {
+  "id": "T16-例2",
+  "title": "標準原価差異の算定",
+  "subject": "工業 #16 標準原価計算①",
+  "mark": "△",
+  "date": "2026-06-02",
+  "next": "2026-06-05",
+  "count": 1,
+  "memo": "初回△(6/2)"
+ },
+ {
+  "id": "T16-例3",
+  "title": "製造直接費差異の分析",
+  "subject": "工業 #16 標準原価計算①",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)。苦手論点"
+ },
+ {
+  "id": "T16-例4",
+  "title": "製造間接費差異の分析 固定予算",
+  "subject": "工業 #16 標準原価計算①",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)"
+ },
+ {
+  "id": "T16-例5",
+  "title": "製造間接費差異の分析〜公式法変動予算",
+  "subject": "工業 #16 標準原価計算①",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)"
+ },
+ {
+  "id": "T16-例6",
+  "title": "製造間接費差異の分析〜実査法変動予算",
+  "subject": "工業 #16 標準原価計算①",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)。✕に近い△。変数多くて複雑"
+ },
+ {
+  "id": "T16-例7",
+  "title": "勘定記入法",
+  "subject": "工業 #16 標準原価計算①",
+  "mark": "△",
+  "date": "2026-06-03",
+  "next": "2026-06-06",
+  "count": 2,
+  "memo": "✕→△昇格(6/3)"
+ },
+ {
+  "id": "T17-例8",
+  "title": "原価差異の会計処理",
+  "subject": "工業 #17 標準原価計算②",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "✕→△昇格(6/6)。問2数量按分/問3金額按分の違いが核心"
+ },
+ {
+  "id": "T17-例9",
+  "title": "材料受入価格差異の会計処理①",
+  "subject": "工業 #17 標準原価計算②",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "✕→△昇格(6/6)"
+ },
+ {
+  "id": "T17-例10",
+  "title": "材料受入価格差異の会計処理②",
+  "subject": "工業 #17 標準原価計算②",
+  "mark": "✕",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "✕継続(6/6)。ケース1〜3の見解が重い。重要度B・6月は捨て可、11月で深掘り"
+ },
+ {
+  "id": "T17-例11",
+  "title": "正常仕損品がある場合",
+  "subject": "工業 #17 標準原価計算②",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "✕→△昇格(6/6)。重要度A。仕損発生地点(中間点)と材料始点投入のズレ→材料100%/労務・間接50%。問題文の「中間地点」読み取りが鍵"
+ },
+ {
+  "id": "T17-例12",
+  "title": "仕損費差異（異常仕損）",
+  "subject": "工業 #17 標準原価計算②",
+  "mark": "✕",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "✕継続(6/6)。異常仕損=非原価・損益直撃。解説でもモヤる。6/9再挑戦"
+ },
+ {
+  "id": "T18-例13",
+  "title": "減損が生じる場合の製品原価計算",
+  "subject": "工業 #18 標準原価計算③",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/6)→△昇格(6/8)。正常減損は標準コストに織込済→ボックス図はシンプル"
+ },
+ {
+  "id": "T18-例14",
+  "title": "数量差異の分析①",
+  "subject": "工業 #18 標準原価計算③",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 3,
+  "memo": "初回✕(6/6)→✕(6/8)→動画で△昇格(6/8)。歩留差異・配合差異の面積図"
+ },
+ {
+  "id": "T18-例15",
+  "title": "数量差異の分析②",
+  "subject": "工業 #18 標準原価計算③",
+  "mark": "✕",
+  "date": "2026-06-08",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "初回✕(6/6)→2回目も✕(6/8)。本人「過去最高にわからない」。投入基準の標準減損量の逆算が壁。11月本命でじっくり再挑戦する論点"
+ },
+ {
+  "id": "T18-例16",
+  "title": "作業時間差異の分析①",
+  "subject": "工業 #18 標準原価計算③",
+  "mark": "✕",
+  "date": "2026-06-08",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "初回✕(6/6)→✕継続(6/8)。歩留系・11月本命でじっくり潰す"
+ },
+ {
+  "id": "T18-例17",
+  "title": "製造間接費差異の分析",
+  "subject": "工業 #18 標準原価計算③",
+  "mark": "✕",
+  "date": "2026-06-08",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "初回✕(6/6)→✕継続(6/8)。歩留系・11月本命でじっくり潰す"
+ },
+ {
+  "id": "T12-例5",
+  "title": "非累加法②（改正計算方式）",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 3,
+  "memo": "✕→△昇格(6/6)。改正計算方式は計算は累加法とほぼ一致、勘定記入方式が違う点が核心"
+ },
+ {
+  "id": "T12-例6",
+  "title": "加工費工程別総合原価計算",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-06",
+  "next": "2026-06-09",
+  "count": 3,
+  "memo": "✕→△昇格(6/6)。度外視法=仕損換算量を分母から除外し良品が自動吸収。別途引かない理由を理解"
+ },
+ {
+  "id": "T12-例4",
+  "title": "非累加法①",
+  "subject": "工業 #12 工程別総合原価計算",
+  "mark": "△",
+  "date": "2026-06-01",
+  "next": "2026-06-08",
+  "count": 2,
+  "memo": "△継続(6/1)。前工程費を抜いて後から手動加算の構造理解"
+ },
+ {
+  "id": "T18-例18",
+  "title": "歩留差異総合問題",
+  "subject": "工業 #18 標準原価計算③",
+  "mark": "✕",
+  "date": "2026-06-08",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "初回✕(6/6)→✕継続(6/8)。歩留系総合・11月本命でじっくり潰す"
+ },
+ {
+  "id": "T18-例19",
+  "title": "工程別標準原価計算・作業点別標準原価計算",
+  "subject": "工業 #18 標準原価計算③",
+  "mark": "✕",
+  "date": "2026-06-08",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "初回✕(6/7)→✕継続(6/8)。歩留系・11月本命でじっくり潰す"
+ },
+ {
+  "id": "T18-例20",
+  "title": "作業点別標準原価計算",
+  "subject": "工業 #18 標準原価計算③",
+  "mark": "✕",
+  "date": "2026-06-08",
+  "next": "2026-06-09",
+  "count": 2,
+  "memo": "初回✕(6/7)→✕継続(6/8)。作業区分ごとのボックス図＋工程全体。11月本命でじっくり潰す"
+ },
+ {
+  "id": "T19-例1",
+  "title": "直接原価計算の損益計算書",
+  "subject": "工業 #19 直接原価計算",
+  "mark": "△",
+  "date": "2026-06-09",
+  "next": "2026-06-12",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/9)。重要度A。変動製造原価を売上原価に、固定製造間接費を期間原価処理"
+ },
+ {
+  "id": "T19-例2",
+  "title": "全部原価計算と直接原価計算の営業利益の差額①",
+  "subject": "工業 #19 直接原価計算",
+  "mark": "△",
+  "date": "2026-06-09",
+  "next": "2026-06-12",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/9)。営業利益の差＝期末在庫の固定製造間接費－期首在庫の固定製造間接費"
+ },
+ {
+  "id": "T19-例3",
+  "title": "全部原価計算と直接原価計算の営業利益の差額②",
+  "subject": "工業 #19 直接原価計算",
+  "mark": "△",
+  "date": "2026-06-09",
+  "next": "2026-06-12",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/9)"
+ },
+ {
+  "id": "T19-例4",
+  "title": "固定費調整",
+  "subject": "工業 #19 直接原価計算",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 3,
+  "memo": "初回✕(6/7)→✕(6/9)→△昇格(6/10)。一括調整法と転がし計算法の2方法。問1=転がし/問2=変動加工費配賦の一括。2連敗から脱出"
+ },
+ {
+  "id": "T19-例5",
+  "title": "直接標準原価計算における固定費調整",
+  "subject": "工業 #19 直接原価計算",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 3,
+  "memo": "初回✕(6/7)→✕(6/9)→△昇格(6/10)。ころがし法・一括法の違いがネックだったが理解"
+ },
+ {
+  "id": "T19-例6",
+  "title": "セグメント別損益計算書",
+  "subject": "工業 #19 直接原価計算",
+  "mark": "△",
+  "date": "2026-06-09",
+  "next": "2026-06-12",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/9)。純益法vs貢献利益法。本人「業務に活かせそう」と実務直結を実感。個別固定費/共通固定費の区分が核心"
+ },
+ {
+  "id": "T20-例1",
+  "title": "原価分解（固変分解）",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。高低点法・回帰分析法"
+ },
+ {
+  "id": "T20-例2",
+  "title": "損益分岐点の算定①",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。BEP売上高=固定費÷限界利益率、BEP販売量=固定費÷単位限界利益"
+ },
+ {
+  "id": "T20-例3",
+  "title": "損益分岐点の算定②",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。限界利益率=1-変動費率。BEP売上高=固定費÷(1-変動費率)"
+ },
+ {
+  "id": "T20-例4",
+  "title": "目標営業利益達成点の算定①",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。(固定費+目標利益)÷限界利益率。BEPの分子に目標利益を足すだけ"
+ },
+ {
+  "id": "T20-例5",
+  "title": "目標営業利益達成点の算定②",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。目標利益率(売上比%)→固定費÷(限界利益率-目標利益率)で分母から引く"
+ },
+ {
+  "id": "T20-例6",
+  "title": "目標営業利益達成点の算定③",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。目標利益額→(固定費+目標利益)÷限界利益率。端数の合理的処理に注意"
+ },
+ {
+  "id": "T20-例7",
+  "title": "資本利益率と資本回収点売上高",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。目標資本利益率を達成する売上高。利益=資本×目標資本利益率をCVPに組み込む"
+ },
+ {
+  "id": "T20-例8",
+  "title": "変動的資本と固定的資本",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。資本を売上連動の変動的資本と固定的資本に分解してCVPに組込む応用。重要度B"
+ },
+ {
+  "id": "T20-例9",
+  "title": "安全余裕率と損益分岐点比率",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。安全余裕率+損益分岐点比率=100%。補数の関係が核心"
+ },
+ {
+  "id": "T20-例10",
+  "title": "経営レバレッジ係数",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。本人「暗記ゲー」。経営レバレッジ係数=限界利益÷営業利益。売上増加率×係数=営業利益増加率"
+ },
+ {
+  "id": "T20-例11",
+  "title": "複数製品のCVP分析①",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-08",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/8)。多品種製品。セールスミックス一定→加重平均限界利益率でBEPを出す"
+ },
+ {
+  "id": "T20-例12",
+  "title": "全部原価計算におけるCVP分析",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-09",
+  "next": "2026-06-12",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/9)。売上総利益＋固定製造間接費－変動販売費＝限界利益の調整がカギ。製造間接費から固定分を割り出して変動分を分解"
+ },
+ {
+  "id": "T20-例13",
+  "title": "感度分析①",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-09",
+  "next": "2026-06-12",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/9)。販売価格・販売量・変動費・固定費が変化したとき利益がどう動くか"
+ },
+ {
+  "id": "T20-例14",
+  "title": "感度分析②",
+  "subject": "工業 #20 CVP分析",
+  "mark": "△",
+  "date": "2026-06-09",
+  "next": "2026-06-12",
+  "count": 2,
+  "memo": "初回✕(6/7)→△昇格(6/9)。感度分析の応用"
+ },
+ {
+  "id": "T21-例1",
+  "title": "予算編成",
+  "subject": "工業 #21 予算管理",
+  "mark": "✕",
+  "date": "2026-06-07",
+  "next": "2026-06-08",
+  "count": 1,
+  "memo": "初回✕(6/7)"
+ },
+ {
+  "id": "T21-例2",
+  "title": "予算実績差異分析①",
+  "subject": "工業 #21 予算管理",
+  "mark": "✕",
+  "date": "2026-06-07",
+  "next": "2026-06-08",
+  "count": 1,
+  "memo": "初回✕(6/7)。問1✕"
+ },
+ {
+  "id": "T21-例3",
+  "title": "予算実績差異分析②",
+  "subject": "工業 #21 予算管理",
+  "mark": "✕",
+  "date": "2026-06-07",
+  "next": "2026-06-08",
+  "count": 1,
+  "memo": "初回✕(6/7)。問2✕"
+ },
+ {
+  "id": "T21-例4",
+  "title": "市場占拠率差異と市場総需要量差異",
+  "subject": "工業 #21 予算管理",
+  "mark": "✕",
+  "date": "2026-06-07",
+  "next": "2026-06-08",
+  "count": 1,
+  "memo": "初回✕(6/7)"
+ },
+ {
+  "id": "T21-例5",
+  "title": "売上品構成差異と売上品数量差異",
+  "subject": "工業 #21 予算管理",
+  "mark": "✕",
+  "date": "2026-06-07",
+  "next": "2026-06-08",
+  "count": 1,
+  "memo": "初回✕(6/7)"
+ },
+ {
+  "id": "T22-例1",
+  "title": "現金資金の管理",
+  "subject": "工業 #22 資金管理",
+  "mark": "✕",
+  "date": "2026-06-07",
+  "next": "2026-06-08",
+  "count": 1,
+  "memo": "初回✕(6/7)。財務部だが初見✕。次はすぐいけそうとのこと"
+ },
+ {
+  "id": "T23-例1",
+  "title": "直接原価計算と戦術的意思決定",
+  "subject": "工業 #23 意思決定会計Ⅰ①",
+  "mark": "△",
+  "date": "2026-06-11",
+  "next": "2026-06-14",
+  "count": 2,
+  "memo": "初回✕(6/8)→△昇格(6/11)。直接原価計算の変動費=差額原価、固定費=埋没原価として意思決定に活用"
+ },
+ {
+  "id": "T23-例2",
+  "title": "関連原価の損益分岐点分析①",
+  "subject": "工業 #23 意思決定会計Ⅰ①",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 2,
+  "memo": "初回✕(6/8)→△昇格(6/10)。切替点(無差別点)の算定。代替案の差額原価・差額収益で有利不利判定"
+ },
+ {
+  "id": "T23-例3",
+  "title": "関連原価の損益分岐点分析②",
+  "subject": "工業 #23 意思決定会計Ⅰ①",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 2,
+  "memo": "初回✕(6/8)→△昇格(6/10)。以上/以下・超/未満の問われ方に注意して切替点を判定"
+ },
+ {
+  "id": "T23-例4",
+  "title": "コストベースの価格決定",
+  "subject": "工業 #23 意思決定会計Ⅰ①",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 2,
+  "memo": "初回✕(6/8)→△昇格(6/10)。原価に一定のマークアップを加えて売価を決める。全部原価加算/製造原価加算等の基準別"
+ },
+ {
+  "id": "T23-例5",
+  "title": "目標を達成する販売価格",
+  "subject": "工業 #23 意思決定会計Ⅰ①",
+  "mark": "✕",
+  "date": "2026-06-10",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/8)→✕継続(6/10)。目標利益(率)から逆算して必要販売価格を求める。CVPの逆算的アプローチ"
+ },
+ {
+  "id": "T23-例6",
+  "title": "価格低限",
+  "subject": "工業 #23 意思決定会計Ⅰ①",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 2,
+  "memo": "初回✕(6/8)→△昇格(6/10)。受注可否の最低価格(プライスフロア)。埋没原価を除いた差額原価が下限ライン"
+ },
+ {
+  "id": "T23-例7",
+  "title": "共通の制約条件１つ",
+  "subject": "工業 #23 意思決定会計Ⅰ①",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 2,
+  "memo": "初回✕(6/8)→△昇格(6/10)。最適セールスミックス。制約1つ→制約単位あたり限界利益が大きい製品を優先"
+ },
+ {
+  "id": "T23-例8",
+  "title": "共通の制約条件２つ以上",
+  "subject": "工業 #23 意思決定会計Ⅰ①",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 2,
+  "memo": "初回✕(6/8)→△昇格(6/10)。制約2つ以上→リニアプログラミング(LP)。制約式を図示し実行可能領域の頂点で最適解"
+ },
+ {
+  "id": "T24-例9",
+  "title": "自製か購入かの意思決定①",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 2,
+  "memo": "初回✕(6/9)→△昇格(6/10)。メイク・オア・バイ。差額原価で自製vs外注の有利不利を判定"
+ },
+ {
+  "id": "T24-例10",
+  "title": "自製か購入かの意思決定②",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 2,
+  "memo": "初回✕(6/9)→△昇格(6/10)。遊休設備の利用可否・機会原価を加味した自製or購入の判定"
+ },
+ {
+  "id": "T24-例11",
+  "title": "自製か購入かの意思決定③",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "✕",
+  "date": "2026-06-10",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/9)→✕継続(6/10)。自製or購入の応用問題"
+ },
+ {
+  "id": "T24-例12",
+  "title": "自製か購入かの意思決定④",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "△",
+  "date": "2026-06-10",
+  "next": "2026-06-13",
+  "count": 2,
+  "memo": "初回✕(6/9)→△昇格(6/10)。自製or購入の総合問題"
+ },
+ {
+  "id": "T24-例13",
+  "title": "受注可否の意思決定①",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "✕",
+  "date": "2026-06-10",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/9)→✕継続(6/10)。受注するかしないかを差額原価・差額収益で判定"
+ },
+ {
+  "id": "T24-例14",
+  "title": "受注可否の意思決定②",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "✕",
+  "date": "2026-06-10",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/9)→✕継続(6/10)。受注可否の応用。機会原価・遊休能力の有無で判断が変わる"
+ },
+ {
+  "id": "T24-例15",
+  "title": "受注可否の意思決定③",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "✕",
+  "date": "2026-06-10",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/9)→✕継続(6/10)。受注可否の総合問題"
+ },
+ {
+  "id": "T24-例16",
+  "title": "追加加工の可否の意思決定",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "✕",
+  "date": "2026-06-10",
+  "next": "2026-06-11",
+  "count": 2,
+  "memo": "初回✕(6/9)→✕継続(6/10)。半製品で売るか追加加工して売るか。分離点までの原価は埋没、追加加工費vs増分収益で判定"
+ },
+ {
+  "id": "T24-例20",
+  "title": "セグメントの廃止か継続かの意思決定",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "✕",
+  "date": "2026-06-09",
+  "next": "2026-06-10",
+  "count": 1,
+  "memo": "初回✕(6/9)。例18〜19(EOQ発注量/再発注点)はページ飛ばし。セグメント廃止で消える個別固定費vs失う貢献利益で判定"
+ },
+ {
+  "id": "T24-例17",
+  "title": "経済的発注点",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "✕",
+  "date": "2026-06-09",
+  "next": "2026-06-10",
+  "count": 1,
+  "memo": "初回✕(6/9)。EOQ。発注コスト＋在庫保有コストの合計が最小になる発注量を求める"
+ },
+ {
+  "id": "T24-例18",
+  "title": "経済的発注量分析①",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "✕",
+  "date": "2026-06-09",
+  "next": "2026-06-10",
+  "count": 1,
+  "memo": "初回✕(6/9)。EOQの応用。1回あたり発注量を変えて年間総コストを比較・最適発注量を判定"
+ },
+ {
+  "id": "T24-例19",
+  "title": "経済的発注量分析②",
+  "subject": "工業 #24 意思決定会計Ⅰ②",
+  "mark": "✕",
+  "date": "2026-06-09",
+  "next": "2026-06-10",
+  "count": 1,
+  "memo": "初回✕(6/9)。EOQ応用②。安全在庫・再発注点の算定"
+ },
+ {
+  "id": "T25-例1",
+  "title": "加重平均資本コストの算定",
+  "subject": "工業 #25 意思決定会計Ⅱ①",
+  "mark": "✕",
+  "date": "2026-06-11",
+  "next": "2026-06-12",
+  "count": 1,
+  "memo": "初回✕(6/11)。WACC。負債コスト(税引後)×負債比率＋自己資本コスト×株主資本比率"
+ },
+ {
+  "id": "T25-例2",
+  "title": "正味現在価値法（NPV）",
+  "subject": "工業 #25 意思決定会計Ⅱ①",
+  "mark": "✕",
+  "date": "2026-06-11",
+  "next": "2026-06-12",
+  "count": 1,
+  "memo": "初回✕(6/11)。将来CFを資本コストで割引いた正味現在価値がプラスなら採用。額が大きい案が有利"
+ },
+ {
+  "id": "T25-例3",
+  "title": "現在価値指数法（収益性指数法）",
+  "subject": "工業 #25 意思決定会計Ⅱ①",
+  "mark": "✕",
+  "date": "2026-06-11",
+  "next": "2026-06-12",
+  "count": 1,
+  "memo": "初回✕(6/11)。CF現在価値合計÷投資額現在価値合計。指数が高い案が有利。投資額の異なる案の比較に有効"
+ },
+ {
+  "id": "T25-例4",
+  "title": "内部利益率法（IRR）",
+  "subject": "工業 #25 意思決定会計Ⅱ①",
+  "mark": "✕",
+  "date": "2026-06-11",
+  "next": "2026-06-12",
+  "count": 1,
+  "memo": "初回✕(6/11)。NPV=0となる割引率を求め、資本コスト率を上回れば採用。補間法で算定"
+ },
+ {
+  "id": "T25-例5",
+  "title": "回収期間法",
+  "subject": "工業 #25 意思決定会計Ⅱ①",
+  "mark": "✕",
+  "date": "2026-06-11",
+  "next": "2026-06-12",
+  "count": 1,
+  "memo": "初回✕(6/11)。投資額を何年で回収できるか。回収期間が短い案が有利。時間価値を無視する点が短所"
+ },
+ {
+  "id": "T25-例6",
+  "title": "投下資本利益率法",
+  "subject": "工業 #25 意思決定会計Ⅱ①",
+  "mark": "✕",
+  "date": "2026-06-11",
+  "next": "2026-06-12",
+  "count": 1,
+  "memo": "初回✕(6/11)。年平均利益÷投資額。利益率が高い案が有利。会計利益ベースでCFでない点に注意"
+ }
+];
+/*DATA_END*/
+
+const LECTURES = [
+  [1,"原価計算総論",20],[2,"材料費会計①",88],[3,"材料費会計②",77],[4,"労務費会計",116],
+  [5,"経費会計",41],[6,"製造間接費",92],[7,"部門別計算①",95],[8,"部門別計算②",165],
+  [9,"個別原価計算",161],[10,"単純総合原価計算①",113],[11,"単純総合原価計算②",151],
+  [12,"工程別総合原価計算",146],[13,"組別総合原価計算",22],[14,"等級別総合原価計算",61],
+  [15,"連産品",116],[16,"標準原価計算①",120],[17,"標準原価計算②",173],[18,"標準原価計算③",141],
+  [19,"直接原価計算",114],[20,"CVP分析",112],[21,"予算管理",150],[22,"資金管理",25],
+  [23,"意思決定会計Ⅰ①",155],[24,"意思決定会計Ⅰ②",104],[25,"意思決定会計Ⅱ①",124],
+  [26,"意思決定会計Ⅱ②",108],[27,"戦略的原価計算",142],[28,"分権組織とグループ経営",125]
+];
+const LEC_DONE = 25;
+const EXAM_RECON = new Date(2026,5,14);
+const EXAM_MAIN  = new Date(2026,5+5,23);
+
+const today = new Date(); today.setHours(0,0,0,0);
+const fmt = d => `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+const days = (a,b) => Math.round((a-b)/86400000);
+
+document.getElementById('nowdate').innerHTML =
+  fmt(today) + '<br>' + ['日','月','火','水','木','金','土'][today.getDay()] + '曜日';
+document.getElementById('cd-recon').innerHTML = Math.max(0,days(EXAM_RECON,today)) + '<small>日</small>';
+document.getElementById('cd-main').innerHTML  = Math.max(0,days(EXAM_MAIN,today))  + '<small>日</small>';
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tabbtn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('page-'+b.dataset.page).classList.add('active');
+    window.scrollTo({top:0});
+  };
+});
+
+/* ---------- derive ---------- */
+const answered = PROBLEMS.filter(p=>p.mark!=='-');
+const cnt = m => answered.filter(p=>p.mark===m).length;
+const C = {o:cnt('○'), d:cnt('△'), x:cnt('✕')};
+const total = answered.length;
+const dueList = answered.filter(p=>p.next && new Date(p.next) <= today);
+const overdue = answered.filter(p=>p.next && new Date(p.next) < today);
+const promo = answered.filter(p=>/昇格/.test(p.memo)).length;
+const frozen = answered.filter(p=>/11月本命/.test(p.memo) && p.mark==='✕').length;
+
+/* ---------- rings (home) ---------- */
+function ring(pct,color,big,small,cap){
+  const r=36,c=2*Math.PI*r,off=c*(1-pct);
+  return `<div class="ringbox"><div class="ring">
+    <svg width="86" height="86" viewBox="0 0 86 86">
+      <circle cx="43" cy="43" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+      <circle cx="43" cy="43" r="${r}" fill="none" stroke="${color}" stroke-width="8"
+        stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
+    </svg>
+    <div class="val"><b>${big}</b><span>${small}</span></div>
+  </div><div class="cap">${cap}</div></div>`;
+}
+const safeRate = (C.o+C.d)/Math.max(1,total);
+document.getElementById('rings').innerHTML =
+  ring(LEC_DONE/28,'#5b8cff',LEC_DONE+'/28','講義','工原インプット') +
+  ring(safeRate,'#34d77b',Math.round(safeRate*100)+'%','○+△','戦える問題率') +
+  ring(C.x/Math.max(1,total),'#ff5d75',C.x,'問','要撃破 ✕');
+
+/* ---------- missions (home) ---------- */
+const MISSIONS = [
+  {id:'m1', pri:'p1', t:'✕6問を△へ（T23-例5 / T24-例11,13,14,15,16）', d:'目標販売価格・自製or購入③・受注可否①②③・追加加工。意思決定の取りこぼし掃討'},
+  {id:'m2', pri:'p2', t:'T25-例1〜6 解き直し（WACC/NPV/IRR/回収期間…）', d:'昨日視聴した#25の6問。数式好きなら伸びる論点、△に乗せる'},
+  {id:'m3', pri:'p3', t:'明日の準備：過去問（工原）1回分を机に出す', d:'6/12は本番形式・時間計測。寝る前にセットしておくと朝逃げられない'},
+];
+const mstore = JSON.parse(localStorage.getItem('boki-missions-'+fmt(today)) || '{}');
+function renderMissions(){
+  document.getElementById('missions').innerHTML = MISSIONS.map(m=>`
+    <div class="mission ${mstore[m.id]?'done':''}" id="ms-${m.id}">
+      <button class="chk" onclick="toggleM('${m.id}')">✓</button>
+      <div><div class="mtitle"><span class="pri ${m.pri}">${m.pri==='p1'?'最優先':m.pri==='p2'?'重要':'準備'}</span>${m.t}</div>
+      <div class="mdesc">${m.d}</div></div>
+    </div>`).join('');
+}
+function toggleM(id){
+  mstore[id]=!mstore[id];
+  localStorage.setItem('boki-missions-'+fmt(today), JSON.stringify(mstore));
+  renderMissions();
+}
+renderMissions();
+
+/* ---------- KPI cards ---------- */
+document.getElementById('kpicards').innerHTML = `
+  <div class="kpi"><div class="n">${total}</div><div class="l">演習済み問題</div></div>
+  <div class="kpi k-o"><div class="n">${C.o}</div><div class="l">○ 完全理解</div></div>
+  <div class="kpi k-d"><div class="n">${C.d}</div><div class="l">△ 解説で理解</div></div>
+  <div class="kpi k-x"><div class="n">${C.x}</div><div class="l">✕ 要撃破</div></div>
+  <div class="kpi"><div class="n">${promo}</div><div class="l">昇格回数 ⤴</div></div>
+  <div class="kpi k-x"><div class="n">${dueList.length}</div><div class="l">復習期限到来</div></div>
+  <div class="kpi"><div class="n">${frozen}</div><div class="l">🧊 封印中（11月行き）</div></div>
+  <div class="kpi k-d"><div class="n">${Math.round(safeRate*100)}%</div><div class="l">戦闘可能率(○+△)</div></div>`;
+
+/* ---------- donut ---------- */
+(function(){
+  const data=[[C.o,'#34d77b','○ 完全理解'],[C.d,'#ffb938','△ 解説で理解'],[C.x,'#ff5d75','✕ 理解不足']];
+  const r=48, cx=65, cy=65, circ=2*Math.PI*r;
+  let acc=0, svg='';
+  data.forEach(([v,col])=>{
+    const frac=v/Math.max(1,total);
+    svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${col}" stroke-width="16"
+      stroke-dasharray="${frac*circ} ${circ}" stroke-dashoffset="${-acc*circ}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    acc+=frac;
+  });
+  svg+=`<text x="${cx}" y="${cy-3}" text-anchor="middle" fill="#e9eefb" font-size="20" font-weight="800">${total}</text>
+        <text x="${cx}" y="${cy+15}" text-anchor="middle" fill="#93a3c4" font-size="9">問題</text>`;
+  document.getElementById('donut').innerHTML=svg;
+  document.getElementById('donutlegend').innerHTML=data.map(([v,col,lb])=>
+    `<div class="li"><div class="dot" style="background:${col}"></div>${lb}<b>${v}問 (${Math.round(v/Math.max(1,total)*100)}%)</b></div>`).join('');
+})();
+
+/* ---------- chapters ---------- */
+function chapKey(s){
+  const m=s.match(/#(\d+)/); return m? +m[1] : 99;
+}
+const byChap={};
+answered.forEach(p=>{
+  const k=chapKey(p.subject);
+  (byChap[k]=byChap[k]||{o:0,d:0,x:0,name:p.subject.replace(/工業 /,'')}).name=p.subject.replace(/工業 /,'');
+  byChap[k][p.mark==='○'?'o':p.mark==='△'?'d':'x']++;
+});
+document.getElementById('chapters').innerHTML=Object.keys(byChap).sort((a,b)=>a-b).map(k=>{
+  const c=byChap[k], t=c.o+c.d+c.x;
+  return `<div class="chaprow">
+    <div class="ct"><span class="nm">${c.name}</span><span class="st">○${c.o} △${c.d} ✕${c.x}</span></div>
+    <div class="stack">
+      <div class="s-o" style="width:${c.o/t*100}%"></div>
+      <div class="s-d" style="width:${c.d/t*100}%"></div>
+      <div class="s-x" style="width:${c.x/t*100}%"></div>
+    </div></div>`;
+}).join('');
+
+/* ---------- insights ---------- */
+(function(){
+  const el=document.getElementById('insights');
+  const worst=Object.values(byChap).map(c=>({...c,t:c.o+c.d+c.x})).filter(c=>c.t>=3)
+    .sort((a,b)=>(b.x/b.t)-(a.x/a.t))[0];
+  const best=Object.values(byChap).map(c=>({...c,t:c.o+c.d+c.x})).filter(c=>c.t>=3)
+    .sort((a,b)=>((b.o+b.d)/b.t)-((a.o+a.d)/a.t))[0];
+  let html='';
+  html+=`<div class="insight good"><b>強み:</b> ${best.name} — ○△率 ${Math.round((best.o+best.d)/best.t*100)}%。本番の得点源。</div>`;
+  html+=`<div class="insight warn"><b>最重課題:</b> ${worst.name} — ✕率 ${Math.round(worst.x/worst.t*100)}%（${worst.x}/${worst.t}問）。</div>`;
+  html+=`<div class="insight"><b>昇格実績:</b> 累計 ${promo} 回。✕→△の変換効率が高い＝復習が機能している証拠。</div>`;
+  if(dueList.length) html+=`<div class="insight warn"><b>復習キュー:</b> 期限到来 ${dueList.length} 問（うち期限切れ ${overdue.length} 問）。「復習」タブで確認。</div>`;
+  html+=`<div class="insight"><b>封印戦略:</b> 🧊${frozen}問は11月行き。6月は「戦える ${C.o+C.d} 問」で戦う。</div>`;
+  el.innerHTML=html;
+})();
+
+/* ---------- problems list ---------- */
+let filter='all';
+function markCls(m){return m==='○'?'m-o':m==='△'?'m-d':m==='✕'?'m-x':'m-n';}
+function renderProbs(){
+  const q=(document.getElementById('q').value||'').toLowerCase();
+  let list=PROBLEMS.filter(p=>{
+    if(filter==='o'&&p.mark!=='○')return false;
+    if(filter==='d'&&p.mark!=='△')return false;
+    if(filter==='x'&&p.mark!=='✕')return false;
+    if(filter==='due'&&!(p.next&&p.mark!=='-'&&new Date(p.next)<=today))return false;
+    if(q&&!(p.id+p.title+p.subject+p.memo).toLowerCase().includes(q))return false;
+    return true;
+  });
+  document.getElementById('probcount').textContent=`${list.length} 問を表示中`;
+  document.getElementById('problist').innerHTML=list.map(p=>{
+    let due='';
+    if(p.next&&p.mark!=='-'){
+      const d=days(new Date(p.next),today);
+      due=d<0?`<span class="due-late">⏰ ${-d}日超過</span>`:d===0?`<span class="due-today">⏰ 今日が復習日</span>`:`次回 ${p.next}`;
+    }
+    return `<div class="prob">
+      <div class="top"><span class="mk ${markCls(p.mark)}">${p.mark}</span>
+        <span><span class="pid">${p.id}</span><br><span class="pt">${p.title}</span></span></div>
+      <div class="meta">${p.subject}　|　解いた日 ${p.date||'—'}　|　${due}　|　復習${p.count}回</div>
+      ${p.memo?`<div class="memo">💬 ${p.memo}</div>`:''}
+    </div>`;
+  }).join('')||'<div class="count-note">該当なし</div>';
+}
+document.getElementById('q').addEventListener('input',renderProbs);
+document.querySelectorAll('.chip').forEach(c=>{
+  c.onclick=()=>{
+    document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on'); filter=c.dataset.f; renderProbs();
+  };
+});
+renderProbs();
+
+/* ---------- review queue ---------- */
+(function(){
+  const el=document.getElementById('revlist');
+  const groups={late:[],today:[],soon:[]};
+  answered.forEach(p=>{
+    if(!p.next)return;
+    const d=days(new Date(p.next),today);
+    if(d<0)groups.late.push(p); else if(d===0)groups.today.push(p);
+    else if(d<=3)groups.soon.push(p);
+  });
+  const sortFn=(a,b)=>(a.mark==='✕'?-1:1)-(b.mark==='✕'?-1:1);
+  let html='';
+  const block=(arr,cls,icon,label)=>{
+    if(!arr.length)return'';
+    return `<div class="rgroup"><div class="rhead ${cls}">${icon} ${label}<span class="cnt">${arr.length}問</span></div>`+
+      arr.sort(sortFn).map(p=>`<div class="prob"><div class="top">
+        <span class="mk ${markCls(p.mark)}">${p.mark}</span>
+        <span><span class="pid">${p.id}</span><br><span class="pt">${p.title}</span></span></div>
+        <div class="meta">${p.subject}　|　予定日 ${p.next}</div></div>`).join('')+'</div>';
+  };
+  html+=block(groups.late,'late','🚨','期限切れ — 最優先で回収');
+  html+=block(groups.today,'today','⏰','今日が復習日');
+  html+=block(groups.soon,'soon','📅','3日以内');
+  el.innerHTML=html||'<div class="card">復習キューは空です 🎉</div>';
+})();
+
+/* ---------- lectures ---------- */
+(function(){
+  const pct=Math.round(LEC_DONE/28*1000)/10;
+  document.getElementById('kouLabel').textContent=`${LEC_DONE} / 28`;
+  document.getElementById('kouPct').textContent=pct+'%';
+  document.getElementById('kouBar').style.width=pct+'%';
+  document.getElementById('kouList').innerHTML=LECTURES.map(([n,t,m])=>{
+    const done=n<=LEC_DONE, next=n===LEC_DONE+1;
+    return `<div class="lec ${done?'done':''} ${next?'next':''}">
+      <span class="st">${done?'✅':next?'▶️':'⬜'}</span>
+      <span class="no">#${String(n).padStart(2,'0')}</span>
+      <span class="nm">${t}${next?'<span class="nextbadge">6/15〜</span>':''}</span>
+      <span class="min">${m}分</span></div>`;
+  }).join('');
+})();
+</script>
+</body>
+</html>
