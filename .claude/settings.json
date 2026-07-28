@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"[現在時刻] %s JST\"}}' \"$(TZ=Asia/Tokyo date '+%Y-%m-%d(%a) %H:%M')\"",
+            "timeout": 5,
+            "suppressOutput": true
+          }
+        ]
+      }
+    ]
+  }
+}
