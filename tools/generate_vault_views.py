@@ -24,7 +24,7 @@ CARD_BY_CHAPTER = {
     18: "型カード① 差額原価の意思決定",
 }
 
-ROW = re.compile(r"^\|\s*([TPC][0-9][^|]*?)\s*\|")
+ROW = re.compile(r"^\|\s*([TPCH][0-9][^|]*?)\s*\|")
 
 
 def sanitize(name: str) -> str:
@@ -54,6 +54,9 @@ def parse_rows(text: str):
 def classify(pid: str, subject_raw: str):
     if pid.startswith("C"):
         subject, kind = "商会", "テキスト例題"
+    elif pid.startswith("H"):
+        # 補講レジュメ（章番号を持たない別ソース）。章ラベルは科目欄の「補講◯ ○○」をそのまま使う
+        subject, kind = "商会", "補講レジュメ"
     elif pid.startswith("P"):
         subject, kind = "工原", "問題集"
     else:
