@@ -1973,10 +1973,14 @@ function section(inner) {
   // 出力対象は既定で「当日分のみ」。localStorage は明示クリアするまで貯まり続けるため、
   // 全件を出すと過去に解いた問題まで「今日解いた」として再記録され、復習日が一斉にリセットされる。
   let exportAll = false;
+  // 学習日 = 05:00 起点の1日。カットオフが1:30なので暦日で切ると1セッションが2日に割れる。
+  const STUDY_DAY_START_HOUR = 5;
+  const studyDay = (ms) => dateStr(ms - STUDY_DAY_START_HOUR * 3600 * 1000);
+  const studyDayToday = () => studyDay(Date.now());
   function exportRecords() {
     if (exportAll) return records;
-    const today = todayStr();
-    return records.filter(r => dateStr(r.ts) === today);
+    const d = studyDayToday();
+    return records.filter(r => studyDay(r.ts) === d);
   }
   function buildLines() {
     return exportRecords().map(r => {
@@ -1991,7 +1995,7 @@ function section(inner) {
     const n = exportRecords().length;
     return exportAll
       ? `※スコープ: 全期間（未クリアの記録すべて・${n}件）。過去分を含むため、当日分でない問題まで再記録される点に注意。`
-      : `※スコープ: ${todayStr()} の記録のみ・${n}件`;
+      : `※スコープ: 学習日 ${studyDayToday()} の記録のみ・${n}件（05:00起点＝深夜まで続けた分も同じ日に入る）`;
   }
   function buildChatText() {
     if (!exportRecords().length) return exportAll ? "（記録がありません）" : "（本日の記録がありません）";
@@ -2049,7 +2053,7 @@ function section(inner) {
           <button type="button" class="tab" data-tab="file">ファイルDL</button>
         </div>
         <div class="export-tabs" role="group" aria-label="出力スコープ">
-          <button type="button" class="tab sel" data-scope="today">今日の記録だけ</button>
+          <button type="button" class="tab sel" data-scope="today">この学習日だけ（05:00起点）</button>
           <button type="button" class="tab" data-scope="all">全期間（未クリア分すべて）</button>
         </div>
         <div class="export-pane" data-pane="chat">
