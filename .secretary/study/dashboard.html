@@ -1970,8 +1970,16 @@ function section(inner) {
   });
 
   // ---- export (=疑似push) ----
+  // 出力対象は既定で「当日分のみ」。localStorage は明示クリアするまで貯まり続けるため、
+  // 全件を出すと過去に解いた問題まで「今日解いた」として再記録され、復習日が一斉にリセットされる。
+  let exportAll = false;
+  function exportRecords() {
+    if (exportAll) return records;
+    const today = todayStr();
+    return records.filter(r => dateStr(r.ts) === today);
+  }
   function buildLines() {
-    return records.map(r => {
+    return exportRecords().map(r => {
       const sym = markSym(r.mark);
       const sub = r.subtitle ? `「${r.subtitle}」` : "";
       const memo = r.memo ? ` メモ:${r.memo}` : "";
@@ -1979,13 +1987,19 @@ function section(inner) {
     });
   }
   const EXPORT_HEADER = "以下を exercise-log.md に記録してください（理解度は下記の通り。復習回数・次回復習日は既存ログのルールで計算し、確定値は上書きしないこと）:";
+  function exportScopeLine() {
+    const n = exportRecords().length;
+    return exportAll
+      ? `※スコープ: 全期間（未クリアの記録すべて・${n}件）。過去分を含むため、当日分でない問題まで再記録される点に注意。`
+      : `※スコープ: ${todayStr()} の記録のみ・${n}件`;
+  }
   function buildChatText() {
-    if (!records.length) return "（記録がありません）";
-    return EXPORT_HEADER + "\n" + buildLines().join("\n");
+    if (!exportRecords().length) return exportAll ? "（記録がありません）" : "（本日の記録がありません）";
+    return EXPORT_HEADER + "\n" + exportScopeLine() + "\n" + buildLines().join("\n");
   }
   function buildFileText() {
-    const body = records.length ? buildLines().join("\n") : "（記録がありません）";
-    return `# 学習記録 ${todayStr()}（ダッシュボード入力分）\n\n${EXPORT_HEADER}\n\n${body}\n`;
+    const body = exportRecords().length ? buildLines().join("\n") : "（記録がありません）";
+    return `# 学習記録 ${todayStr()}（ダッシュボード入力分）\n\n${EXPORT_HEADER}\n${exportScopeLine()}\n\n${body}\n`;
   }
   function download(filename, text) {
     let url;
@@ -2034,6 +2048,10 @@ function section(inner) {
           <button type="button" class="tab sel" data-tab="chat">チャット貼付用</button>
           <button type="button" class="tab" data-tab="file">ファイルDL</button>
         </div>
+        <div class="export-tabs" role="group" aria-label="出力スコープ">
+          <button type="button" class="tab sel" data-scope="today">今日の記録だけ</button>
+          <button type="button" class="tab" data-scope="all">全期間（未クリア分すべて）</button>
+        </div>
         <div class="export-pane" data-pane="chat">
           <textarea class="export-text" id="exportText" readonly></textarea>
           <p class="export-note">これをチャットに貼れば記録されます。</p>
@@ -2066,11 +2084,18 @@ function section(inner) {
     back.addEventListener("click", (e) => { if (e.target === back) close(); });
     back.querySelector(".ov-close").addEventListener("click", close);
 
-    back.querySelectorAll(".tab").forEach(tab => {
+    back.querySelectorAll(".tab[data-tab]").forEach(tab => {
       tab.addEventListener("click", () => {
         const name = tab.dataset.tab;
-        back.querySelectorAll(".tab").forEach(t => t.classList.toggle("sel", t === tab));
+        back.querySelectorAll(".tab[data-tab]").forEach(t => t.classList.toggle("sel", t === tab));
         back.querySelectorAll(".export-pane").forEach(p => { p.hidden = p.dataset.pane !== name; });
+      });
+    });
+    back.querySelectorAll(".tab[data-scope]").forEach(tab => {
+      tab.addEventListener("click", () => {
+        exportAll = tab.dataset.scope === "all";
+        back.querySelectorAll(".tab[data-scope]").forEach(t => t.classList.toggle("sel", t === tab));
+        back.querySelector("#exportText").value = buildChatText();
       });
     });
     back.querySelector("#copyBtn").addEventListener("click", (e) => copyText(buildChatText(), e.currentTarget));
