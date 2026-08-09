@@ -216,6 +216,58 @@
   .wm-goal { font-size: 0.95rem; margin-bottom: 0.85rem; padding: 0.6rem 0.75rem;
     background: var(--act-bg); border-radius: var(--radius-sm); box-shadow: inset 3px 0 0 var(--act); }
   .wm-h { font-weight: 700; font-size: 0.8rem; color: var(--tx-3); letter-spacing: 0.02em; margin: 0 0 0.4rem; }
+
+  /* ===== 合格逆算マップ（図解セクション） ===== */
+  .mp-stock { display: flex; flex-direction: column; gap: 0.3rem; }
+  .mp-row   { display: flex; align-items: center; gap: 0.65rem; }
+  .mp-lab   { flex: 0 0 8.2em; font-size: 0.72rem; color: var(--tx-3); white-space: nowrap;
+              overflow: hidden; text-overflow: ellipsis; }
+  .mp-track { position: relative; height: 20px; border-radius: 5px; background: var(--bg-2);
+              overflow: hidden; min-width: 30px; flex: 0 0 auto; }
+  .mp-fill  { height: 100%; border-radius: 5px 0 0 5px; transition: width .5s ease; }
+  .mp-need  { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--tx);
+              opacity: .55; border-radius: 1px; }
+  .mp-num   { flex: 0 0 4.6em; text-align: right; font-size: 0.72rem;
+              font-variant-numeric: tabular-nums; color: var(--tx-2); font-weight: 600; }
+
+  .mp-road  { position: relative; margin-top: 0.5rem; padding-bottom: 3.2rem; }
+  .mp-bands { position: relative; height: 14px; border-radius: 4px; background: var(--bg-2);
+              overflow: visible; margin-bottom: 0.55rem; }
+  .mp-band  { position: absolute; top: 0; bottom: 0; opacity: .3; border-radius: 3px; }
+  .mp-today { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--tx); z-index: 3; }
+  .mp-today span { position: absolute; top: -1.15rem; left: 50%; transform: translateX(-50%);
+              font-size: 0.6rem; color: var(--tx-3); white-space: nowrap; }
+  .mp-phase { position: relative; height: 40px; }
+  .mp-bar   { position: absolute; top: 0; height: 22px; border-radius: 5px; display: flex;
+              align-items: center; padding: 0 0.5rem; min-width: 40px; }
+  .mp-bar span { font-size: 0.68rem; font-weight: 700; color: #fff; white-space: nowrap;
+              text-shadow: 0 0.5px 1px rgba(0,0,0,.28); }
+  .mp-phase-sub { position: absolute; top: 23px; font-size: 0.62rem; color: var(--tx-3); white-space: nowrap; }
+  .mp-marks { position: relative; height: 0; }
+  .mp-mark  { position: absolute; top: 0; }
+  .mp-mark-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tx);
+              transform: translateX(-50%); }
+  .mp-mark-lab { transform: translateX(-50%); margin-top: 0.25rem; font-size: 0.62rem;
+              font-weight: 700; color: var(--tx-2); text-align: center; white-space: nowrap; }
+  .mp-mark-lab span { font-weight: 400; color: var(--tx-4); font-variant-numeric: tabular-nums; }
+  .mp-mark:last-child .mp-mark-lab { transform: translateX(-85%); }
+  .mp-mark:first-child .mp-mark-lab { transform: translateX(-40%); }
+
+  .mp-heat-wrap { max-width: 320px; }
+  .mp-heat-hd { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
+  .mp-heat-hd span { font-size: 0.6rem; color: var(--tx-4); text-align: center; }
+  .mp-heat  { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .mp-cell  { aspect-ratio: 1; border-radius: 5px; display: flex; align-items: center;
+              justify-content: center; font-size: 0.62rem; font-weight: 700;
+              font-variant-numeric: tabular-nums; color: var(--tx); background: var(--bg-2); }
+  .mp-cell.zero { background: transparent; border: 1px dashed var(--hair-strong); }
+
+  @media (max-width: 560px) {
+    .mp-lab { flex-basis: 6.2em; font-size: 0.66rem; }
+    .mp-num { flex-basis: 3.9em; }
+    .mp-bar span, .mp-phase-sub { font-size: 0.6rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .mp-fill { transition: none; } }
   .wm-musts { margin-bottom: 0.85rem; }
   .wm-musts ul { margin: 0; padding: 0; list-style: none; }
   .wm-musts li { position: relative; padding: 0.35rem 0 0.35rem 1.4rem; font-size: 0.88rem;
@@ -754,7 +806,7 @@
    ============================================================ */
 const DATA = {
   meta: {
-    updated: "2026-08-09（日）17:15時点 — 527問＝**○320／△207／✕0**、教科書の例題478問中**○277＝58%**、残201問。**○3回転を9/30に完了させるには、○1回目を9/9までに**＝1日6.7問（直近6日の実測6.3問／差は▲0.4問＝ほぼオンペース）。明日8/10(月)を挟んで**8/11から6連休＝全体の3分の1の時間がここに集中**",
+    updated: "2026-08-09（日）23:50時点 — ログ527問＝**○328／△199／✕0**。**商会問題集161問を実測して母集団が688問に確定**（残360問）。○1回目の締切を**9/30**に前倒しし、10月は過去問へ全振り。毎日のKPIは**○7問/日**。1日の実力（やった日6.8問）は足りており、平均を殺しているのは**ゼロ日率52%**",
     examDate: "2026-11-15", examLabel: "第171回 日商簿記1級",
     phaseADeadline: "2026-07-31", phaseALabel: "商業講義一周（7/30 達成済）"
   },
@@ -782,6 +834,60 @@ const DATA = {
       { kind: "d", ic: "📐", head: "【逆算】○3回転を9/30に完了させるには、○1回目を9/9まで",
         detail: "○1回目 → +7日 → ○2回目 → +14日 → ○3回目 ＝ 21日。**9/9に1回目なら9/30に3回目**。残207問 ÷ 31日 ＝ **1日6.7問**が必要。直近6日の実測は6.3問/日で**差は▲0.4問＝ほぼオンペース**。ただし**時間ベースでは足りない**（151h × 現在の効率では107問）ので、**6連休の最大化と、期限切れの転換率を8%→上げること**の2つが条件。" }
     ]
+  },
+
+  // 合格逆算マップ（2026-08-09 確定版）— 図で見る用。数値は exercise-log.md からの機械集計
+  masterPlan: {
+    title: "合格逆算マップ",
+    note: "商会問題集161問を実測して母集団が確定。**688問中○328＝48%、残360問**。10月を丸ごと過去問に明け渡すため、○1回目の締切は**9/30**。",
+    stock: {
+      total: 688, done: 328,
+      items: [
+        { label: "商会 テキスト例題", n: 329, o: 173 },
+        { label: "商会 問題集",      n: 161, o: 0   },
+        { label: "工原 テキスト例題", n: 149, o: 112 },
+        { label: "工原 問題集",      n: 43,  o: 43  },
+        { label: "補講レジュメ",      n: 6,   o: 0   }
+      ]
+    },
+    roadmap: {
+      start: "2026-08-10", end: "2026-11-15",
+      phases: [
+        { label: "○1回目スプリント", from: "2026-08-10", to: "2026-09-30", tone: "o",   sub: "残360問 ÷ 52日 ＝ 7問/日" },
+        { label: "3回転の回収",       from: "2026-10-01", to: "2026-10-21", tone: "d",   sub: "復習日が自動で来る" },
+        { label: "過去問・予想模試",   from: "2026-10-01", to: "2026-11-15", tone: "act", sub: "毎日1回分" }
+      ],
+      bands: [
+        { label: "夏休み 8/13-16", from: "2026-08-13", to: "2026-08-16", tone: "o" },
+        { label: "中間決算クランチ", from: "2026-08-20", to: "2026-09-12", tone: "x" }
+      ],
+      marks: [
+        { d: "2026-09-30", label: "○1回目 完了" },
+        { d: "2026-10-21", label: "3回転 完了" },
+        { d: "2026-11-15", label: "本番" }
+      ]
+    },
+    pace: {
+      scaleMax: 9, need: 6.94,
+      bars: [
+        { label: "必要ペース",     v: 6.94, tone: "act" },
+        { label: "今日 8/9",       v: 8,    tone: "o"   },
+        { label: "直近7日 平均",   v: 6.57, tone: "o"   },
+        { label: "全期間 平均",    v: 2.59, tone: "x"   },
+        { label: "やった日だけ",   v: 6.8,  tone: "d"   }
+      ],
+      caption: "**1日の実力は既に足りている。** やった日の平日は6.8問＝必要7問にほぼ届く。平均を殺しているのは1日の量ではなく**ゼロ日**。"
+    },
+    heat: {
+      caption: "直近4週間。マスの濃さ＝その日の○昇格数。**白いマスがゼロ日**。",
+      days: [
+        ["2026-07-13",17],["2026-07-14",0],["2026-07-15",3],["2026-07-16",0],["2026-07-17",16],["2026-07-18",6],["2026-07-19",0],
+        ["2026-07-20",0],["2026-07-21",5],["2026-07-22",6],["2026-07-23",5],["2026-07-24",0],["2026-07-25",11],["2026-07-26",3],
+        ["2026-07-27",0],["2026-07-28",0],["2026-07-29",0],["2026-07-30",0],["2026-07-31",0],["2026-08-01",0],["2026-08-02",0],
+        ["2026-08-03",0],["2026-08-04",3],["2026-08-05",7],["2026-08-06",20],["2026-08-07",7],["2026-08-08",1],["2026-08-09",8]
+      ],
+      zeroNote: "平日ゼロ率 **52%** ／ 週末ゼロ率 **68%**。ゼロ日を1日作るごとに、どこかで7問を上乗せして取り返す必要がある。"
+    }
   },
 
   // 毎日の時間割（2026-08-03 本人指定：昼枠50分の新設／夜19:00始動・1:30就寝）
@@ -967,13 +1073,14 @@ const DATA = {
   ],
 
   stats: {
-    recorded: 527, o: 320, d: 207, x: 0,
-    needAction: 153,            // 要対策（現在△のうち4回目以降）＝残235問の65%
+    recorded: 527, o: 328, d: 199, x: 0,
+    needAction: 124,            // 要対策（現在△のうち4回目以降）
     subjects: [
       { n: 149, k: "工原 テキスト例題" },
       { n: 43,  k: "工原 問題集" },
       { n: 329, k: "商会 例題" },
-      { n: 6,   k: "商会 補講レジュメ" }
+      { n: 6,   k: "商会 補講レジュメ" },
+      { n: 161, k: "商会 問題集（未登録）" }
     ]
   },
 
@@ -1112,6 +1219,103 @@ function section(inner) {
       <h2>${esc(d.headline || "")}</h2>
       <p class="sub">${esc(d.sub)}</p>
       ${blocks}
+    </div>`);
+})();
+
+// 1.2 合格逆算マップ — 図で見るセクション（在庫バー／ロードマップ／ペース／ゼロ日ヒート）
+(function masterPlan() {
+  const m = DATA.masterPlan;
+  if (!m) return;
+  const TONE = { o: "var(--o)", d: "var(--d)", x: "var(--x)", act: "var(--act)" };
+  const day = s => new Date(s + "T00:00:00");
+
+  /* --- A. 在庫バー：幅＝問題数のシェア、塗り＝○化率 --- */
+  const stockRows = m.stock.items.map(it => {
+    const share = it.n / m.stock.total * 100;
+    const fill  = it.n ? it.o / it.n * 100 : 0;
+    return `
+      <div class="mp-row">
+        <div class="mp-lab">${esc(it.label)}</div>
+        <div class="mp-track" style="width:${share.toFixed(1)}%">
+          <div class="mp-fill" style="width:${fill.toFixed(1)}%;background:var(--o)"></div>
+        </div>
+        <div class="mp-num">${it.o}<span style="opacity:.45">/${it.n}</span></div>
+      </div>`;
+  }).join("");
+  const donePct = m.stock.done / m.stock.total * 100;
+
+  /* --- B. ロードマップ --- */
+  const T0 = day(m.roadmap.start), T1 = day(m.roadmap.end), SPAN = T1 - T0;
+  const at = s => Math.max(0, Math.min(100, (day(s) - T0) / SPAN * 100));
+  const today = new Date();
+  const todayPct = Math.max(0, Math.min(100, (today - T0) / SPAN * 100));
+
+  const bands = (m.roadmap.bands || []).map(b => `
+    <div class="mp-band" style="left:${at(b.from)}%;width:${(at(b.to) - at(b.from)).toFixed(2)}%;
+         background:${TONE[b.tone] || "var(--act)"};" title="${esc(b.label)}"></div>`).join("");
+
+  const phases = (m.roadmap.phases || []).map(p => `
+    <div class="mp-phase">
+      <div class="mp-bar" style="left:${at(p.from)}%;width:${(at(p.to) - at(p.from)).toFixed(2)}%;
+           background:${TONE[p.tone] || "var(--act)"}">
+        <span>${esc(p.label)}</span>
+      </div>
+      <div class="mp-phase-sub" style="left:${at(p.from)}%">${esc(p.sub || "")}</div>
+    </div>`).join("");
+
+  const marks = (m.roadmap.marks || []).map(k => `
+    <div class="mp-mark" style="left:${at(k.d)}%">
+      <div class="mp-mark-dot"></div>
+      <div class="mp-mark-lab">${esc(k.label)}<br><span>${k.d.slice(5).replace("-", "/")}</span></div>
+    </div>`).join("");
+
+  /* --- C. ペースゲージ --- */
+  const paceBars = m.pace.bars.map(b => `
+    <div class="mp-row">
+      <div class="mp-lab">${esc(b.label)}</div>
+      <div class="mp-track" style="width:100%">
+        <div class="mp-fill" style="width:${(b.v / m.pace.scaleMax * 100).toFixed(1)}%;background:${TONE[b.tone]}"></div>
+        <div class="mp-need" style="left:${(m.pace.need / m.pace.scaleMax * 100).toFixed(1)}%"></div>
+      </div>
+      <div class="mp-num">${b.v.toFixed(1)}</div>
+    </div>`).join("");
+
+  /* --- D. ゼロ日ヒートマップ --- */
+  const maxV = Math.max(...m.heat.days.map(d => d[1]), 1);
+  const cells = m.heat.days.map(([d, v]) => {
+    const a = v ? (0.22 + 0.78 * (v / maxV)) : 0;
+    return `<div class="mp-cell${v ? "" : " zero"}" style="${v ? `background:color-mix(in srgb, var(--o) ${(a * 100).toFixed(0)}%, transparent)` : ""}"
+       title="${d} — ○${v}"><span>${v || ""}</span></div>`;
+  }).join("");
+
+  section(`
+    <div class="sec-title" style="color:var(--act)">${esc(m.title)}</div>
+    <div class="card">
+      <p class="sub">${esc(m.note)}</p>
+
+      <div class="wm-h" style="margin-top:1.1rem">① 母集団 688問 — ○${m.stock.done}（${donePct.toFixed(0)}%）</div>
+      <div class="mp-stock">${stockRows}</div>
+
+      <div class="wm-h" style="margin-top:1.6rem">② ロードマップ 8/10 → 11/15</div>
+      <div class="mp-road">
+        <div class="mp-bands">${bands}
+          <div class="mp-today" style="left:${todayPct.toFixed(2)}%"><span>今日</span></div>
+        </div>
+        ${phases}
+        <div class="mp-marks">${marks}</div>
+      </div>
+
+      <div class="wm-h" style="margin-top:2.6rem">③ 1日あたりの○ — 縦線が必要ライン ${m.pace.need.toFixed(1)}問</div>
+      <div class="mp-stock">${paceBars}</div>
+      <p class="detail" style="margin:.5rem 0 0">${esc(m.pace.caption)}</p>
+
+      <div class="wm-h" style="margin-top:1.6rem">④ ゼロ日マップ（直近4週）</div>
+      <div class="mp-heat-wrap">
+        <div class="mp-heat-hd"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span></div>
+        <div class="mp-heat">${cells}</div>
+      </div>
+      <p class="detail" style="margin:.55rem 0 0">${esc(m.heat.caption)}</p>
+      <p class="detail" style="margin:.3rem 0 0">${esc(m.heat.zeroNote)}</p>
     </div>`);
 })();
 
