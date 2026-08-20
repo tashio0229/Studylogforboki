@@ -551,6 +551,8 @@
     font-size: 0.82rem; font-weight: 800; color: var(--tx-2); letter-spacing: 0.01em;
   }
   .rq-prog { margin-left: auto; font-size: 0.78rem; font-weight: 700; color: var(--tx-3); }
+  .rq-prog b.o { color: var(--o); }
+  .rq-prog b.x { color: var(--x); }
   .rq-item {
     display: flex; align-items: flex-start; gap: 0.75rem;
     padding: 0.7rem 0.8rem; border-radius: var(--radius-sm);
@@ -573,6 +575,45 @@
     border-radius: var(--radius-sm); padding: 0.35rem 0.6rem; cursor: pointer; flex-shrink: 0;
   }
   .rq-undo:active { transform: scale(0.97); }
+  /* ---- キューの拡張：ブロック見出し / 入り方 / 復習回数 / タイマー ---- */
+  .rq-block {
+    display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap;
+    margin: 1.1rem 0 .5rem; padding: .35rem .7rem;
+    background: var(--bg-2); border-left: 3px solid var(--d); border-radius: 0 6px 6px 0;
+  }
+  .rq-block:first-child { margin-top: .3rem; }
+  .rq-block .bn { font-size: .82rem; font-weight: 800; color: var(--tx); }
+  .rq-block .bm { font-size: .72rem; color: var(--tx-3); font-weight: 600; margin-left: auto; }
+  .rq-chips { display: flex; gap: .3rem; flex-wrap: wrap; margin-top: .3rem; }
+  .chip {
+    display: inline-flex; align-items: center; gap: .2rem;
+    font-size: .66rem; font-weight: 700; line-height: 1;
+    padding: .22rem .42rem; border-radius: 999px; white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .chip.mode-syakyo   { background: color-mix(in srgb, var(--x) 16%, transparent); color: var(--x); border-color: color-mix(in srgb, var(--x) 40%, transparent); }
+  .chip.mode-tejun    { background: color-mix(in srgb, var(--o) 16%, transparent); color: var(--o); border-color: color-mix(in srgb, var(--o) 40%, transparent); }
+  .chip.mode-kousiki  { background: color-mix(in srgb, var(--d) 16%, transparent); color: var(--d); border-color: color-mix(in srgb, var(--d) 40%, transparent); }
+  .chip.reps          { background: var(--bg-2); color: var(--tx-3); border-color: var(--bd); }
+  .chip.reps.hot      { background: color-mix(in srgb, var(--x) 12%, transparent); color: var(--x); border-color: color-mix(in srgb, var(--x) 35%, transparent); }
+  .chip.reps.peak     { background: color-mix(in srgb, var(--o) 14%, transparent); color: var(--o); border-color: color-mix(in srgb, var(--o) 38%, transparent); }
+  .chip.tgt           { background: var(--bg-2); color: var(--tx-3); border-color: var(--bd); }
+  .rq-timer {
+    display: flex; align-items: center; gap: .35rem;
+  }
+  .rq-tbtn {
+    font: inherit; font-size: .72rem; font-weight: 800; cursor: pointer;
+    padding: .3rem .5rem; border-radius: 7px; border: 1px solid var(--bd);
+    background: var(--bg-1); color: var(--tx-2); line-height: 1;
+  }
+  .rq-tbtn.run { background: color-mix(in srgb, var(--d) 20%, transparent); border-color: var(--d); color: var(--d); }
+  .rq-tbtn:active { transform: scale(.96); }
+  .rq-time { font-variant-numeric: tabular-nums; font-size: .78rem; font-weight: 800; color: var(--tx-2); min-width: 3.1rem; }
+  .rq-time.over { color: var(--x); }
+  .rq-time.run  { color: var(--d); }
+  .rq-donetime { font-size: .7rem; font-weight: 700; color: var(--tx-3); margin-left: .35rem; font-variant-numeric: tabular-nums; }
+  .rq-donetime.over { color: var(--x); }
+  .rq-donetime.good { color: var(--o); }
   .rec-manual-head {
     font-size: 0.8rem; font-weight: 700; color: var(--tx-3);
     cursor: pointer; padding: 0.5rem 0; user-select: none;
@@ -799,27 +840,27 @@
    ============================================================ */
 const DATA = {
   meta: {
-    updated: "2026-08-21（金）01:10 — **学習日8/20 確定：16問処理・○9・△7＝転換率56%**（クランチ初日でノルマ21問に対し16問／○9）。**第16章 完全クリア**、工原第19章 意思決定Ⅱは**残4問**（例13・14・15が△12回目で同時突破）。ログ527問＝**○385／△142／✕0**、要対策86、完全クリア44章。未○142＝熟成68／浅い74。**T25-例5・例6は△18回目**＝公式の想起で落ちている（型カード化が必要）。",
+    updated: "2026-08-21（金）02:30 — **ダッシュボードを改修**：各問題に**⟳復習回数／入り方（写経・閉じて手順）／⏱目標タイム**を表示、**問題ごとのストップウォッチ**を新設（実測と目標のギャップが常時見える）。学習日8/20は**22問・○9・△11・✕2＝転換率41%**（処理はノルマ達成、○化は−3.6で未達）。ログ527問＝**○385／△140／✕2**、要対策84、完全クリア44章。**㉒確定：転換率は復習回数の逆U字（8〜11回=100%／12回以上=27%）。12回以上の未○21問は全部が工原**。",
     examDate: "2026-11-15", examLabel: "第171回 日商簿記1級",
     phaseDeadline: "2026-08-31", phaseLabel: "8月完了モード（例題○1回目・151問）"
   },
 
   // 今日の指令 = 日 8/16（発熱で3日ゼロ→病み上がり再開。まず✕2問、体調最優先）
   directive: {
-    date: "8/20（木）— クランチ初日。12日で151問○の初日",
-    headline: "🍱昼＝<b>8/20期限の8問</b>（うち6問は熟成層＝⑲で3分）／🌙夜＝<b>工原の熟成2章14問</b>。",
-    sub: "本人判断で<b>「全151問○」の8月完了は取り下げない</b>。必要は延べ<b>376問転＝約50h</b>に対し標準枠44h＝<b>6h不足</b>。closing条件は<b>週末4日を6h→7.5h</b>。日次ノルマは<b>クランチ平日21問／週末52問</b>。今日はその初日。",
+    date: "8/21（金）— 20問／目標128分。残り11日で142問",
+    headline: "🍱昼＝<b>転換率100%層だけ8問</b>（1問3分）／🌙夜＝<b>✕2問は写経</b>・測定日のC39 5問・熟成5問。",
+    sub: "**㉒が確定しました。転換率は復習回数の逆U字**です（1〜2回=10%／3〜4回=67%／5〜7回=75%／**8〜11回=100%**／**12回以上=27%**）。だから今日は**8〜11回の層を昼に集中**させ、**12回以上の3問（✕2＋T22-例1）は「解く」のをやめて写経**にします。残り11日・未○142問、必要は延べ361問転＝48.3hに対し枠47.5h＝**−0.8h**。ゼロ日ゼロならぎりぎり届く。",
     items: [
-      { kind: "x", ic: "🍱", head: "昼枠50分 ＝ 8/20期限の8問。3章がクリア射程に入る",
-        detail: "**C30-例1・例3・例4・例5**（持分法／復習5〜6回）・**C11-例16**（貸倒懸念債権CF見積法／復習**10回**）・**C16-例9**（圧縮記帳・積立金方式／復習**10回**）＝この6問は**熟成層。⑲の閉じて手順で1問3分＝18分で終わる**。残る**C33-例1**（在外支店・復習3回）・**C37-例1**（セグメント・復習2回）は浅いので写経でよい。**C16-例9で第16章クリア／C33-例1で第33章クリア／C11-例16で第11章が残1**。" },
-      { kind: "d", ic: "🌙", head: "夜2.5h ＝ 工原の熟成2章14問。章まるごと落とす",
-        detail: "**工原第19章 意思決定Ⅱ 8問**（T25-例5・例6／T26-例10〜15・復習12〜17回）＋**工原第13章 標準原価計算 6問**（T17-例12／T18-例15・16・18・19・20・復習16〜19回）。**全問が復習12回以上＝全527問で最も熟した層**。⑲で入れば3分/問で14問＝42分。ここは反復では割れないことが確定している層なので、**閉じて手順を書く→書けなければ即写経**で機械的に回す。2章まるごとクリアが射程。" },
-      { kind: "d", ic: "📐", head: "12日計画＝浅い層の1周目を 8/24 までに終わらせる",
-        detail: "未○151＝**熟成76／浅い75**。熟成はあと1.5回転（3分/問）、浅いはあと3.5回転（10分/問）。**△は+2日サイクルなので、浅い問題を4回転させるには最低7日必要**＝8/25以降に着手した問題は8/31に間に合わない。だから**浅い75問の1周目を8/24(月)までに完了**が絶対条件。8/22(土)＝第38章 企業結合13＋第28章 成果連結8／8/23(日)＝第40章6・第22章5・第41章5・第31章4・第32章4／8/24(月)＝第20章3・第37章3・補講6・第25章4・第29章4。" },
-      { kind: "d", ic: "⚖️", head: "成立条件は4つ。余裕はゼロ",
-        detail: "**①週末4日を7.5h**（6hだと6h不足で計算上届かない）／**②浅い層1周目を8/24までに完了**（+2日×4回転＝7日必要）／**③熟成層は必ず⑲で入る**（3分が7分になると平日ノルマ21問が10問に落ちる）／**④ゼロ日を作らない**（1日落ちると31問転＝以後の日次ノルマが+3問/日）。4つ全部で**ちょうど50h**。" },
-      { kind: "d", ic: "📈", head: "○は叩いた回数に比例する（実測）",
-        detail: "8/17-8/19に○昇格した28問のうち、**25問（89%）が復習5回以上の層**から出た。第19章 退職給付は**△8回目で例3・例6・例7が同日に3問同時突破**。要対策93は「割れない層」ではなく**「次に割れる層」**。今日の夜に置いた工原2章（復習12〜19回）は、その意味で最も期待値が高い。" }
+      { kind: "x", ic: "🍱", head: "昼枠50分 ＝ 8問（期待○8）。1問3分・閉じて手順",
+        detail: "**商業第13章 リース 例3・4・5・7・8・10**（全部**復習9回**）＋**第19章 退職給付 例2・例5**（**復習8回**）。全問が**転換率100%の実測層**です。⑲の閉じて手順で1問3分＝**8問24分**。**リース6問が全部○なら第13章クリア**。ここが今日いちばん安く○が出る場所。" },
+      { kind: "d", ic: "✍️", head: "🌙夜① ＝ ✕2問。解こうとしない。答えを見ながら手で書く",
+        detail: "**T18-例19・例20（工程別／作業点別標準原価計算・復習20回）**。20回叩いて割れていない問題に21回目の「解いてみる」は無意味です。**㉒のルール：12回以上には⑲を適用しない。処方は写経＝答えを見ながら最後まで手で書く**。本人の自己診断「工原は毎日40問のノルマ消化で手を動かしていなかった」がデータと完全一致しています（12回以上の未○21問は**全部が工原、商会はゼロ**）。目標は1問12分。" },
+      { kind: "d", ic: "🎯", head: "🌙夜② ＝ C39 5問。昨夜の解説が48h空けて戻る測定日",
+        detail: "**第39章 事業分離 例1〜例5**（復習2〜3回）。**逆取得**（形式の買い手と会計上の買い手が逆／簿価引継・のれんなし・資本金は株主資本相当額）と**売却割合40%＝100−60の裏返し**（S社を60%取得＝Ⅹ事業を40%売却が同時に起きる／取得側の差額はのれん・売却側は資本剰余金）を昨夜つぶしてあります。浅い層なので**写経で10分/問**。**5問で第39章クリア**。" },
+      { kind: "d", ic: "🔁", head: "🌙夜③ ＝ 熟成5問。2章がクリア射程",
+        detail: "**第23章 四半期 例1・例2**（復習6回・転換率75%層）＋**第34章 在外子会社 例1・例2**（復習4回）＝**それぞれ2問で章クリア**。閉じて手順で5分/問。**T22-例1 現金資金の管理（復習15回）**だけは12回以上の層なので**写経**（10分）。" },
+      { kind: "d", ic: "⏱", head: "新機能：問題ごとのストップウォッチと目標タイム",
+        detail: "各問題の**▶開始／■停止**で計測します（リロードしても走り続けます）。○△✕を押した瞬間の実測が記録に残り、**エクスポートにも ⏱N分M秒 が付く**ので、秘書側で「どの論点に何分かかっているか」を集計できるようになります。上部に**実測合計／目標合計と差分**を常時表示。試験が近づくほど『この問題に時間をかけるべきか』の判断が効いてくるので、ここから測り始めます。**⟳の色**＝グレー(1〜7回)／緑(**8〜11回＝最も割れる**)／赤(**12回以上＝写経に切り替える**)。" }
     ]
   },
 
@@ -970,28 +1011,26 @@ const DATA = {
   // 今日のキュー = 事前記入済み。○△✕とメモを叩くだけ（記録モードから使う）
   // 科目/章は記録フォームのセレクト値と一致させること（subject:"工業"|"商業", chapterは章ラベル完全一致）
   todayQueue: [
-    {"subject": "商業", "chapter": "第30章 持分法会計", "example": "例1", "subtitle": "基本的な会計処理", "note": "🍱昼・📅8/20期限・熟成・復習5回｜C30-例1"},
-    {"subject": "商業", "chapter": "第30章 持分法会計", "example": "例3", "subtitle": "持分法から連結への移行", "note": "🍱昼・📅8/20期限・熟成・復習6回｜C30-例3"},
-    {"subject": "商業", "chapter": "第30章 持分法会計", "example": "例4", "subtitle": "その他有価証券評価差額金", "note": "🍱昼・📅8/20期限・熟成・復習5回｜C30-例4"},
-    {"subject": "商業", "chapter": "第30章 持分法会計", "example": "例5", "subtitle": "未実現利益①（商品・ダウンストリーム）", "note": "🍱昼・📅8/20期限・熟成・復習5回｜C30-例5"},
-    {"subject": "商業", "chapter": "第11章 債権債務・貸倒引当金", "example": "例16", "subtitle": "貸倒懸念債権②（キャッシュ・フロー見積法）", "note": "🍱昼・📅8/20期限・熟成・🎯章クリア射程・復習10回｜C11-例16"},
-    {"subject": "商業", "chapter": "第16章 税金及び税効果会計", "example": "例9", "subtitle": "圧縮記帳（積立金方式）", "note": "🍱昼・📅8/20期限・熟成・🎯これで第16章クリア・復習10回｜C16-例9"},
-    {"subject": "商業", "chapter": "第33章 在外支店", "example": "例1", "subtitle": "在外支店の換算", "note": "🍱昼・📅8/20期限・🎯これで第33章クリア・復習3回｜C33-例1"},
-    {"subject": "商業", "chapter": "第37章 セグメント情報", "example": "例1", "subtitle": "報告セグメントの決定", "note": "🍱昼・📅8/20期限・復習2回｜C37-例1"},
-    {"subject": "工業", "chapter": "第19章 意思決定会計Ⅱ", "example": "例5", "subtitle": "回収期間法", "note": "🌙夜・熟成・章まるごと・復習17回｜T25-例5"},
-    {"subject": "工業", "chapter": "第19章 意思決定会計Ⅱ", "example": "例6", "subtitle": "投下資本利益率法", "note": "🌙夜・熟成・章まるごと・復習17回｜T25-例6"},
-    {"subject": "工業", "chapter": "第19章 意思決定会計Ⅱ", "example": "例10", "subtitle": "正味運転資本とキャッシュ・フロー", "note": "🌙夜・熟成・章まるごと・復習12回｜T26-例10"},
-    {"subject": "工業", "chapter": "第19章 意思決定会計Ⅱ", "example": "例11", "subtitle": "取替投資①", "note": "🌙夜・熟成・章まるごと・復習14回｜T26-例11"},
-    {"subject": "工業", "chapter": "第19章 意思決定会計Ⅱ", "example": "例12", "subtitle": "取替投資②", "note": "🌙夜・熟成・章まるごと・復習12回｜T26-例12"},
-    {"subject": "工業", "chapter": "第19章 意思決定会計Ⅱ", "example": "例13", "subtitle": "経済的耐用年数と法定耐用年数", "note": "🌙夜・熟成・章まるごと・復習12回｜T26-例13"},
-    {"subject": "工業", "chapter": "第19章 意思決定会計Ⅱ", "example": "例14", "subtitle": "耐用年数が異なる相互排他的投資案", "note": "🌙夜・熟成・章まるごと・復習12回｜T26-例14"},
-    {"subject": "工業", "chapter": "第19章 意思決定会計Ⅱ", "example": "例15", "subtitle": "リースか購入かの意思決定", "note": "🌙夜・🎯これで工原第19章クリア・復習12回｜T26-例15"},
-    {"subject": "工業", "chapter": "第13章 標準原価計算", "example": "例12", "subtitle": "仕損費差異（異常仕損）", "note": "🌙夜・熟成・章まるごと・復習16回｜T17-例12"},
-    {"subject": "工業", "chapter": "第13章 標準原価計算", "example": "例15", "subtitle": "数量差異の分析②", "note": "🌙夜・熟成・章まるごと・復習18回｜T18-例15"},
-    {"subject": "工業", "chapter": "第13章 標準原価計算", "example": "例16", "subtitle": "作業時間差異の分析①", "note": "🌙夜・熟成・章まるごと・復習18回｜T18-例16"},
-    {"subject": "工業", "chapter": "第13章 標準原価計算", "example": "例18", "subtitle": "歩留差異総合問題", "note": "🌙夜・熟成・章まるごと・復習18回｜T18-例18"},
-    {"subject": "工業", "chapter": "第13章 標準原価計算", "example": "例19", "subtitle": "工程別標準原価計算・作業点別標準原価計算", "note": "🌙夜・熟成・章まるごと・復習19回｜T18-例19"},
-    {"subject": "工業", "chapter": "第13章 標準原価計算", "example": "例20", "subtitle": "作業点別標準原価計算", "note": "🌙夜・🎯これで工原第13章クリア・復習19回｜T18-例20"},
+    {"subject": "商業", "chapter": "第13章 リース会計", "example": "例3", "subtitle": "貸手の購入価額が判明しない場合・所有権移転外FL", "block": "🍱 昼枠 50分", "reps": 9, "mode": "閉じて手順", "target": 3, "note": "転換率100%層・🎯6問で第13章クリア｜C13-例3"},
+    {"subject": "商業", "chapter": "第13章 リース会計", "example": "例4", "subtitle": "貸手の購入価額が判明しない場合・所有権移転FL", "block": "🍱 昼枠 50分", "reps": 9, "mode": "閉じて手順", "target": 3, "note": "転換率100%層・🎯章クリア｜C13-例4"},
+    {"subject": "商業", "chapter": "第13章 リース会計", "example": "例5", "subtitle": "リース料の半年払い", "block": "🍱 昼枠 50分", "reps": 9, "mode": "閉じて手順", "target": 3, "note": "転換率100%層・🎯章クリア｜C13-例5"},
+    {"subject": "商業", "chapter": "第13章 リース会計", "example": "例7", "subtitle": "中途解約", "block": "🍱 昼枠 50分", "reps": 9, "mode": "閉じて手順", "target": 3, "note": "転換率100%層・🎯章クリア｜C13-例7"},
+    {"subject": "商業", "chapter": "第13章 リース会計", "example": "例8", "subtitle": "セール・アンド・リースバック取引①（所有権移転ＦＬの場合）", "block": "🍱 昼枠 50分", "reps": 9, "mode": "閉じて手順", "target": 3, "note": "転換率100%層・🎯章クリア｜C13-例8"},
+    {"subject": "商業", "chapter": "第13章 リース会計", "example": "例10", "subtitle": "貸手側の処理", "block": "🍱 昼枠 50分", "reps": 9, "mode": "閉じて手順", "target": 3, "note": "転換率100%層・🎯章クリア｜C13-例10"},
+    {"subject": "商業", "chapter": "第19章 退職給付会計", "example": "例2", "subtitle": "外部積立型企業年金制度", "block": "🍱 昼枠 50分", "reps": 8, "mode": "閉じて手順", "target": 3, "note": "転換率100%層・📅8/21期限｜C19-例2"},
+    {"subject": "商業", "chapter": "第19章 退職給付会計", "example": "例5", "subtitle": "各種差異③（前期以前に発生）", "block": "🍱 昼枠 50分", "reps": 8, "mode": "閉じて手順", "target": 3, "note": "転換率100%層・📅8/21期限｜C19-例5"},
+    {"subject": "工業", "chapter": "第13章 標準原価計算", "example": "例19", "subtitle": "工程別標準原価計算・作業点別標準原価計算", "block": "🌙 夜① 最優先＝✕2問", "reps": 20, "mode": "写経", "target": 12, "note": "✕・20回・解こうとしない｜T18-例19"},
+    {"subject": "工業", "chapter": "第13章 標準原価計算", "example": "例20", "subtitle": "作業点別標準原価計算", "block": "🌙 夜① 最優先＝✕2問", "reps": 20, "mode": "写経", "target": 12, "note": "✕・20回・解こうとしない｜T18-例20"},
+    {"subject": "商業", "chapter": "第39章 事業分離会計", "example": "例1", "subtitle": "対価が現金等の財産のみの場合の個別財務諸表上の処理", "block": "🌙 夜② 測定日（48h空け）", "reps": 3, "mode": "写経", "target": 10, "note": "📅8/21期限・浅い層｜C39-例1"},
+    {"subject": "商業", "chapter": "第39章 事業分離会計", "example": "例2", "subtitle": "対価が分離先企業の株式のみの場合の個別財務諸表上の処理", "block": "🌙 夜② 測定日（48h空け）", "reps": 3, "mode": "写経", "target": 10, "note": "📅8/21期限・逆取得を解説済み｜C39-例2"},
+    {"subject": "商業", "chapter": "第39章 事業分離会計", "example": "例3", "subtitle": "対価が現金等の財産のみ（分離先子会社）", "block": "🌙 夜② 測定日（48h空け）", "reps": 2, "mode": "写経", "target": 10, "note": "📅8/21期限・浅い層｜C39-例3"},
+    {"subject": "商業", "chapter": "第39章 事業分離会計", "example": "例4", "subtitle": "対価が株式のみ（新規子会社）", "block": "🌙 夜② 測定日（48h空け）", "reps": 2, "mode": "写経", "target": 10, "note": "📅8/21期限・売却割合40%を解説済み｜C39-例4"},
+    {"subject": "商業", "chapter": "第39章 事業分離会計", "example": "例5", "subtitle": "共同支配企業の形成", "block": "🌙 夜② 測定日（48h空け）", "reps": 3, "mode": "写経", "target": 10, "note": "📅8/21期限・🎯5問で第39章クリア｜C39-例5"},
+    {"subject": "商業", "chapter": "第23章 四半期財務諸表", "example": "例1", "subtitle": "税金費用の計算", "block": "🌙 夜③ 熟成層の回収", "reps": 6, "mode": "閉じて手順", "target": 5, "note": "📅8/21期限・🎯2問で第23章クリア｜C23-例1"},
+    {"subject": "商業", "chapter": "第23章 四半期財務諸表", "example": "例2", "subtitle": "原価差異の繰延処理", "block": "🌙 夜③ 熟成層の回収", "reps": 6, "mode": "閉じて手順", "target": 5, "note": "📅8/21期限・🎯章クリア｜C23-例2"},
+    {"subject": "商業", "chapter": "第34章 在外子会社", "example": "例1", "subtitle": "在外子会社の財務諸表項目の換算", "block": "🌙 夜③ 熟成層の回収", "reps": 4, "mode": "閉じて手順", "target": 5, "note": "📅8/21期限・🎯2問で第34章クリア｜C34-例1"},
+    {"subject": "商業", "chapter": "第34章 在外子会社", "example": "例2", "subtitle": "資本連結", "block": "🌙 夜③ 熟成層の回収", "reps": 4, "mode": "閉じて手順", "target": 5, "note": "📅8/21期限・🎯章クリア｜C34-例2"},
+    {"subject": "工業", "chapter": "第17章 資金管理", "example": "例1", "subtitle": "現金資金の管理", "block": "🌙 夜③ 熟成層の回収", "reps": 15, "mode": "写経", "target": 10, "note": "📅8/21期限・15回＝反復では割れない層｜T22-例1"},
   ],
 
     // 6パターン制圧ボード（marks: [ラベル, o|d|x]）
@@ -1011,8 +1050,8 @@ const DATA = {
   ],
 
   stats: {
-    recorded: 527, o: 385, d: 142, x: 0,
-    needAction: 86,             // 要対策（現在△のうち4回目以降）
+    recorded: 527, o: 385, d: 140, x: 2,
+    needAction: 84,             // 要対策（現在△のうち4回目以降）
     subjects: [
       { n: 149, k: "工原 テキスト例題" },
       { n: 43,  k: "工原 問題集" },
@@ -1033,15 +1072,15 @@ const DATA = {
   weekPlan: {
     label: "8/17週（〜8/23）：クランチ入り。12日で151問○の第1・第2ブロック",
     rows: [
-      { day: "月", task: "23問・○9（転換率39%）。第26章クリア（8/17）", done: true },
-      { day: "火", task: "22問・○14（**64%**）。第17章 外貨・第24章 収益認識が完全クリア（8/18）", done: true },
-      { day: "水", task: "17問・○5（29%）。**第19章 退職給付が△8回目で3問同時突破**／**第27章 資本連結クリア**（8/19）", done: true },
-      { day: "木", task: "🏢取締役会→クランチ開始。🍱昼8問＋🌙夜 工原熟成2章14問＝**22問**（8/20）", done: false },
-      { day: "金", task: "8/21期限12問＋商業第13章 リース6問＝**21問**（8/21）", done: false },
+      { day: "月", task: "23問・○9（39%）。第26章クリア（8/17）", done: true },
+      { day: "火", task: "22問・○14（**64%**）。第17章 外貨・第24章 収益認識クリア（8/18）", done: true },
+      { day: "水", task: "17問・○5（29%）。第19章 退職給付が△8回目で3問同時突破／第27章クリア（8/19）", done: true },
+      { day: "木", task: "22問・○9・✕2（41%）。**第16章クリア**／工原第19章は残4問／**㉒＝転換率の逆U字が確定**（8/20）", done: true },
+      { day: "金", task: "🎯**20問・目標128分**。昼＝転換率100%層8問／夜＝✕2は写経・C39測定5問・熟成5問（8/21）", done: false },
       { day: "土", task: "🔥**7.5h**。第38章 企業結合13＋第28章 成果連結8＝**21問**（浅い層1周目）（8/22）", done: false },
       { day: "日", task: "🔥**7.5h**。第40章6・第22章5・第41章5・第31章4・第32章4＝**24問**（8/23）", done: false }
     ],
-    maxims: ["📐必要は延べ376問転＝約50h。標準枠44hに対し6h不足＝**週末7.5hが closing 条件**", "⏳浅い層75問の1周目は**8/24までに完了**（+2日×4回転＝7日必要）", "📈○は叩いた回数に比例する。○昇格の89%は復習5回以上の層から"]
+    maxims: ["📊㉒転換率は復習回数の逆U字：1〜2回=10%／8〜11回=**100%**／12回以上=**27%**", "✍️12回以上の未○21問は**全部が工原**。処方は⑲ではなく**写経**", "⏱残り11日・未○142問。必要48.3h vs 枠47.5h＝**−0.8h**。ゼロ日ゼロでぎりぎり"]
   },
 
   // 週次プラン（マクロ逆算）＝ 突発予定が出たときに「週単位でどう吸収するか」を見える化
@@ -1071,7 +1110,7 @@ const DATA = {
   },
 
   reviewQueue: {
-    total: 135, d: 135, x: 0,
+    total: 131, d: 129, x: 2,
     groups: [
       { title: "🔴 本日8/19期限 14問（⑲の測定対象・今日の本命）", cnt: 14,
         body: "第19章 退職給付5（例2・3・5・6・7）／第38章 企業結合4（例2・4・8・9）／第39章 事業分離3（例1・2・5）／第34章 在外子会社2（例1・2）。**すべて8/17に解いた分が48h空けて戻ってきたもの**＝閉じて手順が測定として成立する。しかも第19章・第34章・第39章はこれで章クリア。" },
@@ -1776,43 +1815,157 @@ function section(inner) {
   }
 
   const markGlyph = { o: "○", d: "△", x: "✕" };
+
+  // ---- 問題ごとのストップウォッチ ----
+  // 目的：⑳の「理想タイム」との差を可視化し、コスパ判断（この問題に時間をかけるべきか）を数値でやる。
+  // localStorage に持つのでリロードしても走り続ける。
+  const TIMER_KEY = "boki_dash_timers_v1";
+  let timers = (() => {
+    try { return JSON.parse(localStorage.getItem(TIMER_KEY)) || {}; } catch (e) { return {}; }
+  })();
+  function saveTimers() {
+    try { localStorage.setItem(TIMER_KEY, JSON.stringify(timers)); } catch (e) { /* ignore */ }
+  }
+  const qKey = (q) => `${q.subject}|${q.chapter}|${q.example}`;
+  function tSec(k) {
+    const t = timers[k];
+    if (!t) return 0;
+    return (t.acc || 0) + (t.run ? Math.floor((Date.now() - t.run) / 1000) : 0);
+  }
+  function tRunning(k) { return !!(timers[k] && timers[k].run); }
+  function tToggle(k) {
+    const t = timers[k] || (timers[k] = { run: null, acc: 0 });
+    if (t.run) { t.acc = (t.acc || 0) + Math.floor((Date.now() - t.run) / 1000); t.run = null; }
+    else { t.run = Date.now(); }
+    saveTimers();
+  }
+  function tStop(k) {
+    const t = timers[k];
+    if (t && t.run) { t.acc = (t.acc || 0) + Math.floor((Date.now() - t.run) / 1000); t.run = null; saveTimers(); }
+  }
+  function fmtSec(s) {
+    const m = Math.floor(s / 60), r = s % 60;
+    return `${m}:${String(r).padStart(2, "0")}`;
+  }
+  const MODE_CLASS = { "写経": "mode-syakyo", "閉じて手順": "mode-tejun", "公式カード": "mode-kousiki" };
+  // ㉒ 転換率は復習回数の逆U字：8〜11回が最も割れる／12回以上は反復では割れない
+  function repsClass(n) {
+    if (!n) return "";
+    if (n >= 12) return "hot";
+    if (n >= 8) return "peak";
+    return "";
+  }
+  function repsTitle(n) {
+    if (!n) return "";
+    if (n >= 12) return "12回以上＝反復では割れない層（転換率27%）。写経で手を動かす";
+    if (n >= 8) return "8〜11回＝転換率100%の実測層。最も安く○が出る";
+    if (n >= 5) return "5〜7回＝転換率75%";
+    if (n >= 3) return "3〜4回＝転換率67%";
+    return "1〜2回＝写経段階（転換率10%）";
+  }
+
   function renderQueue() {
     if (!QUEUE.length) { elQueue.hidden = true; return; }
     elQueue.hidden = false;
     const doneCount = QUEUE.filter(queueDone).length;
-    elQueue.innerHTML =
-      `<div class="rq-head">🎯 今日の予定（叩くだけ）<span class="rq-prog tnum">${doneCount}/${QUEUE.length}</span></div>` +
-      QUEUE.map((q, i) => {
-        const done = queueDone(q);
-        const ch = chapterNum(q.chapter) || q.chapter;
-        const sub = q.subtitle ? `「${esc(q.subtitle)}」` : "";
-        const note = q.note ? `<div class="rq-note">${esc(q.note)}</div>` : "";
-        if (done) {
-          const memo = done.memo ? `<span class="rq-donmemo">📝 ${esc(done.memo)}</span>` : "";
-          return `<div class="rq-item done" data-i="${i}">
-            <div class="rq-main">
-              <div class="rq-ttl"><span class="rq-glyph ${done.mark}">${markGlyph[done.mark]}</span> ${esc(q.subject)}・${esc(ch)} ${esc(q.example)}${sub}</div>
-              ${note}${memo}
-            </div>
-            <button type="button" class="rq-undo" data-i="${i}" data-rid="${esc(done.id)}">取消</button>
-          </div>`;
-        }
-        return `<div class="rq-item" data-i="${i}">
+    const tgtTotal  = QUEUE.reduce((a, q) => a + (Number(q.target) || 0), 0);
+    const secTotal  = QUEUE.reduce((a, q) => {
+      const d = queueDone(q);
+      return a + (d && d.sec ? d.sec : tSec(qKey(q)));
+    }, 0);
+    const gap = Math.round(secTotal / 60) - tgtTotal;
+    const gapTxt = tgtTotal
+      ? `実測 ${fmtSec(secTotal)} / 目標 ${tgtTotal}:00　<b class="${gap > 0 ? "x" : "o"}">${gap >= 0 ? "+" : ""}${gap}分</b>`
+      : "";
+
+    let html = `<div class="rq-head">🎯 今日の予定（叩くだけ）<span class="rq-prog tnum">${doneCount}/${QUEUE.length}　${gapTxt}</span></div>`;
+    let lastBlock = null;
+
+    QUEUE.forEach((q, i) => {
+      const blk = q.block || "";
+      if (blk && blk !== lastBlock) {
+        lastBlock = blk;
+        const g = QUEUE.filter(x => x.block === blk);
+        const gt = g.reduce((a, x) => a + (Number(x.target) || 0), 0);
+        const gd = g.filter(queueDone).length;
+        html += `<div class="rq-block"><span class="bn">${esc(blk)}</span>` +
+                `<span class="bm">${gd}/${g.length}問・目標 ${gt}分</span></div>`;
+      }
+      const done  = queueDone(q);
+      const ch    = chapterNum(q.chapter) || q.chapter;
+      const sub   = q.subtitle ? `「${esc(q.subtitle)}」` : "";
+      const note  = q.note ? `<div class="rq-note">${esc(q.note)}</div>` : "";
+      const key   = qKey(q);
+      const tgt   = Number(q.target) || 0;
+      const chips = [];
+      if (q.reps) chips.push(`<span class="chip reps ${repsClass(q.reps)}" title="${esc(repsTitle(q.reps))}">⟳ ${q.reps}回</span>`);
+      if (q.mode) chips.push(`<span class="chip ${MODE_CLASS[q.mode] || ""}">${esc(q.mode)}</span>`);
+      if (tgt)    chips.push(`<span class="chip tgt">⏱ 目標${tgt}分</span>`);
+      const chipHtml = chips.length ? `<div class="rq-chips">${chips.join("")}</div>` : "";
+
+      if (done) {
+        const memo = done.memo ? `<span class="rq-donmemo">📝 ${esc(done.memo)}</span>` : "";
+        const sec  = done.sec || 0;
+        const cls  = !tgt ? "" : (sec > tgt * 60 ? "over" : "good");
+        const tm   = sec ? `<span class="rq-donetime ${cls}">⏱ ${fmtSec(sec)}${tgt ? ` / ${tgt}:00` : ""}</span>` : "";
+        html += `<div class="rq-item done" data-i="${i}">
           <div class="rq-main">
-            <div class="rq-ttl">${esc(q.subject)}・${esc(ch)} ${esc(q.example)}${sub}</div>
-            ${note}
+            <div class="rq-ttl"><span class="rq-glyph ${done.mark}">${markGlyph[done.mark]}</span> ${esc(q.subject)}・${esc(ch)} ${esc(q.example)}${sub}${tm}</div>
+            ${chipHtml}${note}${memo}
           </div>
-          <div class="rq-controls">
-            <div class="mark-btns sm" data-i="${i}">
-              <button type="button" class="mark-btn o" data-mark="o" data-i="${i}">○</button>
-              <button type="button" class="mark-btn d" data-mark="d" data-i="${i}">△</button>
-              <button type="button" class="mark-btn x" data-mark="x" data-i="${i}">✕</button>
-            </div>
-            <input class="rec-input rq-memo" data-i="${i}" type="text" placeholder="メモ（任意）" autocomplete="off">
-          </div>
+          <button type="button" class="rq-undo" data-i="${i}" data-rid="${esc(done.id)}">取消</button>
         </div>`;
-      }).join("");
+        return;
+      }
+      const sec  = tSec(key);
+      const run  = tRunning(key);
+      const tcls = run ? "run" : (tgt && sec > tgt * 60 ? "over" : "");
+      html += `<div class="rq-item" data-i="${i}">
+        <div class="rq-main">
+          <div class="rq-ttl">${esc(q.subject)}・${esc(ch)} ${esc(q.example)}${sub}</div>
+          ${chipHtml}${note}
+        </div>
+        <div class="rq-controls">
+          <div class="rq-timer">
+            <button type="button" class="rq-tbtn ${run ? "run" : ""}" data-timer="${i}">${run ? "■ 停止" : (sec ? "▶ 再開" : "▶ 開始")}</button>
+            <span class="rq-time ${tcls}" data-time="${esc(key)}">${fmtSec(sec)}</span>
+          </div>
+          <div class="mark-btns sm" data-i="${i}">
+            <button type="button" class="mark-btn o" data-mark="o" data-i="${i}">○</button>
+            <button type="button" class="mark-btn d" data-mark="d" data-i="${i}">△</button>
+            <button type="button" class="mark-btn x" data-mark="x" data-i="${i}">✕</button>
+          </div>
+          <input class="rec-input rq-memo" data-i="${i}" type="text" placeholder="メモ（任意）" autocomplete="off">
+        </div>
+      </div>`;
+    });
+    elQueue.innerHTML = html;
   }
+
+  // 走っているタイマーだけ毎秒書き換える（全体を再描画すると入力中のメモが消えるため）
+  setInterval(() => {
+    let any = false;
+    elQueue.querySelectorAll(".rq-time").forEach(el => {
+      const k = el.dataset.time;
+      if (!tRunning(k)) return;
+      any = true;
+      el.textContent = fmtSec(tSec(k));
+    });
+    if (any) {
+      const q = elQueue.querySelector(".rq-prog");
+      if (q) {
+        const tgtTotal = QUEUE.reduce((a, x) => a + (Number(x.target) || 0), 0);
+        const secTotal = QUEUE.reduce((a, x) => {
+          const d = queueDone(x);
+          return a + (d && d.sec ? d.sec : tSec(qKey(x)));
+        }, 0);
+        const gap = Math.round(secTotal / 60) - tgtTotal;
+        const doneCount = QUEUE.filter(queueDone).length;
+        q.innerHTML = `${doneCount}/${QUEUE.length}　実測 ${fmtSec(secTotal)} / 目標 ${tgtTotal}:00　` +
+          `<b class="${gap > 0 ? "x" : "o"}">${gap >= 0 ? "+" : ""}${gap}分</b>`;
+      }
+    }
+  }, 1000);
 
   elQueue.addEventListener("click", (e) => {
     const undo = e.target.closest(".rq-undo");
@@ -1825,27 +1978,36 @@ function section(inner) {
       applyLiveOverlay();
       return;
     }
+    const tb = e.target.closest(".rq-tbtn");
+    if (tb) {
+      const q = QUEUE[Number(tb.dataset.timer)];
+      if (q) { tToggle(qKey(q)); renderQueue(); }
+      return;
+    }
     const btn = e.target.closest(".mark-btn");
     if (!btn) return;
     const i = Number(btn.dataset.i);
     const q = QUEUE[i];
     if (!q || !MARKS.has(btn.dataset.mark)) return;
     const memoEl = elQueue.querySelector(`.rq-memo[data-i="${i}"]`);
+    const key = qKey(q);
+    tStop(key);
     pushRecord({
       subject: q.subject, chapter: q.chapter, example: q.example,
       subtitle: q.subtitle || "", memo: memoEl ? memoEl.value.trim() : "",
-      mark: btn.dataset.mark
+      mark: btn.dataset.mark, sec: tSec(key)
     });
   });
 
   // 記録追加の共通処理（手入力フォームと今日のキューの両方から使う）
-  function pushRecord({ subject, chapter, example, subtitle, memo, mark }) {
+  function pushRecord({ subject, chapter, example, subtitle, memo, mark, sec }) {
     records.push({
       id: newId(),
       subject, chapter, example,
       subtitle: subtitle || "",
       memo: memo || "",
       mark,
+      sec: Number(sec) || 0,
       ts: Date.now()
     });
     records.sort((a, b) => a.ts - b.ts);
@@ -2115,7 +2277,8 @@ function section(inner) {
       const sym = markSym(r.mark);
       const sub = r.subtitle ? `「${r.subtitle}」` : "";
       const memo = r.memo ? ` メモ:${r.memo}` : "";
-      return `- ${r.subject} ${r.chapter} ${r.example}${sub} ${sym}${memo}`;
+      const t = r.sec ? ` ⏱${Math.floor(r.sec / 60)}分${String(r.sec % 60).padStart(2, "0")}秒` : "";
+      return `- ${r.subject} ${r.chapter} ${r.example}${sub} ${sym}${t}${memo}`;
     });
   }
   const EXPORT_HEADER = "以下を exercise-log.md に記録してください（理解度は下記の通り。復習回数・次回復習日は既存ログのルールで計算し、確定値は上書きしないこと）:";
