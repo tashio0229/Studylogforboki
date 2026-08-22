@@ -142,6 +142,17 @@
       repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 26px);
   }
   .fig-body svg { display: block; min-width: 640px; width: 100%; height: auto; }
+  .panes { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .panes { grid-template-columns: 1.25fr 1fr; } }
+  .pane { min-width: 0; }
+  .pane + .pane { border-top: 1px solid var(--bd-soft); }
+  @media (min-width: 900px) { .pane + .pane { border-top: none; border-left: 1px solid var(--bd-soft); } }
+  .pane-lbl {
+    font-family: var(--f-mono); font-size: .68rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--tx-3);
+    padding: .5rem .9rem .1rem;
+  }
+  .pane .fig-body svg { min-width: 420px; }
   .fig-note {
     padding: .7rem 1.1rem; border-top: 1px solid var(--bd-soft);
     font-size: .82rem; color: var(--tx-3); background: var(--surface-2);
@@ -257,7 +268,7 @@
         <span class="m">変動 @300 ／ 固定 @200 ／ 標準 @500</span>
       </div>
       <div class="fig-body"><svg id="fig-kata" role="img" aria-label="シュラッター図の一般形"></svg></div>
-      <div class="fig-note">SH＝標準操業度／AH＝実際操業度／NH＝基準操業度。この例では SH &lt; AH &lt; NH で、3つとも不利差異。</div>
+      <div class="fig-note">SH＝標準操業度／AH＝実際操業度／NH＝基準操業度。この例では SH &lt; AH &lt; NH で3つとも不利差異。<b>薄く塗った三角形</b>が、2本の線が NH で交わることで生まれる領域＝固定費の配賦不足。</div>
     </div>
 
     <ol class="steps">
@@ -290,6 +301,21 @@
       </div>
     </div>
 
+    <h3>2本の線が作る「三角形」＝ 固定費の配賦不足</h3>
+    <div class="prose">
+      <p>
+        公式法変動予算では、予算線も標準配賦線も<b>直線</b>です。そして
+        <b>この2本は必ず NH（基準操業度）で交わります</b>。
+        だから <b>0 から NH までの間に三角形ができる</b>——これがシュラッター図の一番の特徴です。
+      </p>
+      <p>
+        三角形の縦の幅は、どの操業度でも <span class="n">固定費率 × (NH − 操業度)</span>。
+        つまり <b>AH のところで測った三角形の縦幅が、そのまま操業度差異</b>です。
+        NH に近づくほど三角形は細くなり、NH でゼロ——<b>基準操業度どおりに働けば固定費は過不足なく配賦される</b>、
+        という意味がそのまま形になっています。
+      </p>
+    </div>
+
     <div class="call ok">
       <div class="h">検算はいつも1本</div>
       <p>予算差異 ＋ 能率差異 ＋ 操業度差異 ＝ <b>標準配賦額（SH×標準配賦率）− 実際発生額</b>。<br>
@@ -314,8 +340,17 @@
         <span class="t">第一工程</span>
         <span class="m">SH 800h ＝ NH 800h ／ AH 795h</span>
       </div>
-      <div class="fig-body"><svg id="fig-p1" role="img" aria-label="第一工程のシュラッター図"></svg></div>
-      <div class="fig-note">※ 差が5hしかないため、原点付近を省略して<b>横軸・縦軸を拡大</b>しています（実線の傾きは正しい）。</div>
+      <div class="panes">
+        <div class="pane">
+          <div class="pane-lbl">全体図 ／ 三角形が見える</div>
+          <div class="fig-body"><svg id="fig-p1" role="img" aria-label="第一工程のシュラッター図・全体"></svg></div>
+        </div>
+        <div class="pane">
+          <div class="pane-lbl">拡大図 ／ 差異が読める</div>
+          <div class="fig-body"><svg id="fig-p1z" role="img" aria-label="第一工程のシュラッター図・拡大"></svg></div>
+        </div>
+      </div>
+      <div class="fig-note">※ 全体図の点線の枠が、右の拡大図の範囲。差が 5h・2,500円 と小さいので、全体図では差異が潰れて見えません。</div>
     </div>
 
     <div class="tw">
@@ -349,8 +384,17 @@
         <span class="t">第二工程</span>
         <span class="m">SH 1,200h ＝ AH 1,200h ／ NH 1,250h</span>
       </div>
-      <div class="fig-body"><svg id="fig-p2" role="img" aria-label="第二工程のシュラッター図"></svg></div>
-      <div class="fig-note">※ 原点付近を省略して拡大表示。SHとAHが同じ位置なので、縦線が1本に重なります。</div>
+      <div class="panes">
+        <div class="pane">
+          <div class="pane-lbl">全体図 ／ 三角形が見える</div>
+          <div class="fig-body"><svg id="fig-p2" role="img" aria-label="第二工程のシュラッター図・全体"></svg></div>
+        </div>
+        <div class="pane">
+          <div class="pane-lbl">拡大図 ／ 差異が読める</div>
+          <div class="fig-body"><svg id="fig-p2z" role="img" aria-label="第二工程のシュラッター図・拡大"></svg></div>
+        </div>
+      </div>
+      <div class="fig-note">※ SH と AH が同じ位置なので縦線が1本に重なり、能率差異の区間が消えます。</div>
     </div>
 
     <div class="tw">
@@ -470,6 +514,17 @@
       o.push('<path d="M' + (M.l - 6) + ' ' + (M.t + ph - 14) + ' l-9 -6 l18 -6 l-18 -6 l9 -6" fill="none" stroke="' + C.bd + '" stroke-width="1.5"/>');
     }
 
+    // --- 三角形（0〜NH で 予算線 と 標準配賦線 に挟まれる領域）＝固定費の配賦不足 ---
+    if (cfg.triangle) {
+      var tx0 = Math.max(x0, 0);
+      o.push('<path d="M' + X(tx0) + " " + Y(sr * tx0) +
+        " L" + X(tx0) + " " + Y(vr * tx0 + fixed) +
+        " L" + X(NH) + " " + Y(sr * NH) + ' Z" fill="' + C.budbg + '"/>');
+      var tmx = (tx0 + NH) / 2;
+      txt(X(tmx) - 4, (Y(sr * tmx) + Y(vr * tmx + fixed)) / 2 + 4,
+        "固定費の配賦不足", C.bud, 12, "middle", 700);
+    }
+
     // --- 2本の直線 ---
     var stdA = { x: Math.max(x0, 0), y: sr * Math.max(x0, 0) };
     line(X(stdA.x), Y(sr * stdA.x), X(x1), Y(sr * x1), C.std, 2.6);
@@ -532,14 +587,25 @@
     span(NH, vr * NH + fixed, sr * NH, capDiff < 0 ? C.bad : C.good,
       "操業度差異", nfmt(capDiff), cfg.capSide || "R");
 
+    // --- 拡大図の範囲を示す枠 ---
+    if (cfg.zoomBox) {
+      var z = cfg.zoomBox;
+      var zx = X(z.x0), zy = Y(z.y1), zw = X(z.x1) - X(z.x0), zh = Y(z.y0) - Y(z.y1);
+      o.push('<rect x="' + zx + '" y="' + zy + '" width="' + Math.max(zw, 3) +
+        '" height="' + Math.max(zh, 3) + '" fill="none" stroke="' + C.tx3 +
+        '" stroke-width="1.4" stroke-dasharray="4 3"/>');
+      txt(zx + Math.max(zw, 3) / 2, zy - 7, "拡大図の範囲", C.tx3, 11, "middle", 700);
+    }
+
     svg.setAttribute("viewBox", "0 0 " + W + " " + H);
     svg.innerHTML = o.join("");
   }
 
   function renderAll() {
-    // 一般形：SH < AH < NH。すべて不利。
+    // 一般形：SH < AH < NH。すべて不利。三角形もここで見せる。
     draw("fig-kata", {
       vr: 300, fr: 200, NH: 1000, SH: 850, AH: 900, actual: 490000,
+      triangle: true,
       marks: [
         { v: 850, label: "SH 標準" },
         { v: 900, label: "AH 実際" },
@@ -547,27 +613,29 @@
       ]
     });
 
-    // 第一工程：AH 795 < SH 800 = NH 800（原点付近を省略して拡大）
-    draw("fig-p1", {
-      vr: 500, fr: 500, NH: 800, SH: 800, AH: 795, actual: 800000,
+    // 第一工程：AH 795 < SH 800 = NH 800
+    var p1 = { vr: 500, fr: 500, NH: 800, SH: 800, AH: 795, actual: 800000,
+      marks: [{ v: 795, label: "AH 実際" }, { v: 800, label: "SH ＝ NH" }] };
+    draw("fig-p1", Object.assign({}, p1, {
+      triangle: true,
+      zoomBox: { x0: 780, x1: 812, y0: 780000, y1: 815000 }
+    }));
+    draw("fig-p1z", Object.assign({}, p1, {
       xmin: 780, xmax: 812, ymin: 780000, ymax: 815000,
-      capSide: "R", budSide: "L",
-      marks: [
-        { v: 795, label: "AH 実際" },
-        { v: 800, label: "SH ＝ NH" }
-      ]
-    });
+      capSide: "R", budSide: "L"
+    }));
 
-    // 第二工程：SH = AH 1,200 < NH 1,250（原点付近を省略して拡大）
-    draw("fig-p2", {
-      vr: 500, fr: 700, NH: 1250, SH: 1200, AH: 1200, actual: 1500000,
+    // 第二工程：SH = AH 1,200 < NH 1,250
+    var p2 = { vr: 500, fr: 700, NH: 1250, SH: 1200, AH: 1200, actual: 1500000,
+      marks: [{ v: 1200, label: "SH ＝ AH" }, { v: 1250, label: "NH 基準" }] };
+    draw("fig-p2", Object.assign({}, p2, {
+      triangle: true,
+      zoomBox: { x0: 1180, x1: 1272, y0: 1400000, y1: 1530000 }
+    }));
+    draw("fig-p2z", Object.assign({}, p2, {
       xmin: 1180, xmax: 1272, ymin: 1400000, ymax: 1530000,
-      capSide: "R", budSide: "L",
-      marks: [
-        { v: 1200, label: "SH ＝ AH" },
-        { v: 1250, label: "NH 基準" }
-      ]
-    });
+      capSide: "R", budSide: "L"
+    }));
   }
 
   renderAll();
