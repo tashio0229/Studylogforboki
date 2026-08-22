@@ -1,0 +1,580 @@
+<title>シュラッター図の描き方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+  :root {
+    --paper:    #EDF1F2;
+    --surface:  #FFFFFF;
+    --surface-2:#F4F7F8;
+    --bd:       #D2DBDE;
+    --bd-soft:  #E3EAEC;
+    --tx:       #101619;
+    --tx-2:     #3D4A50;
+    --tx-3:     #6B7B82;
+    --std:      #0E7490;   /* 標準配賦線 */
+    --bud:      #A85B12;   /* 予算線 */
+    --bad:      #A81E14;   /* 不利差異 */
+    --good:     #14682F;   /* 有利差異 */
+    --std-bg:   rgba(14,116,144,.10);
+    --bud-bg:   rgba(168,91,18,.10);
+    --bad-bg:   rgba(168,30,20,.09);
+    --good-bg:  rgba(20,104,47,.09);
+    --grid:     rgba(16,22,25,.055);
+    --shadow:   0 1px 2px rgba(16,22,25,.05), 0 8px 24px -14px rgba(16,22,25,.28);
+
+    --f-disp: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif;
+    --f-body: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:    #0C1113;
+      --surface:  #141B1E;
+      --surface-2:#111819;
+      --bd:       #2A363B;
+      --bd-soft:  #1E282C;
+      --tx:       #E6ECEE;
+      --tx-2:     #B2C0C5;
+      --tx-3:     #7E8F96;
+      --std:      #35B4D0;
+      --bud:      #E09A3E;
+      --bad:      #F0736A;
+      --good:     #59CE84;
+      --std-bg:   rgba(53,180,208,.14);
+      --bud-bg:   rgba(224,154,62,.14);
+      --bad-bg:   rgba(240,115,106,.13);
+      --good-bg:  rgba(89,206,132,.13);
+      --grid:     rgba(230,236,238,.06);
+      --shadow:   0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:    #0C1113;
+    --surface:  #141B1E;
+    --surface-2:#111819;
+    --bd:       #2A363B;
+    --bd-soft:  #1E282C;
+    --tx:       #E6ECEE;
+    --tx-2:     #B2C0C5;
+    --tx-3:     #7E8F96;
+    --std:      #35B4D0;
+    --bud:      #E09A3E;
+    --bad:      #F0736A;
+    --good:     #59CE84;
+    --std-bg:   rgba(53,180,208,.14);
+    --bud-bg:   rgba(224,154,62,.14);
+    --bad-bg:   rgba(240,115,106,.13);
+    --good-bg:  rgba(89,206,132,.13);
+    --grid:     rgba(230,236,238,.06);
+    --shadow:   0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.8);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--tx);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 2.4rem 1.15rem 5rem; }
+  .prose { max-width: 68ch; }
+
+  /* ---------- header ---------- */
+  header.top { margin-bottom: 2.6rem; }
+  .eyebrow {
+    font-family: var(--f-mono); font-size: .7rem; font-weight: 700;
+    letter-spacing: .16em; text-transform: uppercase; color: var(--std);
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--bd); }
+  h1 {
+    font-family: var(--f-disp); font-weight: 900; font-size: clamp(1.9rem, 5vw, 2.9rem);
+    line-height: 1.18; letter-spacing: -.02em; margin: .7rem 0 .5rem; text-wrap: balance;
+  }
+  .lede { color: var(--tx-2); font-size: 1.02rem; max-width: 62ch; margin: 0; }
+
+  h2 {
+    font-family: var(--f-disp); font-weight: 700; font-size: 1.45rem; letter-spacing: -.015em;
+    margin: 3.4rem 0 .35rem; text-wrap: balance;
+  }
+  h2 .num {
+    font-family: var(--f-mono); font-size: .78rem; font-weight: 700; color: var(--std);
+    display: block; letter-spacing: .12em; margin-bottom: .15rem;
+  }
+  h3 {
+    font-family: var(--f-disp); font-weight: 700; font-size: 1.03rem;
+    margin: 2rem 0 .5rem; letter-spacing: -.01em;
+  }
+  p { margin: .85rem 0; }
+  .sub { color: var(--tx-3); font-size: .9rem; margin-top: .1rem; }
+  b, strong { font-weight: 700; }
+  code, .n {
+    font-family: var(--f-mono); font-variant-numeric: tabular-nums;
+    font-size: .92em;
+  }
+
+  /* ---------- figure card ---------- */
+  .fig {
+    margin: 1.5rem 0 0;
+    background: var(--surface);
+    border: 1px solid var(--bd);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .fig-head {
+    display: flex; align-items: baseline; gap: .75rem; flex-wrap: wrap;
+    padding: .8rem 1.1rem;
+    border-bottom: 1px solid var(--bd-soft);
+    background: var(--surface-2);
+  }
+  .fig-head .t { font-family: var(--f-disp); font-weight: 700; font-size: .97rem; }
+  .fig-head .m { font-family: var(--f-mono); font-size: .74rem; color: var(--tx-3); margin-left: auto; }
+  .fig-body {
+    overflow-x: auto;
+    background-image:
+      repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 26px),
+      repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 26px);
+  }
+  .fig-body svg { display: block; min-width: 640px; width: 100%; height: auto; }
+  .fig-note {
+    padding: .7rem 1.1rem; border-top: 1px solid var(--bd-soft);
+    font-size: .82rem; color: var(--tx-3); background: var(--surface-2);
+  }
+
+  /* ---------- legend ---------- */
+  .legend { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0 0; }
+  .key {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .76rem; font-weight: 700; padding: .28rem .55rem;
+    border: 1px solid var(--bd); border-radius: 3px; background: var(--surface);
+  }
+  .key i { width: 1.4rem; height: 0; border-top-width: 2.5px; border-top-style: solid; display: inline-block; }
+  .key.std  i { border-color: var(--std); }
+  .key.bud  i { border-color: var(--bud); border-top-style: dashed; }
+  .key.act  i { border-color: var(--tx-2); border-top-style: dotted; }
+
+  /* ---------- results table ---------- */
+  .tw { overflow-x: auto; margin: 1.1rem 0 0; }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: .89rem; }
+  th, td { padding: .58rem .7rem; border-bottom: 1px solid var(--bd-soft); text-align: left; vertical-align: top; }
+  thead th {
+    font-family: var(--f-mono); font-size: .7rem; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--tx-3); border-bottom: 1px solid var(--bd); font-weight: 700;
+  }
+  td.calc { font-family: var(--f-mono); font-variant-numeric: tabular-nums; color: var(--tx-2); font-size: .82rem; }
+  td.val  { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+  td.val.bad  { color: var(--bad); }
+  td.val.good { color: var(--good); }
+  td.val.zero { color: var(--tx-3); }
+  tbody tr.total td { border-top: 2px solid var(--bd); border-bottom: none; font-weight: 700; }
+
+  /* ---------- formula cards ---------- */
+  .cards { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fit, minmax(248px, 1fr)); margin-top: 1.1rem; }
+  .card {
+    background: var(--surface); border: 1px solid var(--bd); border-radius: 4px;
+    padding: .95rem 1rem; box-shadow: var(--shadow);
+  }
+  .card .lbl {
+    font-family: var(--f-mono); font-size: .68rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--tx-3);
+  }
+  .card .nm { font-family: var(--f-disp); font-weight: 700; font-size: 1.02rem; margin: .1rem 0 .45rem; }
+  .card .fx {
+    font-family: var(--f-mono); font-size: .8rem; line-height: 1.6; color: var(--tx);
+    background: var(--surface-2); border: 1px solid var(--bd-soft); border-radius: 3px;
+    padding: .5rem .6rem; margin-bottom: .5rem; overflow-x: auto;
+  }
+  .card p { margin: 0; font-size: .85rem; color: var(--tx-2); line-height: 1.65; }
+  .card.c-bud { border-top: 3px solid var(--bud); }
+  .card.c-eff { border-top: 3px solid var(--std); }
+  .card.c-cap { border-top: 3px solid var(--tx-3); }
+
+  /* ---------- callout ---------- */
+  .call {
+    border-left: 3px solid var(--bad); background: var(--bad-bg);
+    padding: .85rem 1rem; margin: 1.3rem 0 0; border-radius: 0 3px 3px 0;
+  }
+  .call .h { font-family: var(--f-disp); font-weight: 700; font-size: .95rem; margin-bottom: .2rem; }
+  .call p { margin: .3rem 0 0; font-size: .88rem; color: var(--tx-2); }
+  .call.ok { border-left-color: var(--good); background: var(--good-bg); }
+
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 1.1rem 0 0; }
+  ol.steps li {
+    counter-increment: s; position: relative; padding-left: 2.3rem; margin-bottom: .75rem;
+    font-size: .93rem; color: var(--tx-2);
+  }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: 0; top: .08rem;
+    width: 1.6rem; height: 1.6rem; border-radius: 2px;
+    background: var(--std); color: var(--surface);
+    font-family: var(--f-mono); font-size: .78rem; font-weight: 700;
+    display: grid; place-items: center;
+  }
+  ol.steps li b { color: var(--tx); }
+
+  footer {
+    margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--bd);
+    font-size: .78rem; color: var(--tx-3); font-family: var(--f-mono);
+  }
+  :focus-visible { outline: 2px solid var(--std); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">工原 第13章 ／ 例題19</div>
+    <h1>シュラッター図の描き方</h1>
+    <p class="lede">
+      製造間接費差異は、<b>2本の直線と3本の縦線</b>だけで決まります。線の意味さえ覚えれば、
+      予算差異・能率差異・操業度差異がどこに現れるかは図が教えてくれます。
+    </p>
+  </header>
+
+  <!-- ============ 1. 型 ============ -->
+  <section>
+    <h2><span class="num">型</span>まずこの形を覚える</h2>
+    <div class="prose">
+      <p>
+        横軸は<b>操業度（時間）</b>、縦軸は<b>金額</b>。ここに引く線は2本だけです。
+      </p>
+    </div>
+
+    <div class="legend">
+      <span class="key std"><i></i>標準配賦線 ＝ 標準配賦率 × 操業度（原点を通る）</span>
+      <span class="key bud"><i></i>予算線 ＝ 変動費率 × 操業度 ＋ 固定費予算</span>
+      <span class="key act"><i></i>実際発生額（実際操業度の真上に点を打つ）</span>
+    </div>
+
+    <div class="fig">
+      <div class="fig-head">
+        <span class="t">一般形（3つの差異がすべて現れる場合）</span>
+        <span class="m">変動 @300 ／ 固定 @200 ／ 標準 @500</span>
+      </div>
+      <div class="fig-body"><svg id="fig-kata" role="img" aria-label="シュラッター図の一般形"></svg></div>
+      <div class="fig-note">SH＝標準操業度／AH＝実際操業度／NH＝基準操業度。この例では SH &lt; AH &lt; NH で、3つとも不利差異。</div>
+    </div>
+
+    <ol class="steps">
+      <li><b>横軸に3点を打つ。</b>標準操業度（SH）・実際操業度（AH）・基準操業度（NH）。数直線の上で<b>小さい順に並べる</b>だけ。位置関係が図の形を決めます。</li>
+      <li><b>標準配賦線を引く。</b>原点から、傾き＝標準配賦率（変動費率＋固定費率）。</li>
+      <li><b>予算線を引く。</b>縦軸の切片＝固定費予算（＝固定費率×NH）、傾き＝変動費率。<b>必ず標準配賦線より上から始まって、NHで交わる</b>——ここが検算になります。</li>
+      <li><b>実際発生額の点を打つ。</b>AHの真上、金額の高さに。</li>
+      <li><b>縦の区間を読む。</b>3つの差異は全部、この図の縦方向の長さです。</li>
+    </ol>
+
+    <h3>3つの差異は「どの2本の間か」で決まる</h3>
+    <div class="cards">
+      <div class="card c-bud">
+        <div class="lbl">Budget</div>
+        <div class="nm">予算差異</div>
+        <div class="fx">（変動費率 × AH ＋ 固定費予算）<br>　　　− 実際発生額</div>
+        <p><b>予算線 と 実際発生額の点</b>の差。「AHだけ働いたなら、いくらまで使ってよかったか」に対する使いすぎ・節約。</p>
+      </div>
+      <div class="card c-eff">
+        <div class="lbl">Efficiency</div>
+        <div class="nm">能率差異</div>
+        <div class="fx">（SH − AH）× 標準配賦率</div>
+        <p><b>標準配賦線の上で、SH と AH の間</b>。時間を余計に使ったか、短く済んだか。<b>率は問題文の指示で変わります</b>（後述）。</p>
+      </div>
+      <div class="card c-cap">
+        <div class="lbl">Capacity</div>
+        <div class="nm">操業度差異</div>
+        <div class="fx">（AH − NH）× 固定費率</div>
+        <p><b>AH と NH の間</b>。固定費だけの話。設備を遊ばせた分。AHがNHに届かなければ必ず不利。</p>
+      </div>
+    </div>
+
+    <div class="call ok">
+      <div class="h">検算はいつも1本</div>
+      <p>予算差異 ＋ 能率差異 ＋ 操業度差異 ＝ <b>標準配賦額（SH×標準配賦率）− 実際発生額</b>。<br>
+      3つ足して総差異にならなければ、どこかで率を取り違えています。</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. 第一工程 ============ -->
+  <section>
+    <h2><span class="num">例題19 ／ 問2</span>第一工程</h2>
+    <p class="sub">変動費率 @500 ／ 固定費率 @700…ではなく <span class="n">@500</span>。標準配賦率 <span class="n">@1,000</span>／h、基準操業度 <span class="n">800h</span>、実際発生額 <span class="n">800,000円</span>。</p>
+    <div class="prose">
+      <p>
+        標準操業度は <span class="n">800個 × @1h ＝ 800h</span>。実際は <span class="n">795h</span>。
+        つまり <b>AH(795) &lt; SH(800) ＝ NH(800)</b> ——標準より<b>速く終わった</b>ので能率は有利、
+        でも基準操業度に届かなかったので操業度は不利、という形になります。
+      </p>
+    </div>
+
+    <div class="fig">
+      <div class="fig-head">
+        <span class="t">第一工程</span>
+        <span class="m">SH 800h ＝ NH 800h ／ AH 795h</span>
+      </div>
+      <div class="fig-body"><svg id="fig-p1" role="img" aria-label="第一工程のシュラッター図"></svg></div>
+      <div class="fig-note">※ 差が5hしかないため、原点付近を省略して<b>横軸・縦軸を拡大</b>しています（実線の傾きは正しい）。</div>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>差異</th><th>計算</th><th style="text-align:right">金額</th></tr></thead>
+        <tbody>
+          <tr><td>予算差異</td><td class="calc">795h×@500 ＋ 800h×@500 − 800,000</td><td class="val bad" style="text-align:right">−2,500（不利）</td></tr>
+          <tr><td>能率差異</td><td class="calc">(800h − 795h) × @1,000</td><td class="val good" style="text-align:right">+5,000（有利）</td></tr>
+          <tr><td>操業度差異</td><td class="calc">(795h − 800h) × @500</td><td class="val bad" style="text-align:right">−2,500（不利）</td></tr>
+          <tr class="total"><td>合計</td><td class="calc">標準配賦 800,000 − 実際 800,000</td><td class="val zero" style="text-align:right">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub">合計がちょうど0。標準配賦額と実際発生額がたまたま一致している問題です。3つ足して0にならなければ計算ミス。</p>
+  </section>
+
+  <!-- ============ 3. 第二工程 ============ -->
+  <section>
+    <h2><span class="num">例題19 ／ 問2</span>第二工程</h2>
+    <p class="sub">変動費率 <span class="n">@500</span>／固定費率 <span class="n">@700</span>／標準配賦率 <span class="n">@1,200</span>／h、基準操業度 <span class="n">1,250h</span>、実際発生額 <span class="n">1,500,000円</span>。</p>
+    <div class="prose">
+      <p>
+        標準操業度は <span class="n">800個 × @1.5h ＝ 1,200h</span>、実際も <span class="n">1,200h</span>。
+        <b>SH ＝ AH</b> なので<b>能率差異はゼロ</b>——縦線が重なって、区間が消えます。
+        残るのは予算差異と操業度差異だけ。
+      </p>
+    </div>
+
+    <div class="fig">
+      <div class="fig-head">
+        <span class="t">第二工程</span>
+        <span class="m">SH 1,200h ＝ AH 1,200h ／ NH 1,250h</span>
+      </div>
+      <div class="fig-body"><svg id="fig-p2" role="img" aria-label="第二工程のシュラッター図"></svg></div>
+      <div class="fig-note">※ 原点付近を省略して拡大表示。SHとAHが同じ位置なので、縦線が1本に重なります。</div>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>差異</th><th>計算</th><th style="text-align:right">金額</th></tr></thead>
+        <tbody>
+          <tr><td>予算差異</td><td class="calc">1,200h×@500 ＋ 1,250h×@700 − 1,500,000</td><td class="val bad" style="text-align:right">−25,000（不利）</td></tr>
+          <tr><td>能率差異</td><td class="calc">(1,200h − 1,200h) × @1,200</td><td class="val zero" style="text-align:right">0</td></tr>
+          <tr><td>操業度差異</td><td class="calc">(1,200h − 1,250h) × @700</td><td class="val bad" style="text-align:right">−35,000（不利）</td></tr>
+          <tr class="total"><td>合計</td><td class="calc">標準配賦 1,440,000 − 実際 1,500,000</td><td class="val bad" style="text-align:right">−60,000（不利）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 4. 落とし穴 ============ -->
+  <section>
+    <h2><span class="num">注意</span>能率差異の「率」だけは問題文を読む</h2>
+    <div class="prose">
+      <p>
+        図の形は同じでも、<b>能率差異にどの率を掛けるかは問題によって変わります</b>。
+        例題19には、資料4に一行だけこう書いてあります。
+      </p>
+    </div>
+
+    <div class="call">
+      <div class="h">「ただし、能率差異は標準配賦率から算定すること」</div>
+      <p>この一行があるので <b>@1,000（第一工程）・@1,200（第二工程）</b>を使いました。
+      指示がなければ、あるいは「変動費からのみ能率差異を算定する」とあれば、<b>変動費率だけ</b>を掛けます。
+      その場合、固定費分の能率は操業度差異に吸収されます。</p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>指示</th><th>能率差異に掛ける率</th><th>操業度差異</th></tr></thead>
+        <tbody>
+          <tr><td>標準配賦率から算定（今回）</td><td class="calc">変動費率 ＋ 固定費率</td><td class="calc">(AH − NH) × 固定費率</td></tr>
+          <tr><td>変動費からのみ算定</td><td class="calc">変動費率のみ</td><td class="calc">(SH − NH) × 固定費率</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub">※ 変動費のみで能率を出す場合、操業度差異の起点がAHではなく<b>SH</b>に変わる点に注意。図では、縦線を引く位置が1本ずれます。</p>
+
+    <div class="call ok">
+      <div class="h">工程別でも、やることは1工程分を2回やるだけ</div>
+      <p>第一工程と第二工程は<b>まったく独立</b>に分析します。図も2枚描く。
+      迷うのは「当月投入の加工換算量（＝SHの元になる数）」を工程ごとに正しく拾えるかだけで、
+      差異分析そのものは1工程の問題と同じです。<br>
+      第一工程 SH ＝ 800個×@1h、第二工程 SH ＝ 800個×@1.5h。どちらも<b>当月投入の加工換算量800個</b>から出ています。</p>
+    </div>
+  </section>
+
+  <footer>工原 第13章 第8節 ／ 例題19 問2 ・ 標準原価計算</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var CS = getComputedStyle(document.documentElement);
+  function tok(n) { return CS.getPropertyValue(n).trim(); }
+
+  // 図の共通描画。窓（xmin..xmax, ymin..ymax）を指定できるので、
+  // 差が小さいケースでは原点付近を省略して拡大できる。
+  function draw(id, cfg) {
+    var svg = document.getElementById(id);
+    if (!svg) return;
+
+    var W = 820, H = 430;
+    var M = { t: 34, r: 128, b: 62, l: 96 };
+    var pw = W - M.l - M.r, ph = H - M.t - M.b;
+
+    var vr = cfg.vr, fr = cfg.fr, sr = vr + fr;
+    var NH = cfg.NH, SH = cfg.SH, AH = cfg.AH, act = cfg.actual;
+    var fixed = fr * NH;
+
+    var xs = [SH, AH, NH], ys = [sr * SH, sr * AH, vr * AH + fixed, act, sr * NH];
+    var x0 = cfg.xmin !== undefined ? cfg.xmin : 0;
+    var x1 = cfg.xmax !== undefined ? cfg.xmax : Math.max.apply(null, xs) * 1.14;
+    var y0 = cfg.ymin !== undefined ? cfg.ymin : 0;
+    var y1 = cfg.ymax !== undefined ? cfg.ymax : Math.max.apply(null, ys) * 1.16;
+
+    var X = function (v) { return M.l + (v - x0) / (x1 - x0) * pw; };
+    var Y = function (v) { return M.t + ph - (v - y0) / (y1 - y0) * ph; };
+
+    var C = {
+      std: tok("--std"), bud: tok("--bud"), bad: tok("--bad"), good: tok("--good"),
+      tx: tok("--tx"), tx2: tok("--tx-2"), tx3: tok("--tx-3"), bd: tok("--bd"),
+      stdbg: tok("--std-bg"), budbg: tok("--bud-bg")
+    };
+    var o = [];
+    function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+    function line(a, b, c, d, col, w, dash) {
+      o.push('<line x1="' + a + '" y1="' + b + '" x2="' + c + '" y2="' + d +
+        '" stroke="' + col + '" stroke-width="' + w + '"' +
+        (dash ? ' stroke-dasharray="' + dash + '"' : "") + ' stroke-linecap="round"/>');
+    }
+    function txt(x, y, s, col, size, anchor, weight, mono) {
+      o.push('<text x="' + x + '" y="' + y + '" fill="' + col + '" font-size="' + size +
+        '" text-anchor="' + (anchor || "start") + '" font-weight="' + (weight || 500) +
+        '" font-family="' + (mono ? "JetBrains Mono, monospace" : '"Zen Kaku Gothic New", sans-serif') +
+        '">' + esc(s) + "</text>");
+    }
+    function nfmt(v) { return (v < 0 ? "−" : "") + Math.abs(v).toLocaleString("ja-JP"); }
+
+    // --- axes ---
+    line(M.l, M.t - 12, M.l, M.t + ph, C.bd, 1.5);
+    line(M.l, M.t + ph, M.l + pw + 14, M.t + ph, C.bd, 1.5);
+    txt(M.l - 8, M.t - 18, "金額", C.tx3, 12, "end", 700);
+    txt(M.l + pw + 18, M.t + ph + 5, "操業度(h)", C.tx3, 12, "start", 700);
+
+    // 軸を途中から始めている場合の「省略」記号
+    if (x0 > 0) {
+      o.push('<path d="M' + (M.l + 10) + ' ' + (M.t + ph + 6) + ' l6 -9 l6 18 l6 -18 l6 9" fill="none" stroke="' + C.bd + '" stroke-width="1.5"/>');
+    }
+    if (y0 > 0) {
+      o.push('<path d="M' + (M.l - 6) + ' ' + (M.t + ph - 14) + ' l-9 -6 l18 -6 l-18 -6 l9 -6" fill="none" stroke="' + C.bd + '" stroke-width="1.5"/>');
+    }
+
+    // --- 2本の直線 ---
+    var stdA = { x: Math.max(x0, 0), y: sr * Math.max(x0, 0) };
+    line(X(stdA.x), Y(sr * stdA.x), X(x1), Y(sr * x1), C.std, 2.6);
+    line(X(Math.max(x0, 0)), Y(vr * Math.max(x0, 0) + fixed), X(x1), Y(vr * x1 + fixed), C.bud, 2.4, "7 5");
+
+    txt(X(x1) + 6, Y(sr * x1) + 4, "標準配賦線", C.std, 12.5, "start", 700);
+    txt(X(x1) + 6, Y(vr * x1 + fixed) + 4, "予算線", C.bud, 12.5, "start", 700);
+
+    // --- 縦線（SH / AH / NH） ---
+    var marks = cfg.marks;
+    marks.forEach(function (m) {
+      var top = Math.max(sr * m.v, vr * m.v + fixed, m.v === AH ? act : 0);
+      line(X(m.v), Y(y0), X(m.v), Y(top) - 6, C.bd, 1.3, "3 4");
+      txt(X(m.v), M.t + ph + 22, m.label, C.tx2, 13, "middle", 700);
+      txt(X(m.v), M.t + ph + 39, m.v.toLocaleString("ja-JP") + "h", C.tx3, 11.5, "middle", 400, true);
+    });
+
+    // --- 実際発生額の点 ---
+    line(M.l, Y(act), X(AH), Y(act), C.tx2, 1.2, "2 4");
+    o.push('<circle cx="' + X(AH) + '" cy="' + Y(act) + '" r="5" fill="' + C.tx + '"/>');
+    txt(M.l - 10, Y(act) + 4, "実際 " + nfmt(act), C.tx2, 11.5, "end", 700, true);
+
+    // --- 差異の区間（縦の矢印つきブラケット） ---
+    function span(x, ya, yb, col, label, amount, side) {
+      var a = Y(ya), b = Y(yb);
+      var xx = X(x) + (side === "L" ? -13 : 13);
+      line(xx, a, xx, b, col, 2.2);
+      line(xx - 4, a, xx + 4, a, col, 2.2);
+      line(xx - 4, b, xx + 4, b, col, 2.2);
+      var mid = (a + b) / 2;
+      var lx = xx + (side === "L" ? -8 : 8);
+      txt(lx, mid - 2, label, col, 12, side === "L" ? "end" : "start", 700);
+      txt(lx, mid + 13, amount, col, 11.5, side === "L" ? "end" : "start", 700, true);
+    }
+
+    var budDiff = (vr * AH + fixed) - act;
+    var effDiff = (SH - AH) * sr;
+    var capDiff = (AH - NH) * fr;
+
+    // 予算差異：予算線@AH ←→ 実際
+    span(AH, vr * AH + fixed, act, budDiff < 0 ? C.bad : C.good,
+      "予算差異", nfmt(budDiff), cfg.budSide || "R");
+
+    // 能率差異：標準配賦線上の SH ←→ AH
+    if (SH !== AH) {
+      var ex = (SH + AH) / 2;
+      var ya = sr * SH, yb = sr * AH;
+      var a = Y(ya), b = Y(yb);
+      o.push('<rect x="' + Math.min(X(SH), X(AH)) + '" y="' + Math.min(a, b) +
+        '" width="' + Math.abs(X(SH) - X(AH)) + '" height="' + Math.abs(a - b) +
+        '" fill="' + C.stdbg + '"/>');
+      var lx = X(ex), ly = (a + b) / 2 - 18;
+      txt(lx, ly, "能率差異", effDiff < 0 ? C.bad : C.good, 12, "middle", 700);
+      txt(lx, ly + 14, nfmt(effDiff), effDiff < 0 ? C.bad : C.good, 11.5, "middle", 700, true);
+    } else {
+      txt(X(SH), M.t + 6, "SH ＝ AH → 能率差異 0", C.tx3, 12, "middle", 700);
+    }
+
+    // 操業度差異：AH ←→ NH（固定費率ぶん）
+    span(NH, vr * NH + fixed, sr * NH, capDiff < 0 ? C.bad : C.good,
+      "操業度差異", nfmt(capDiff), cfg.capSide || "R");
+
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.innerHTML = o.join("");
+  }
+
+  function renderAll() {
+    // 一般形：SH < AH < NH。すべて不利。
+    draw("fig-kata", {
+      vr: 300, fr: 200, NH: 1000, SH: 850, AH: 900, actual: 490000,
+      marks: [
+        { v: 850, label: "SH 標準" },
+        { v: 900, label: "AH 実際" },
+        { v: 1000, label: "NH 基準" }
+      ]
+    });
+
+    // 第一工程：AH 795 < SH 800 = NH 800（原点付近を省略して拡大）
+    draw("fig-p1", {
+      vr: 500, fr: 500, NH: 800, SH: 800, AH: 795, actual: 800000,
+      xmin: 780, xmax: 812, ymin: 780000, ymax: 815000,
+      capSide: "R", budSide: "L",
+      marks: [
+        { v: 795, label: "AH 実際" },
+        { v: 800, label: "SH ＝ NH" }
+      ]
+    });
+
+    // 第二工程：SH = AH 1,200 < NH 1,250（原点付近を省略して拡大）
+    draw("fig-p2", {
+      vr: 500, fr: 700, NH: 1250, SH: 1200, AH: 1200, actual: 1500000,
+      xmin: 1180, xmax: 1272, ymin: 1400000, ymax: 1530000,
+      capSide: "R", budSide: "L",
+      marks: [
+        { v: 1200, label: "SH ＝ AH" },
+        { v: 1250, label: "NH 基準" }
+      ]
+    });
+  }
+
+  renderAll();
+
+  // テーマが切り替わったら色トークンを取り直して描き直す
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+  if (mq.addEventListener) mq.addEventListener("change", renderAll);
+  new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+})();
+</script>
