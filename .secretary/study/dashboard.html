@@ -556,6 +556,15 @@
     font-size: 0.82rem; font-weight: 800; color: var(--tx-2); letter-spacing: 0.01em;
   }
   .rq-prog { margin-left: auto; font-size: 0.78rem; font-weight: 700; color: var(--tx-3); }
+  .rq-normbar {
+    display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap;
+    margin: -.35rem 0 .8rem; padding: .4rem .7rem;
+    background: var(--bg-2); border: 1px dashed var(--bd); border-radius: 6px;
+    font-size: .78rem; color: var(--tx-2); font-weight: 600;
+  }
+  .rq-normbar b { font-weight: 800; color: var(--tx); }
+  .rq-normbar b.x { color: var(--x); }
+  .rq-normbar b.o { color: var(--o); }
   .rq-prog b.o { color: var(--o); }
   .rq-prog b.x { color: var(--x); }
   .rq-item {
@@ -847,9 +856,11 @@
    ============================================================ */
 const DATA = {
   meta: {
-    updated: "2026-08-24（月）23:46 — **12問処理・○7＝転換率58%**（43hモデル初日）。**第19章 退職給付・第23章 四半期がともに完全クリア**、C41-例4は**✕→△に回復**（「暗記ゲーか」→「ロジック理解した、意外とシンプル」）。ログ527問＝**○402／△123／✕2**、要対策84、未○**125**、完全クリア**46章**。残る✕はT18-例19・例20の2問のみ。夜②③の9問が残り。",
+    updated: "2026-08-25（火）00:19 — **日次ノルマをキュー上部に常時表示するようにしました**（平日31問／週末72問・43hモデル）。8/24は**12問処理・○7＝転換率58%**、**第19章 退職給付・第23章 四半期がクリア**、C41-例4は**✕→△回復**。ログ527問＝**○402／△123／✕2**、要対策84、未○**125**、完全クリア**46章**。",
     examDate: "2026-11-15", examLabel: "第171回 日商簿記1級",
-    phaseDeadline: "2026-08-31", phaseLabel: "8月完了モード（例題○1回目・151問）"
+    phaseDeadline: "2026-08-31", phaseLabel: "8月完了モード（例題○1回目）",
+    // 43hモデルの日次ノルマ（2026-08-24 本人指示で確定・問転/日）
+    norm: { weekday: 31, weekend: 72, hoursWeekday: 4.0, hoursWeekend: 9.5 }
   },
 
   // 今日の指令 = 日 8/16（発熱で3日ゼロ→病み上がり再開。まず✕2問、体調最優先）
@@ -1071,17 +1082,17 @@ const DATA = {
   ],
 
   weekPlan: {
-    label: "🔥43hモデル：8/24〜8/31 で未○132問を全部○にする（余白 +0.1h）",
+    label: "🔥43hモデル：8/24〜8/31 で未○を全部○にする｜ノルマ＝平日31問・週末72問",
     rows: [
-      { day: "月", task: "**4h**｜✕1問（C41-例4 のれん等調整額）最優先 ＋ **あと1〜2問で閉じる13章の18問**（8/24）", done: false },
-      { day: "火", task: "**4h**｜🎯**40問が戻る測定日**。優先＝第28章6→第22章 例1・例5→第38章 例2/3/4/8/9（8/25）", done: false },
-      { day: "水", task: "**4h**｜8/24分の戻り＋穴埋め（8/26）", done: false },
-      { day: "木", task: "**4h**｜**第25章 本支店7問**（未着手の最大塊）に着手（8/27）", done: false },
-      { day: "金", task: "**4h**｜⚠️**⑭金曜プロトコル全適用**。ここを落とすと週末が死ぬ（8/28）", done: false },
-      { day: "土", task: "🔥**9.5h**｜**測定日**＝残り全問を閉じて手順で1周し○/△を仕分け（8/29）", done: false },
-      { day: "日", task: "🔥**9.5h**｜**回収日**＝土曜で△だったものを再攻撃（8/30）", done: false }
+      { day: "月", task: "**ノルマ31問**（4h）｜✅12問処理・○7（58%）。**第19章 退職給付・第23章 四半期がクリア**／C41-例4が✕→△回復。残9問（8/24）", done: false },
+      { day: "火", task: "**ノルマ31問**（4h）｜🎯**8/23の40問が戻る測定日**。優先＝第28章6→第38章 例2/3/4/8/9→第31章・第32章（8/25）", done: false },
+      { day: "水", task: "**ノルマ31問**（4h）｜8/24分の戻り（C34-例2・C41-例4・C11-例8・C13-例10・C22-例1）＋穴埋め（8/26）", done: false },
+      { day: "木", task: "**ノルマ31問**（4h）｜**第25章 本支店7問**（未着手の最大塊）に着手（8/27）", done: false },
+      { day: "金", task: "**ノルマ31問**（4h）｜⚠️**⑭金曜プロトコル全適用**。ここを落とすと週末が死ぬ（8/28）", done: false },
+      { day: "土", task: "🔥**ノルマ72問**（9.5h）｜**測定日**＝残り全問を閉じて手順で1周し○/△を仕分け（8/29）", done: false },
+      { day: "日", task: "🔥**ノルマ72問**（9.5h）｜**回収日**＝土曜で△だったものを再攻撃（8/30）", done: false }
     ],
-    maxims: ["📐43h ≒ 必要42.9h。**余白+0.1h＝1日でも落とせば届かない**（ゼロ日10%で−4.2h）", "🕧平日4h＝昼枠50分＋夜22:00-01:30。**カットオフ1:30は死守**（2:00超えは翌日カスケードの起点）", "⚠️壊れる条件は1つ＝**8/28(金)の夜更かし**。8/22はそれで0問になり週末が半分消えた"]
+    maxims: ["📌**日次ノルマ＝平日31問／週末72問**（1問7.9分）。キュー上部に常時表示",  "📐43h ≒ 必要42.9h。**余白+0.1h＝1日でも落とせば届かない**", "⚠️壊れる条件は1つ＝**8/28(金)の夜更かし**。8/22はそれで0問になり週末が半分消えた"]
   },
 
   // 週次プラン（マクロ逆算）＝ 突発予定が出たときに「週単位でどう吸収するか」を見える化
@@ -1879,7 +1890,17 @@ function section(inner) {
       ? `実測 ${fmtSec(secTotal)} / 目標 ${tgtTotal}:00　<b class="${gap > 0 ? "x" : "o"}">${gap >= 0 ? "+" : ""}${gap}分</b>`
       : "";
 
-    let html = `<div class="rq-head">🎯 今日の予定（叩くだけ）<span class="rq-prog tnum">${doneCount}/${QUEUE.length}　${gapTxt}</span></div>`;
+    const nm = DATA.meta && DATA.meta.norm;
+    let normTxt = "";
+    if (nm) {
+      const wknd = [0, 6].includes(new Date().getDay());
+      const n = wknd ? nm.weekend : nm.weekday;
+      const h = wknd ? nm.hoursWeekend : nm.hoursWeekday;
+      const short = n - doneCount;
+      normTxt = `<span class="rq-norm">📌 本日ノルマ <b>${n}問</b>（${h}h・${wknd ? "週末" : "平日"}）` +
+        (short > 0 ? ` ／ 残り <b class="x">${short}問</b>` : ` ／ <b class="o">達成</b>`) + `</span>`;
+    }
+    let html = `<div class="rq-head">🎯 今日の予定（叩くだけ）<span class="rq-prog tnum">${doneCount}/${QUEUE.length}　${gapTxt}</span></div>` + (normTxt ? `<div class="rq-normbar">${normTxt}</div>` : "");
     let lastBlock = null;
 
     QUEUE.forEach((q, i) => {
