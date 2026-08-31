@@ -777,6 +777,9 @@
   .ov-close:active { transform: scale(0.92); }
   .ov-desc { font-size: 0.82rem; color: var(--tx-3); margin-bottom: 1rem; line-height: 1.5; }
   .ov-desc b { color: var(--tx-2); }
+  .chip.src { font-weight: 700; letter-spacing: .02em; }
+  .chip.src.t { background: var(--o-bg);  color: var(--o); }
+  .chip.src.q { background: var(--d-bg);  color: var(--d); }
   .export-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.9rem; }
   .tab {
     font: inherit; font-size: 0.85rem; font-weight: 700;
@@ -814,6 +817,8 @@
   }
   @media (prefers-contrast: more) {
     .rec-panel, .rec-item, .local-status, .ov-sheet, .export-text { border: 1px solid var(--hair-strong); }
+    .chip.src.t { background: rgba(52,199,89,0.22); color: var(--o); }
+    .chip.src.q { background: rgba(255,159,10,0.24); color: var(--d); }
     .rec-input, .rec-select, .mark-btn, .tab { border-color: var(--hair-strong); }
   }
 </style>
@@ -1918,6 +1923,10 @@ function section(inner) {
       const key   = qKey(q);
       const tgt   = Number(q.target) || 0;
       const chips = [];
+      // 教材の別（教科書の例題か、問題集か）を一目で分かるようにする。
+      // src が無い行は、ログID（P始まり＝問題集）から推定する。
+      const src = q.src || (/\|\s*P/.test(q.note || "") ? "問題集" : "教科書");
+      chips.push(`<span class="chip src ${src === "問題集" ? "q" : "t"}">${src === "問題集" ? "📘 問題集" : "📗 教科書"}</span>`);
       if (q.reps) chips.push(`<span class="chip reps ${repsClass(q.reps)}" title="${esc(repsTitle(q.reps))}">⟳ ${q.reps}回</span>`);
       if (q.mode) chips.push(`<span class="chip ${MODE_CLASS[q.mode] || ""}">${esc(q.mode)}</span>`);
       if (tgt)    chips.push(`<span class="chip tgt">⏱ 目標${tgt}分</span>`);
