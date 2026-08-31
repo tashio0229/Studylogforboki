@@ -1,0 +1,425 @@
+<title>B案の勝ち筋</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#F1F4F2; --surface:#FFFFFF; --surface-2:#F7F9F8;
+  --ink:#15191C; --ink-2:#3E474C; --ink-3:#6B767C;
+  --rule:#D4DBD8; --rule-2:#E4E9E7;
+  --aka:#A82E1A;          /* 赤字＝不足 */
+  --aka-soft:#F3DDD8;
+  --ok:#15191C;           /* 黒字＝充足 */
+  --jade:#1E6B52;
+  --amber:#7A5A12;
+  --shadow:0 1px 2px rgba(21,25,28,.05), 0 8px 24px -16px rgba(21,25,28,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111517; --surface:#181D20; --surface-2:#1E2427;
+    --ink:#E6EBE8; --ink-2:#AEB8B4; --ink-3:#7C8783;
+    --rule:#2B3336; --rule-2:#232A2D;
+    --aka:#E8735C; --aka-soft:#3A211C;
+    --ok:#E6EBE8; --jade:#5BBF9A; --amber:#C9A24E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111517; --surface:#181D20; --surface-2:#1E2427;
+  --ink:#E6EBE8; --ink-2:#AEB8B4; --ink-3:#7C8783;
+  --rule:#2B3336; --rule-2:#232A2D;
+  --aka:#E8735C; --aka-soft:#3A211C;
+  --ok:#E6EBE8; --jade:#5BBF9A; --amber:#C9A24E;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:"Zen Kaku Gothic New",-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+  font-size:15px; line-height:1.85; margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px; margin:0 auto; padding:0 24px 96px}
+@media(max-width:640px){ .wrap{padding:0 16px 64px} }
+
+/* ---------- type ---------- */
+h1,h2,h3{font-family:"Shippori Mincho",Georgia,"Yu Mincho",serif; text-wrap:balance; margin:0}
+h1{font-size:clamp(30px,6.2vw,44px); font-weight:700; line-height:1.3; letter-spacing:.01em}
+h2{font-size:clamp(21px,3.4vw,26px); font-weight:700; line-height:1.45}
+h3{font-size:17px; font-weight:600; line-height:1.5}
+p{margin:0}
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px; font-weight:500;
+  letter-spacing:.18em; color:var(--ink-3); text-transform:uppercase;
+}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums; font-weight:500}
+.lede{font-size:17px; line-height:1.9; color:var(--ink-2)}
+strong{font-weight:700; color:var(--ink)}
+.aka{color:var(--aka)}
+.jade{color:var(--jade)}
+
+/* ---------- structure ---------- */
+header{padding:64px 0 40px; border-bottom:2px solid var(--ink)}
+.meta{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:22px}
+.meta span{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); font-variant-numeric:tabular-nums}
+section{padding:52px 0; border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.head{display:flex; flex-direction:column; gap:10px; margin-bottom:26px}
+.stack{display:flex; flex-direction:column; gap:18px}
+.stack-tight{display:flex; flex-direction:column; gap:10px}
+
+/* ---------- verdict ---------- */
+.verdict{
+  background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--aka);
+  padding:28px 30px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:14px;
+}
+.verdict.good{border-left-color:var(--jade)}
+.verdict h2{font-size:22px}
+
+/* ---------- T字（貸借）---------- */
+.taccount{
+  display:grid; grid-template-columns:1fr 1fr; background:var(--surface);
+  border:1px solid var(--rule); box-shadow:var(--shadow);
+}
+@media(max-width:600px){ .taccount{grid-template-columns:1fr} }
+.tside{padding:22px 24px}
+.tside+.tside{border-left:1px solid var(--rule)}
+@media(max-width:600px){ .tside+.tside{border-left:0; border-top:1px solid var(--rule)} }
+.tlabel{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em; color:var(--ink-3); text-transform:uppercase; display:block; margin-bottom:14px}
+.tbig{font-family:"IBM Plex Mono",monospace; font-size:38px; font-weight:600; font-variant-numeric:tabular-nums; line-height:1.1; display:block}
+.tnote{font-size:13px; color:var(--ink-2); margin-top:10px; line-height:1.7}
+.trow{display:flex; justify-content:space-between; gap:14px; font-size:13px; padding:5px 0; color:var(--ink-2)}
+.trow b{font-family:"IBM Plex Mono",monospace; font-weight:500; font-variant-numeric:tabular-nums; color:var(--ink)}
+.tfoot{
+  grid-column:1/-1; border-top:2px solid var(--ink); padding:18px 24px;
+  display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap;
+  background:var(--surface-2);
+}
+.tfoot .k{font-size:13px; color:var(--ink-2)}
+.tfoot .v{font-family:"IBM Plex Mono",monospace; font-size:26px; font-weight:600; font-variant-numeric:tabular-nums}
+
+/* ---------- tables ---------- */
+.scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font-size:13.5px; background:var(--surface); min-width:440px}
+caption{text-align:left; font-size:12.5px; color:var(--ink-3); padding-bottom:9px; line-height:1.6}
+th,td{padding:10px 14px; border-bottom:1px solid var(--rule-2); text-align:left; vertical-align:top}
+thead th{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; color:var(--ink-3);
+  text-transform:uppercase; font-weight:500; border-bottom:1px solid var(--rule); white-space:nowrap;
+}
+td.n,th.n{text-align:right; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tr.hi td{background:var(--surface-2); font-weight:500}
+tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--jade)}
+tr.bad td{color:var(--aka)}
+tr.bad td:first-child{box-shadow:inset 3px 0 0 var(--aka)}
+
+/* ---------- bars ---------- */
+.bars{display:flex; flex-direction:column; gap:14px; background:var(--surface); border:1px solid var(--rule); padding:22px 24px; box-shadow:var(--shadow)}
+.bar{display:grid; grid-template-columns:minmax(84px,auto) 1fr minmax(72px,auto); gap:14px; align-items:center}
+.bar .lab{font-size:13px; color:var(--ink-2)}
+.bar .track{height:12px; background:var(--rule-2); position:relative; overflow:hidden}
+.bar .fill{height:100%; background:var(--ok)}
+.bar .fill.aka{background:var(--aka)}
+.bar .fill.amber{background:var(--amber)}
+.bar .val{font-family:"IBM Plex Mono",monospace; font-size:13px; font-variant-numeric:tabular-nums; text-align:right}
+.bar .mark{position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--ink)}
+
+/* ---------- misc blocks ---------- */
+.callout{background:var(--surface-2); border:1px solid var(--rule); padding:20px 22px; font-size:14px; line-height:1.85; color:var(--ink-2)}
+.callout strong{color:var(--ink)}
+ol.steps{list-style:none; counter-reset:s; margin:0; padding:0; display:flex; flex-direction:column; gap:0}
+ol.steps li{
+  counter-increment:s; display:grid; grid-template-columns:34px 1fr; gap:16px;
+  padding:15px 0; border-bottom:1px solid var(--rule-2); font-size:14px; line-height:1.75;
+}
+ol.steps li:last-child{border-bottom:0}
+ol.steps li::before{
+  content:counter(s); font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600;
+  color:var(--ink-3); padding-top:3px;
+}
+ol.steps li.keep::before{content:"—"; color:var(--jade)}
+.conds{display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule)}
+.cond{background:var(--surface); padding:20px 20px 22px}
+.cond .k{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.12em; color:var(--ink-3); text-transform:uppercase}
+.cond .v{font-family:"IBM Plex Mono",monospace; font-size:27px; font-weight:600; font-variant-numeric:tabular-nums; margin-top:8px; line-height:1.15}
+.cond .d{font-size:12px; color:var(--ink-2); margin-top:8px; line-height:1.65}
+footer{padding:44px 0 0; color:var(--ink-3); font-size:12.5px; line-height:1.8; border-top:1px solid var(--rule)}
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">簿記1級 · 第174回 · 逆算</p>
+  <h1>B案で行くと、<br>何がどこまで届くのか</h1>
+  <p class="lede" style="margin-top:20px">実測値だけで組み直した見積もり（B＝中央シナリオ）と、現状とのギャップ、そして私の提案。</p>
+  <div class="meta">
+    <span>2026-08-31 作成</span>
+    <span>試験 2026-11-15</span>
+    <span>残り 76日</span>
+  </div>
+</header>
+
+<section>
+  <div class="head"><p class="eyebrow">結論</p><h2>目標は入りません。母集団を約3分の1に絞れば入ります。</h2></div>
+  <div class="stack">
+    <div class="verdict">
+      <p><strong>「教科書例題484問＋問題集275問を、全部○3回転」はB前提では829h必要。</strong>供給は着席556h×稼働率85%＝<span class="num">472.6h</span>。<strong class="aka">356h不足、充足率57%。</strong></p>
+      <p style="font-size:14px;color:var(--ink-2)">これは時間の使い方の問題ではなく、母集団の大きさの問題です。平日を8hにしても、休日を毎日13hにしても届きません。</p>
+    </div>
+    <div class="verdict good">
+      <p><strong>例題484問の完成 ＋ 問題集95問 ＋ 過去問20回</strong>なら464h。<strong class="jade">差異 +8.6h で収まります。</strong></p>
+      <p style="font-size:14px;color:var(--ink-2)">これが私の提案です。ただし余裕は<strong>1.4日分</strong>しかありません。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">現在地</p>
+    <h2>○422問は、○3回転が422問という意味ではない</h2>
+  </div>
+  <div class="stack">
+    <p>ここが今回いちばん大きく認識がずれていた場所です。○の内訳を、次回復習日の間隔から機械判定しました。</p>
+    <div class="scroll">
+      <table>
+        <caption>○422問の内訳（2026-08-31時点・exercise-log.md より機械集計）</caption>
+        <thead><tr><th>状態</th><th class="n">例題</th><th class="n">問題集</th><th class="n">計</th><th>残りのタッチ</th></tr></thead>
+        <tbody>
+          <tr class="bad"><td>○1回目のみ</td><td class="n">356</td><td class="n">22</td><td class="n">378</td><td>あと2回ずつ</td></tr>
+          <tr><td>○2回目まで</td><td class="n">10</td><td class="n">14</td><td class="n">24</td><td>あと1回ずつ</td></tr>
+          <tr class="hi"><td>○3回転 完了</td><td class="n">13</td><td class="n">7</td><td class="n">20</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <strong>○3回転が完成しているのは759問中20問＝2.6%。</strong>残り378問（90%）は、まだ1回しか○がついていません。
+    </div>
+
+    <p style="margin-top:8px">さらに、8月に処理した215タッチを追跡すると：</p>
+    <div class="scroll">
+      <table>
+        <caption>2026年8月に触った行 — 8/1時点の状態から現在への遷移</caption>
+        <thead><tr><th>遷移</th><th class="n">件数</th></tr></thead>
+        <tbody>
+          <tr><td>△ → ○</td><td class="n">140</td></tr>
+          <tr><td>△ → △</td><td class="n">73</td></tr>
+          <tr><td>△ → ✕</td><td class="n">2</td></tr>
+          <tr class="bad"><td>○ 行へのタッチ</td><td class="n">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <strong>8月、○の維持には1タッチも使っていません。</strong>結果、期限切れの○が<span class="num">404問</span>、超過日数の中央値<span class="num">40日</span>。うち<span class="num">265問</span>は31日以上放置。<br>
+      これまでお伝えしていた「○昇格後の降格率0.3%」は<strong>無効な数字</strong>です。維持を一度もしていないので、降格するイベント自体が起きていませんでした。
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">B案の中身</p>
+    <h2>仮定を全部、実測値に置き換えた</h2>
+  </div>
+  <div class="stack">
+    <p>前回お出しした466hは、6つのパラメータすべてで最良値を同時に取った数字（A＝楽観）でした。ログに残っていた<strong>ストップウォッチ実測24件</strong>を掘り起こして、当て直したものがBです。</p>
+    <div class="scroll">
+      <table>
+        <caption>実測24件はすべて例題・すべて商業の難所（連結Ⅲ／企業結合／在外子会社／包括利益）。平均が中央値の2倍以上＝裾が長く、45分・36分・27分の問題が実在する。総時間の見積もりには平均を使う。</caption>
+        <thead><tr><th>パラメータ</th><th class="n">A 楽観</th><th class="n">B 中央</th><th class="n">C 悲観</th><th>Bの根拠</th></tr></thead>
+        <tbody>
+          <tr class="hi"><td>例題 △タッチ</td><td class="n">10.5分</td><td class="n">15.0分</td><td class="n">18分</td><td>実測12件の平均</td></tr>
+          <tr class="hi"><td>例題 ○タッチ</td><td class="n">5.0分</td><td class="n">7.2分</td><td class="n">9分</td><td>実測12件の平均</td></tr>
+          <tr><td>問題集 △／○</td><td class="n">21／10分</td><td class="n">30／14.4分</td><td class="n">45／22.5分</td><td>例題の2.0倍（未実測）</td></tr>
+          <tr><td>未○105の初○まで</td><td class="n">1.5回転</td><td class="n">2.5回転</td><td class="n">4.0回転</td><td>例題全体の実測4.45回転</td></tr>
+          <tr><td>問題集の初○まで</td><td class="n">2.0回転</td><td class="n">2.8回転</td><td class="n">3.5回転</td><td>工原実測2.5回転</td></tr>
+          <tr><td>降格率</td><td class="n">15%</td><td class="n">25%</td><td class="n">40%</td><td>測定不能（上記の通り）</td></tr>
+          <tr><td>過去問1回</td><td class="n">4.0h</td><td class="n">4.5h</td><td class="n">5.5h</td><td>2.5h解く＋2h復習</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top:8px">この3つのパラメータセットで、全759問を○3回転させた場合の総必要時間：</p>
+    <div class="bars">
+      <div class="bar"><span class="lab">A 楽観</span><span class="track"><span class="fill amber" style="width:35%"></span><span class="mark" style="left:34%"></span></span><span class="val">493h</span></div>
+      <div class="bar"><span class="lab">B 中央</span><span class="track"><span class="fill aka" style="width:59%"></span><span class="mark" style="left:34%"></span></span><span class="val">829h</span></div>
+      <div class="bar"><span class="lab">C 悲観</span><span class="track"><span class="fill aka" style="width:100%"></span><span class="mark" style="left:34%"></span></span><span class="val">1,399h</span></div>
+      <p style="font-size:12px;color:var(--ink-3);line-height:1.7;margin-top:4px">縦の細線＝供給472.6h。6つのパラメータが同時に楽観側へ振れる確率は、各35%としても0.2%。Aは使ってはいけない数字でした。</p>
+    </div>
+
+    <div class="callout">
+      <strong>Bが妥当だという別ルートの検証。</strong>8月の実績215タッチ × 実測15.0分 ＝ <span class="num">53.8h</span>。これが8月に実際に問題を解いていた時間で、稼働23日なら1日2.3h。Bの829hは2.5ヶ月で月331h＝<strong>8月の6.1倍</strong>です。
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">ギャップ</p>
+    <h2>必要と供給を並べる</h2>
+  </div>
+  <div class="stack">
+    <div class="taccount">
+      <div class="tside">
+        <span class="tlabel">必要 — B・全部やる</span>
+        <span class="tbig aka">829<span style="font-size:20px">h</span></span>
+        <div class="tnote">
+          <div class="trow"><span>問題集232 → ○1回目</span><b>325h</b></div>
+          <div class="trow"><span>問題集232 の ○2・○3</span><b>111h</b></div>
+          <div class="trow"><span>問題集の降格復旧</span><b>48h</b></div>
+          <div class="trow"><span>例題484 の完成</span><b>222h</b></div>
+          <div class="trow"><span>過去問20回</span><b>90h</b></div>
+          <div class="trow"><span>暗記レイヤー</span><b>19h</b></div>
+        </div>
+      </div>
+      <div class="tside">
+        <span class="tlabel">供給 — 新しい目標値</span>
+        <span class="tbig">472.6<span style="font-size:20px">h</span></span>
+        <div class="tnote">
+          <div class="trow"><span>通常平日 5h × 32日</span><b>160h</b></div>
+          <div class="trow"><span>午後休 9h × 12日</span><b>108h</b></div>
+          <div class="trow"><span>有給全休 9h × 10日</span><b>90h</b></div>
+          <div class="trow"><span>土日 9h × 22日</span><b>198h</b></div>
+          <div class="trow"><span>着席 計</span><b>556h</b></div>
+          <div class="trow"><span>× 稼働率 85%</span><b>472.6h</b></div>
+        </div>
+      </div>
+      <div class="tfoot">
+        <span class="k">差異（供給 − 必要）</span>
+        <span class="v aka">−356.4h</span>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>不足356hの内訳は、ほぼ全部が問題集です。</strong>問題集275問だけで485h＝全体の59%。例題484問の完成（222h）と過去問20回（90h）を守ると、問題集に回せるのは<span class="num">133h</span>しか残りません。
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">提案</p>
+    <h2>問題集を95問に絞る。それ以外は削らない。</h2>
+  </div>
+  <div class="stack">
+    <div class="taccount">
+      <div class="tside">
+        <span class="tlabel">必要 — 絞ったプラン</span>
+        <span class="tbig">464<span style="font-size:20px">h</span></span>
+        <div class="tnote">
+          <div class="trow"><span>例題484 完成（未○105の○化含む）</span><b>222h</b></div>
+          <div class="trow"><span>過去問20回</span><b>90h</b></div>
+          <div class="trow"><span>問題集95問（○1回目）</span><b>133h</b></div>
+          <div class="trow"><span>暗記レイヤー</span><b>19h</b></div>
+        </div>
+      </div>
+      <div class="tside">
+        <span class="tlabel">供給</span>
+        <span class="tbig">472.6<span style="font-size:20px">h</span></span>
+        <div class="tnote">
+          <div class="trow"><span>着席</span><b>556h</b></div>
+          <div class="trow"><span>稼働率</span><b>85%</b></div>
+        </div>
+      </div>
+      <div class="tfoot">
+        <span class="k">差異 ＝ <strong>1.4日分</strong>（1日の平均実作業6.1hで換算）</span>
+        <span class="v jade">+8.6h</span>
+      </div>
+    </div>
+
+    <h3 style="margin-top:10px">なぜ問題集95問なのか</h3>
+    <ol class="steps">
+      <li><strong>商会が穴だから。</strong>工原は例題37問を潰せば完成が見えている。商会問題集161問（A59／B86／C15）が手つかず。</li>
+      <li><strong>㉔で足りなかった能力がここにあるから。</strong>8/10の精査どおり、問題集は論点が題名に書いていない＝<strong>論点同定の訓練</strong>。例題は「独立処理の仕訳を示せ」と論点名が書いてある。</li>
+      <li><strong>理論42問が含まれるから。</strong>会計学は足切りが最も出る科目で、演習ログの理論記録は現在0件。</li>
+    </ol>
+    <div class="callout">
+      95問の選定は机上でやりません。<strong>過去問を回して外した論点から逆引きで決めます。</strong>そのほうが精度が高く、C論点を機械的に切るより穴が小さい。<br>
+      なお<strong>C論点切りは効きません</strong>。問題集のCは商会161問中15問＝9%しかなく、最大費目（問題集の初○化325h）はC切りでほぼ軽くなりませんでした。
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">最大のリスク</p>
+    <h2>ゼロ日が、着席時間より効く</h2>
+  </div>
+  <div class="stack">
+    <p>8月は30日中7日がゼロ日（23%）。同じ率が続いた場合の着地：</p>
+    <div class="bars">
+      <div class="bar"><span class="lab">ゼロ日 0%</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="val">101問</span></div>
+      <div class="bar"><span class="lab">月3日 (10%)</span><span class="track"><span class="fill amber" style="width:66%"></span></span><span class="val">67問</span></div>
+      <div class="bar"><span class="lab">8月と同率 23%</span><span class="track"><span class="fill aka" style="width:23%"></span></span><span class="val">23問</span></div>
+      <p style="font-size:12px;color:var(--ink-3);line-height:1.7;margin-top:4px">問題集275問中、○1回目まで到達する問題数。</p>
+    </div>
+    <div class="callout">
+      <strong>ゼロ日を23%→10%に抑えると +61h。平日を1h増やしても +27h。</strong>着席を増やすより、ゼロ日を潰すほうが2倍以上効きます。<br>
+      同じ理由で、稼働率を60%→85%に上げると必要着席が227h減ります（1日3h分）。<strong>時間を伸ばすより、密度を上げるほうが安い。</strong>
+    </div>
+    <div class="callout" style="border-left:3px solid var(--aka)">
+      <strong>そして、Bは中央値です。</strong>真のコストがBより悪い確率が約半分あります。計画通り完璧に走っても、5割の確率で問題集101問には届きません。<strong>101問は上限であって目標ではなく、現実的な着地は60〜100問。</strong>この計画に「うまくいけば余る」シナリオは入っていません。
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">実行条件</p>
+    <h2>この4つを全部満たすこと</h2>
+  </div>
+  <div class="stack">
+    <div class="conds">
+      <div class="cond"><span class="k">通常平日</span><span class="v">5h</span><span class="d">32日。定時退社→18:30〜19:00着席</span></div>
+      <div class="cond"><span class="k">土日・有給・午後休</span><span class="v">9h</span><span class="d">44日。土日は本試験と同じ9:00開始（㉙）</span></div>
+      <div class="cond"><span class="k">稼働率</span><span class="v">85%</span><span class="d">着席時間のうち実際に問題を解いている割合</span></div>
+      <div class="cond"><span class="k">ゼロ日</span><span class="v">≤3日<span style="font-size:15px">/月</span></span><span class="d">8月は7日。ここが最大の変数</span></div>
+    </div>
+    <div class="callout">
+      <strong>稼働率85%は私の推定で、実測ではありません。</strong>着席時間を記録していないので確かめられない ── これが見積もりに残る最後の仮定です。<br>
+      9/1から、ブロックの開始と終了の時刻だけ記録してください。問題ごとのタイマーは不要です（8月のC31-例2のように値がキャリーオーバーする不具合があるため）。1日4行で済みます。9/8の較正で、稼働率も1タッチあたりの分数も実測に置き換わり、A/B/Cの幅が縮みます。
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">先に決めておくこと</p>
+    <h2>遅れたとき、何から削るか</h2>
+  </div>
+  <div class="stack">
+    <p>余裕が1.4日分しかない以上、遅れは「起きるかどうか」ではなく「起きたときどうするか」の問題です。慌ててから決めると、たいてい一番大事なものを削ります。</p>
+    <ol class="steps">
+      <li>問題集の <strong>○3回目</strong></li>
+      <li>問題集の <strong>問題数</strong>（95問 → 実測に合わせて減らす）</li>
+      <li>例題の <strong>○3回目</strong></li>
+      <li class="keep"><strong>過去問20回は削らない。</strong>㉔の結論 ── 過去問は現在地の確認ではなく、例題と問題集では育たない別能力の訓練だから</li>
+    </ol>
+    <div class="callout">
+      <strong>判定日は10/15。</strong>その時点で稼働率と1タッチあたりの分数が実測で出ているので、A/B/Cの幅が縮み、残り1ヶ月の配分を確定できます。私が勝手に判断せず、10/15に数字を出して報告します。
+    </div>
+  </div>
+</section>
+
+<section style="border-bottom:0">
+  <div class="head">
+    <p class="eyebrow">この計画で変えること</p>
+    <h2>復習のルール</h2>
+  </div>
+  <div class="stack">
+    <ol class="steps">
+      <li><strong>復習＝解く。例外なし。</strong>「見るだけ」で○にはしない。○保留も作らない ── 解けなかったのに○のままだと数字が嘘になる</li>
+      <li><strong>外したら即△。</strong>降格しても○の回数はリセットせず、直前の回数から再開する</li>
+      <li><strong>暗記レイヤーを別立てにする。</strong>ROIの式、リース判定90%/75%、外貨の換算レート表など「知っているか知らないかだけ」の項目をカード化。解く直前に30秒当てる。専用枠は朝10分のみ<br><span style="font-size:12.5px;color:var(--ink-3)">投資19hに対して回収99.8h（正味81h）。効き方は初○までの回転数より、降格率の低下のほうが大きい</span></li>
+      <li><strong>1日の処理順に「期限切れ○」を追加。</strong>✕全問 → 期限切れ△ → <strong>期限切れ○（1日15問まで）</strong> → 当日分 → 新規。この行が無かったので404問が滞留した</li>
+      <li><strong>キューは前週の実測 +10% で置く。</strong>8月は毎日20問前後を出して実測7.2問＝実行率36%。達成できないキューを渡していたのは私の設計ミスです。9/1〜9/7は較正週、9/8にキュー量を確定</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  数値はすべて <span class="num">.secretary/study/exercise-log.md</span>（527行）からの機械集計、および git 履歴で復元した 8/1・8/15 時点の状態との差分による実測です。推定値には本文中でその旨を明記しています。<br>
+  母集団 759問 ＝ 教科書例題 484問 ＋ 問題集 275問（工原114／商会Ⅰ107／商会Ⅱ54）。
+</footer>
+
+</div>
