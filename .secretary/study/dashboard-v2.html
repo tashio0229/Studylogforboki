@@ -1,0 +1,2438 @@
+<title>簿記1級 A+Bスコープ盤</title>
+<style>
+  /* ============================================================
+     Design foundations — Apple-style (apple-design SKILL.md)
+     Typography §15 / Materials §12 / Reduced motion §14 / Restraint §16
+     ============================================================ */
+  :root {
+    color-scheme: light dark;
+    /* Semantic colors (light) — Apple system palette */
+    --o:      #34c759;  /* ○ green  */
+    --o-bg:   rgba(52,199,89,0.14);
+    --d:      #ff9f0a;  /* △ amber  */
+    --d-bg:   rgba(255,159,10,0.16);
+    --x:      #ff3b30;  /* ✕ red    */
+    --x-bg:   rgba(255,59,48,0.13);
+    --act:    #0a84ff;  /* action blue */
+    --act-bg: rgba(10,132,255,0.12);
+
+    /* Surfaces */
+    --bg:        #f2f2f7;
+    --bg-2:      #e9e9ef;
+    --card:      #ffffff;
+    --card-2:    #fbfbfd;
+    --chrome:    rgba(248,248,252,0.72);
+    --chrome-edge: rgba(255,255,255,0.65);
+    --hair:      rgba(60,60,67,0.10);
+    --hair-strong: rgba(60,60,67,0.20);
+
+    /* Text */
+    --tx:      #1c1c1e;
+    --tx-2:    #3c3c43;
+    --tx-3:    rgba(60,60,67,0.6);
+    --tx-4:    rgba(60,60,67,0.42);
+
+    /* Shadow (multi-layer, restrained) */
+    --shadow-sm: 0 0.5px 1px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow:    0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.05);
+    --shadow-lg: 0 2px 6px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.09), 0 24px 60px rgba(0,0,0,0.08);
+
+    --radius:   18px;
+    --radius-sm: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --o:      #30d158;
+      --o-bg:   rgba(48,209,88,0.20);
+      --d:      #ff9f0a;
+      --d-bg:   rgba(255,159,10,0.22);
+      --x:      #ff453a;
+      --x-bg:   rgba(255,69,58,0.22);
+      --act:    #0a84ff;
+      --act-bg: rgba(10,132,255,0.22);
+
+      --bg:        #000000;
+      --bg-2:      #0c0c0e;
+      --card:      #1c1c1e;
+      --card-2:    #232325;
+      --chrome:    rgba(28,28,30,0.68);
+      --chrome-edge: rgba(255,255,255,0.10);
+      --hair:      rgba(255,255,255,0.10);
+      --hair-strong: rgba(255,255,255,0.22);
+
+      --tx:      #f5f5f7;
+      --tx-2:    #e3e3e6;
+      --tx-3:    rgba(235,235,245,0.62);
+      --tx-4:    rgba(235,235,245,0.4);
+
+      --shadow-sm: 0 0.5px 1px rgba(0,0,0,0.4);
+      --shadow:    0 1px 3px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.5);
+      --shadow-lg: 0 2px 6px rgba(0,0,0,0.55), 0 18px 48px rgba(0,0,0,0.6);
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font: 100%/1.5 system-ui, -apple-system, "Hiragino Sans", "Yu Gothic UI", sans-serif;
+    background: var(--bg);
+    color: var(--tx);
+    letter-spacing: 0;
+    padding-bottom: 4rem;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Header (translucent, scroll-edge) §12 ---------- */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--chrome);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid var(--chrome-edge);   /* bright top edge = light catching the material */
+  }
+  /* Scroll-edge effect: soft fade where content meets floating chrome (no hard 1px divider) */
+  header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -18px;
+    height: 18px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, var(--hair), transparent);
+    opacity: 0.7;
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem 0.95rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .brand {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-right: auto;
+  }
+  .brand .updated {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--tx-3);
+    margin-top: 0.2rem;
+  }
+  .countdown { text-align: right; line-height: 1.05; }
+  .countdown .num {
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--act);
+  }
+  .countdown.phase .num { font-size: 1.35rem; color: var(--d); }
+  .countdown .lbl {
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 600;
+    color: var(--tx-3);
+    letter-spacing: 0.01em;
+    margin-top: 0.1rem;
+  }
+
+  /* ---------- Layout ---------- */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.75rem 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .sec-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--tx-3);
+    margin: 0 0 0.75rem 0.25rem;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.4rem 1.5rem;
+  }
+
+  /* ---------- Today's directive (most obvious) §16 ---------- */
+  .directive {
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.6rem 1.6rem;
+    background:
+      radial-gradient(120% 100% at 0% 0%, var(--act-bg), transparent 60%),
+      var(--card);
+  }
+  .directive h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 0.25rem;
+  }
+  .directive .sub { color: var(--tx-3); font-size: 0.85rem; margin-bottom: 1.1rem; line-height: 1.45; }
+  .d-block {
+    display: flex;
+    gap: 0.85rem;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--card-2);
+    margin-bottom: 0.7rem;
+  }
+  .d-block:last-child { margin-bottom: 0; }
+  .d-block .ic { font-size: 1.15rem; line-height: 1.4; flex-shrink: 0; }
+  .d-block .body { flex: 1; min-width: 0; }
+  .d-block .head { font-weight: 700; font-size: 0.95rem; letter-spacing: -0.01em; margin-bottom: 0.15rem; }
+  .d-block .detail { font-size: 0.86rem; color: var(--tx-2); line-height: 1.45; }
+  .d-block.x    { box-shadow: inset 3px 0 0 var(--x); background: var(--x-bg); }
+
+  /* 週次プラン（マクロ逆算） */
+  .wm-goal { font-size: 0.95rem; margin-bottom: 0.85rem; padding: 0.6rem 0.75rem;
+    background: var(--act-bg); border-radius: var(--radius-sm); box-shadow: inset 3px 0 0 var(--act); }
+  .wm-h { font-weight: 700; font-size: 0.8rem; color: var(--tx-3); letter-spacing: 0.02em; margin: 0 0 0.4rem; }
+
+  /* ===== 合格逆算マップ（図解セクション） ===== */
+  .mp-stock { display: flex; flex-direction: column; gap: 0.3rem; }
+  .mp-row   { display: flex; align-items: center; gap: 0.65rem; }
+  .mp-lab   { flex: 0 0 8.2em; font-size: 0.72rem; color: var(--tx-3); white-space: nowrap;
+              overflow: hidden; text-overflow: ellipsis; }
+  .mp-track { position: relative; height: 20px; border-radius: 5px; background: var(--bg-2);
+              overflow: hidden; min-width: 30px; flex: 0 0 auto; }
+  .mp-fill  { height: 100%; border-radius: 5px 0 0 5px; transition: width .5s ease; }
+  .mp-need  { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--tx);
+              opacity: .55; border-radius: 1px; }
+  .mp-num   { flex: 0 0 4.6em; text-align: right; font-size: 0.72rem;
+              font-variant-numeric: tabular-nums; color: var(--tx-2); font-weight: 600; }
+
+  .mp-road  { position: relative; margin-top: 0.5rem; padding-bottom: 3.2rem; }
+  .mp-bands { position: relative; height: 14px; border-radius: 4px; background: var(--bg-2);
+              overflow: visible; margin-bottom: 0.55rem; }
+  .mp-band  { position: absolute; top: 0; bottom: 0; opacity: .3; border-radius: 3px; }
+  .mp-today { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--tx); z-index: 3; }
+  .mp-today span { position: absolute; top: -1.15rem; left: 50%; transform: translateX(-50%);
+              font-size: 0.6rem; color: var(--tx-3); white-space: nowrap; }
+  .mp-phase { position: relative; height: 40px; }
+  .mp-bar   { position: absolute; top: 0; height: 22px; border-radius: 5px; display: flex;
+              align-items: center; padding: 0 0.5rem; min-width: 40px; }
+  .mp-bar span { font-size: 0.68rem; font-weight: 700; color: #fff; white-space: nowrap;
+              text-shadow: 0 0.5px 1px rgba(0,0,0,.28); }
+  .mp-phase-sub { position: absolute; top: 23px; font-size: 0.62rem; color: var(--tx-3); white-space: nowrap; }
+  .mp-marks { position: relative; height: 0; }
+  .mp-mark  { position: absolute; top: 0; }
+  .mp-mark-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tx);
+              transform: translateX(-50%); }
+  .mp-mark-lab { transform: translateX(-50%); margin-top: 0.25rem; font-size: 0.62rem;
+              font-weight: 700; color: var(--tx-2); text-align: center; white-space: nowrap; }
+  .mp-mark-lab span { font-weight: 400; color: var(--tx-4); font-variant-numeric: tabular-nums; }
+  .mp-mark:last-child .mp-mark-lab { transform: translateX(-85%); }
+  .mp-mark:first-child .mp-mark-lab { transform: translateX(-40%); }
+
+  .mp-heat-wrap { max-width: 320px; }
+  .mp-heat-hd { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
+  .mp-heat-hd span { font-size: 0.6rem; color: var(--tx-4); text-align: center; }
+  .mp-heat  { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .mp-cell  { aspect-ratio: 1; border-radius: 5px; display: flex; align-items: center;
+              justify-content: center; font-size: 0.62rem; font-weight: 700;
+              font-variant-numeric: tabular-nums; color: var(--tx); background: var(--bg-2); }
+  .mp-cell.zero { background: transparent; border: 1px dashed var(--hair-strong); }
+
+  @media (max-width: 560px) {
+    .mp-lab { flex-basis: 6.2em; font-size: 0.66rem; }
+    .mp-num { flex-basis: 3.9em; }
+    .mp-bar span, .mp-phase-sub { font-size: 0.6rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .mp-fill { transition: none; } }
+  .wm-musts { margin-bottom: 0.85rem; }
+  .wm-musts ul { margin: 0; padding: 0; list-style: none; }
+  .wm-musts li { position: relative; padding: 0.35rem 0 0.35rem 1.4rem; font-size: 0.88rem;
+    color: var(--tx-2); border-bottom: 1px solid var(--hair); }
+  .wm-musts li:last-child { border-bottom: 0; }
+  .wm-musts li::before { content: "✓"; position: absolute; left: 0.15rem; color: var(--o); font-weight: 800; }
+  .wm-road { display: flex; gap: 0.4rem; overflow-x: auto; padding: 0.2rem 0 0.3rem; }
+  .wm-seg { flex: 1 0 8.5rem; padding: 0.6rem 0.65rem; border-radius: var(--radius-sm);
+    background: var(--card-2); border: 1px solid var(--hair); }
+  .wm-seg.now { border-color: var(--act); box-shadow: inset 0 0 0 1px var(--act); background: var(--act-bg); }
+  .wm-seg .sp { font-weight: 800; font-size: 0.85rem; }
+  .wm-seg .ph { font-size: 0.7rem; color: var(--tx-3); margin: 0.1rem 0 0.25rem; }
+  .wm-seg .mi { font-size: 0.78rem; color: var(--tx-2); line-height: 1.35; }
+  .d-block.card { box-shadow: inset 3px 0 0 var(--act); }
+  .d-block.lec  { box-shadow: inset 3px 0 0 var(--o); }
+  .d-block.rev  { box-shadow: inset 3px 0 0 var(--d); }
+
+  /* ---------- Pattern board ---------- */
+  .board-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 1rem; margin-bottom: 0.85rem; flex-wrap: wrap;
+  }
+  .board-head .hint { font-size: 0.85rem; color: var(--tx-3); }
+  .board-total { font-size: 0.85rem; color: var(--tx-3); font-weight: 600; white-space: nowrap; }
+  .board-total b { color: var(--o); font-size: 1rem; }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .pcard {
+    background: var(--card);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem 1.1rem 1.05rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .pcard .top { display: flex; align-items: flex-start; gap: 0.5rem; }
+  .pcard .idx {
+    font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em;
+    color: var(--act); flex-shrink: 0;
+  }
+  .pcard .name { font-weight: 700; font-size: 0.95rem; letter-spacing: -0.01em; line-height: 1.25; }
+  .pcard .chap { font-size: 0.75rem; color: var(--tx-3); margin-top: 0.1rem; }
+  .pcard .prog-row { display: flex; align-items: center; gap: 0.6rem; }
+  .pcard .frac { font-size: 0.82rem; font-weight: 700; color: var(--tx-2); white-space: nowrap; }
+  .pcard .frac b { color: var(--o); }
+  .bar {
+    flex: 1; height: 6px; border-radius: 3px;
+    background: var(--bg-2); overflow: hidden;
+  }
+  .bar > span { display: block; height: 100%; border-radius: 3px; background: var(--o); }
+  .dots { display: flex; flex-wrap: wrap; gap: 5px; }
+  .dot { width: 15px; height: 15px; border-radius: 50%; flex-shrink: 0; }
+  .dot.o { background: var(--o); }
+  .dot.d { background: var(--d); }
+  .dot.x { background: var(--x); }
+  .pcard .when { font-size: 0.75rem; font-weight: 600; color: var(--tx-3); margin-top: 0.1rem; }
+  .pcard .when.done { color: var(--o); }
+  .pcard .when.plan { color: var(--act); }
+
+  /* ---------- Stats ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  .stat {
+    padding: 0.9rem 1rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--card-2);
+  }
+  .stat .n { font-size: 2.3rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .stat .k { font-size: 0.78rem; font-weight: 600; color: var(--tx-3); margin-top: 0.3rem; }
+  .stat.o .n { color: var(--o); }
+  .stat.d .n { color: var(--d); }
+  .stat.x .n { color: var(--x); }
+  .stat.tot .n { color: var(--tx); }
+  .stat.warn .n { color: var(--d); }
+
+  .stackbar { height: 14px; border-radius: 7px; overflow: hidden; display: flex; box-shadow: var(--shadow-sm); }
+  .stackbar > span { height: 100%; }
+  .stackbar .so { background: var(--o); }
+  .stackbar .sd { background: var(--d); }
+  .stackbar .sx { background: var(--x); }
+  .legend { display: flex; gap: 1.1rem; flex-wrap: wrap; margin-top: 0.7rem; font-size: 0.8rem; color: var(--tx-2); }
+  .legend .li { display: flex; align-items: center; gap: 0.4rem; }
+  .legend .sw { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+  .subj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-top: 1.2rem; }
+  .subj {
+    padding: 0.75rem 0.9rem; border-radius: var(--radius-sm);
+    background: var(--card-2); display: flex; flex-direction: column; gap: 0.15rem;
+  }
+  .subj .sn { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
+  .subj .sk { font-size: 0.76rem; color: var(--tx-3); }
+
+  /* ---------- Wins ---------- */
+  .wins { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+  .wins li { display: flex; gap: 0.7rem; font-size: 0.9rem; line-height: 1.45; color: var(--tx-2); }
+  .wins li .ic { flex-shrink: 0; }
+  .wins li b { color: var(--tx); font-weight: 700; }
+
+  /* ---------- Week plan ---------- */
+  .week { display: flex; flex-direction: column; }
+  .wrow {
+    display: flex; align-items: baseline; gap: 0.85rem;
+    padding: 0.6rem 0.2rem; border-bottom: 1px solid var(--hair);
+  }
+  .wrow:last-child { border-bottom: none; }
+  .wrow .day { font-weight: 700; font-size: 0.85rem; width: 2.8rem; flex-shrink: 0; color: var(--tx-2); }
+  .wrow .task { flex: 1; font-size: 0.88rem; color: var(--tx-2); line-height: 1.4; }
+  .wrow .st { flex-shrink: 0; font-size: 0.9rem; }
+  .wrow.done .day, .wrow.done .task { color: var(--tx-3); }
+  .wrow .st.ok { color: var(--o); }
+  .maxims {
+    margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--hair);
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+  }
+  .maxim {
+    font-size: 0.76rem; color: var(--tx-3);
+    background: var(--card-2); padding: 0.3rem 0.7rem; border-radius: 999px;
+    font-weight: 600;
+  }
+
+  /* ---------- Review queue ---------- */
+  .rq-head { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
+  .rq-head .big { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em; color: var(--d); }
+  .rq-head .lbl { font-size: 0.85rem; color: var(--tx-3); font-weight: 600; }
+  details.rqg {
+    border-radius: var(--radius-sm);
+    background: var(--card-2);
+    margin-bottom: 0.6rem;
+    overflow: hidden;
+  }
+  details.rqg:last-child { margin-bottom: 0; }
+  details.rqg > summary {
+    list-style: none; cursor: pointer;
+    padding: 0.75rem 1rem;
+    display: flex; align-items: center; gap: 0.6rem;
+    font-weight: 700; font-size: 0.9rem;
+    user-select: none;
+  }
+  details.rqg > summary::-webkit-details-marker { display: none; }
+  details.rqg > summary::after {
+    content: "›"; margin-left: auto; font-size: 1.3rem; color: var(--tx-3);
+    transform: rotate(90deg); transition: transform 0.25s ease; line-height: 1;
+  }
+  details.rqg[open] > summary::after { transform: rotate(-90deg); }
+  details.rqg .rq-body { padding: 0 1rem 0.9rem; font-size: 0.86rem; color: var(--tx-2); line-height: 1.5; }
+  details.rqg .cnt {
+    font-size: 0.78rem; font-weight: 700; padding: 0.08rem 0.5rem;
+    border-radius: 999px; background: var(--d-bg); color: var(--d); white-space: nowrap;
+  }
+  details.rqg.crit { background: var(--x-bg); }
+  details.rqg.crit > summary { color: var(--x); }
+  details.rqg.crit .cnt { background: var(--x); color: #fff; }
+
+  /* ---------- Roadmap ---------- */
+  .road-bar {
+    display: flex; height: 30px; border-radius: 8px; overflow: hidden;
+    box-shadow: var(--shadow-sm); margin-bottom: 0.5rem;
+  }
+  .road-seg {
+    height: 100%; display: flex; align-items: center; justify-content: center;
+    font-size: 0.68rem; font-weight: 700; color: #fff; white-space: nowrap;
+    padding: 0 4px; overflow: hidden;
+  }
+  .road-wrap { position: relative; padding-top: 1.4rem; }
+  .road-now {
+    position: absolute; top: 0; transform: translateX(-50%);
+    text-align: center; white-space: nowrap;
+  }
+  .road-now .tri { font-size: 0.7rem; color: var(--x); line-height: 1; }
+  .road-now .l { font-size: 0.66rem; font-weight: 700; color: var(--x); }
+  .road-legend { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.9rem; }
+  .road-legend .li { display: flex; gap: 0.6rem; font-size: 0.85rem; color: var(--tx-2); align-items: baseline; }
+  .road-legend .sw { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; position: relative; top: 2px; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    max-width: 1100px; margin: 2.5rem auto 0; padding: 1.5rem;
+    font-size: 0.78rem; color: var(--tx-4); text-align: center; line-height: 1.6;
+  }
+  footer code { background: var(--card-2); padding: 0.1rem 0.4rem; border-radius: 5px; color: var(--tx-3); }
+
+  /* ---------- Motion (restrained) §16 / §14 ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--rd, 0ms);
+  }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+  /* Instant, pointer-down feedback (§1) */
+  .pcard, details.rqg > summary { transition: transform 0.12s ease-out; }
+  details.rqg > summary:active,
+  .pcard:active { transform: scale(0.99); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { animation: fade 0.3s ease forwards; transform: none; }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    details.rqg > summary::after { transition: none; }
+    .pcard:active, details.rqg > summary:active { transform: none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    header { background: var(--bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  }
+  @media (prefers-contrast: more) {
+    :root { --hair: rgba(60,60,67,0.4); --hair-strong: rgba(60,60,67,0.6); }
+    .card, .pcard, .stat, .d-block, details.rqg, .directive { border: 1px solid var(--hair-strong); }
+    header { border-bottom: 1px solid var(--hair-strong); }
+  }
+  @media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+    :root { --hair: rgba(255,255,255,0.4); --hair-strong: rgba(255,255,255,0.6); }
+  }
+
+  @media (max-width: 560px) {
+    .header-inner { gap: 0.75rem; }
+    .countdown .num { font-size: 1.5rem; }
+    main { padding: 1.25rem 1rem 0; gap: 1.4rem; }
+    .card, .directive { padding: 1.15rem 1.15rem; }
+    .rec-form { grid-template-columns: 1fr; }
+    .rec-body { padding: 0 1.15rem 1.15rem; }
+    .rec-panel > summary { padding: 1rem 1.15rem; }
+  }
+
+  /* ============================================================
+     Recording mode — 記録入力・疑似管理・エクスポート（機能層）
+     閲覧ビューの上に足すレイヤー。確定DATAは書き換えず、記録は
+     localStorage に載せ「記録依頼リスト」としてエクスポートする。
+     exercise-log.md が唯一の正。ここは入力補助＋速報表示のみ。
+     ============================================================ */
+
+  /* --- Collapsible record panel (elevated card) §12 --- */
+  .rec-panel {
+    border-radius: var(--radius);
+    background:
+      radial-gradient(120% 100% at 100% 0%, var(--o-bg), transparent 55%),
+      var(--card);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .rec-panel > summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    padding: 1.15rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    transition: transform 0.12s ease-out;
+  }
+  .rec-panel > summary::-webkit-details-marker { display: none; }
+  .rec-panel > summary:active { transform: scale(0.99); }
+  .rec-panel > summary .rp-title {
+    font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15;
+  }
+  .rec-panel > summary .rp-sub { font-size: 0.78rem; color: var(--tx-3); font-weight: 600; }
+  .rec-panel > summary::after {
+    content: "›"; margin-left: auto; font-size: 1.4rem; color: var(--tx-3);
+    transform: rotate(90deg); transition: transform 0.25s ease; line-height: 1; flex-shrink: 0;
+  }
+  .rec-panel[open] > summary::after { transform: rotate(-90deg); }
+  .rp-badge {
+    font-size: 0.72rem; font-weight: 700; padding: 0.12rem 0.55rem;
+    border-radius: 999px; background: var(--act-bg); color: var(--act);
+    white-space: nowrap; margin-left: 0.1rem;
+  }
+  .rec-body { padding: 0 1.5rem 1.5rem; }
+  .rec-note {
+    font-size: 0.78rem; color: var(--tx-3); line-height: 1.5;
+    background: var(--card-2); padding: 0.7rem 0.85rem; border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+  }
+  .rec-note b { color: var(--tx-2); font-weight: 700; }
+
+  /* --- 今日のキュー（事前記入済み・叩くだけ） --- */
+  .rec-queue { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1rem; }
+  .rq-head {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.82rem; font-weight: 800; color: var(--tx-2); letter-spacing: 0.01em;
+  }
+  .rq-prog { margin-left: auto; font-size: 0.78rem; font-weight: 700; color: var(--tx-3); }
+  .rq-normbar {
+    display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap;
+    margin: -.35rem 0 .8rem; padding: .4rem .7rem;
+    background: var(--bg-2); border: 1px dashed var(--bd); border-radius: 6px;
+    font-size: .78rem; color: var(--tx-2); font-weight: 600;
+  }
+  .rq-normbar b { font-weight: 800; color: var(--tx); }
+  .rq-normbar b.x { color: var(--x); }
+  .rq-normbar b.o { color: var(--o); }
+  .rq-prog b.o { color: var(--o); }
+  .rq-prog b.x { color: var(--x); }
+  .rq-item {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+    padding: 0.7rem 0.8rem; border-radius: var(--radius-sm);
+    border: 1px solid var(--hair-strong); background: var(--card-2);
+  }
+  .rq-item.done { background: var(--o-bg); border-color: color-mix(in srgb, var(--o) 35%, transparent); }
+  .rq-main { flex: 1; min-width: 0; }
+  .rq-ttl { font-size: 0.86rem; font-weight: 700; color: var(--tx); line-height: 1.35; }
+  .rq-note { font-size: 0.72rem; color: var(--tx-3); margin-top: 0.2rem; line-height: 1.4; }
+  .rq-donmemo { display: inline-block; font-size: 0.72rem; color: var(--tx-3); margin-top: 0.25rem; }
+  .rq-glyph { font-weight: 900; }
+  .rq-glyph.o { color: var(--o); } .rq-glyph.d { color: var(--d); } .rq-glyph.x { color: var(--x); }
+  .rq-controls { display: flex; flex-direction: column; gap: 0.4rem; width: min(46%, 15rem); flex-shrink: 0; }
+  .mark-btns.sm { gap: 0.35rem; }
+  .mark-btns.sm .mark-btn { font-size: 1.1rem; padding: 0.35rem 0; border-width: 2px; }
+  .rq-memo { font-size: 0.8rem; padding: 0.45rem 0.6rem; }
+  .rq-undo {
+    font: inherit; font-size: 0.72rem; font-weight: 700; color: var(--tx-3);
+    background: transparent; border: 1px solid var(--hair-strong);
+    border-radius: var(--radius-sm); padding: 0.35rem 0.6rem; cursor: pointer; flex-shrink: 0;
+  }
+  .rq-undo:active { transform: scale(0.97); }
+  /* ---- キューの拡張：ブロック見出し / 入り方 / 復習回数 / タイマー ---- */
+  .rq-block {
+    display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap;
+    margin: 1.1rem 0 .5rem; padding: .35rem .7rem;
+    background: var(--bg-2); border-left: 3px solid var(--d); border-radius: 0 6px 6px 0;
+  }
+  .rq-block:first-child { margin-top: .3rem; }
+  .rq-block .bn { font-size: .82rem; font-weight: 800; color: var(--tx); }
+  .rq-block .bm { font-size: .72rem; color: var(--tx-3); font-weight: 600; margin-left: auto; }
+  .rq-chips { display: flex; gap: .3rem; flex-wrap: wrap; margin-top: .3rem; }
+  .chip {
+    display: inline-flex; align-items: center; gap: .2rem;
+    font-size: .66rem; font-weight: 700; line-height: 1;
+    padding: .22rem .42rem; border-radius: 999px; white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .chip.mode-syakyo   { background: color-mix(in srgb, var(--x) 16%, transparent); color: var(--x); border-color: color-mix(in srgb, var(--x) 40%, transparent); }
+  .chip.mode-tejun    { background: color-mix(in srgb, var(--o) 16%, transparent); color: var(--o); border-color: color-mix(in srgb, var(--o) 40%, transparent); }
+  .chip.mode-kousiki  { background: color-mix(in srgb, var(--d) 16%, transparent); color: var(--d); border-color: color-mix(in srgb, var(--d) 40%, transparent); }
+  .chip.reps          { background: var(--bg-2); color: var(--tx-3); border-color: var(--bd); }
+  .chip.reps.hot      { background: color-mix(in srgb, var(--x) 12%, transparent); color: var(--x); border-color: color-mix(in srgb, var(--x) 35%, transparent); }
+  .chip.reps.peak     { background: color-mix(in srgb, var(--o) 14%, transparent); color: var(--o); border-color: color-mix(in srgb, var(--o) 38%, transparent); }
+  .chip.tgt           { background: var(--bg-2); color: var(--tx-3); border-color: var(--bd); }
+  .rq-timer {
+    display: flex; align-items: center; gap: .35rem;
+  }
+  .rq-tbtn {
+    font: inherit; font-size: .72rem; font-weight: 800; cursor: pointer;
+    padding: .3rem .5rem; border-radius: 7px; border: 1px solid var(--bd);
+    background: var(--bg-1); color: var(--tx-2); line-height: 1;
+  }
+  .rq-tbtn.run { background: color-mix(in srgb, var(--d) 20%, transparent); border-color: var(--d); color: var(--d); }
+  .rq-tbtn:active { transform: scale(.96); }
+  .rq-time { font-variant-numeric: tabular-nums; font-size: .78rem; font-weight: 800; color: var(--tx-2); min-width: 3.1rem; }
+  .rq-time.over { color: var(--x); }
+  .rq-time.run  { color: var(--d); }
+  .rq-donetime { font-size: .7rem; font-weight: 700; color: var(--tx-3); margin-left: .35rem; font-variant-numeric: tabular-nums; }
+  .rq-donetime.over { color: var(--x); }
+  .rq-donetime.good { color: var(--o); }
+  .rec-manual-head {
+    font-size: 0.8rem; font-weight: 700; color: var(--tx-3);
+    cursor: pointer; padding: 0.5rem 0; user-select: none;
+  }
+  .rec-manual-head.open { color: var(--tx-2); }
+
+  /* --- Form --- */
+  .rec-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem 1rem; }
+  .rec-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+  .rec-field.full { grid-column: 1 / -1; }
+  .rec-field > label { font-size: 0.74rem; font-weight: 700; color: var(--tx-3); letter-spacing: 0.01em; }
+  .rec-input, .rec-select {
+    font: inherit; font-size: 0.9rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--hair-strong);
+    background: var(--card-2);
+    color: var(--tx);
+    width: 100%;
+  }
+  .rec-input::placeholder { color: var(--tx-4); }
+  .rec-input:focus, .rec-select:focus { outline: 2px solid var(--act); outline-offset: 1px; border-color: transparent; }
+
+  /* Mark buttons ○△✕ (big, tappable, semantic §16) */
+  .mark-btns { display: flex; gap: 0.55rem; }
+  .mark-btn {
+    flex: 1; font: inherit; font-size: 1.45rem; font-weight: 800;
+    padding: 0.5rem 0 0.55rem; border-radius: var(--radius-sm);
+    border: 2px solid var(--hair-strong); background: var(--card-2);
+    color: var(--tx-3); cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem;
+    transition: transform 0.1s ease-out, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .mark-btn .mk-lbl { font-size: 0.64rem; font-weight: 700; letter-spacing: 0; }
+  .mark-btn:active { transform: scale(0.97); }
+  .mark-btn.o.sel { background: var(--o-bg); border-color: var(--o); color: var(--o); }
+  .mark-btn.d.sel { background: var(--d-bg); border-color: var(--d); color: var(--d); }
+  .mark-btn.x.sel { background: var(--x-bg); border-color: var(--x); color: var(--x); }
+
+  /* Buttons */
+  .btn {
+    font: inherit; font-size: 0.9rem; font-weight: 700;
+    padding: 0.7rem 1.1rem; border-radius: var(--radius-sm);
+    border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+    transition: transform 0.1s ease-out, background 0.15s ease, opacity 0.15s ease;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn.wide { width: 100%; }
+  .btn.sm { padding: 0.4rem 0.75rem; font-size: 0.78rem; }
+  .btn.primary { background: var(--act); color: #fff; }
+  .btn.o { background: var(--o); color: #fff; }
+  .btn.ghost { background: var(--card-2); color: var(--tx-2); border: 1px solid var(--hair-strong); }
+  .btn.danger { background: var(--x-bg); color: var(--x); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  #recAdd { margin-top: 1rem; }
+  .rec-err { font-size: 0.8rem; color: var(--x); font-weight: 600; min-height: 1.1em; margin-top: 0.55rem; }
+
+  /* Local-edit status (疑似管理バッジ) */
+  .local-status {
+    display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+    margin-top: 1rem; padding: 0.6rem 0.85rem; border-radius: var(--radius-sm);
+    background: var(--act-bg); font-size: 0.8rem; color: var(--act); font-weight: 700;
+  }
+  .local-status span { margin-right: auto; }
+
+  /* Today's record list */
+  .rec-tally { display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap; margin: 1.4rem 0 0.75rem; }
+  .rec-tally .big { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; }
+  .rec-tally .brk { font-size: 0.85rem; color: var(--tx-3); font-weight: 600; }
+  .rec-tally .brk .co { color: var(--o); } .rec-tally .brk .cd { color: var(--d); } .rec-tally .brk .cx { color: var(--x); }
+  .rec-warn {
+    font-size: 0.8rem; font-weight: 600; color: var(--d);
+    background: var(--d-bg); padding: 0.55rem 0.8rem; border-radius: var(--radius-sm); margin-bottom: 0.75rem;
+  }
+  .rec-list { display: flex; flex-direction: column; gap: 0.55rem; }
+  .rec-empty { font-size: 0.85rem; color: var(--tx-3); padding: 0.6rem 0.1rem; }
+  .rec-item {
+    display: flex; align-items: flex-start; gap: 0.7rem;
+    padding: 0.7rem 0.85rem; border-radius: var(--radius-sm); background: var(--card-2);
+  }
+  .rec-item .rm { font-size: 1.15rem; font-weight: 800; flex-shrink: 0; width: 1.4rem; text-align: center; line-height: 1.5; }
+  .rec-item.o .rm { color: var(--o); } .rec-item.d .rm { color: var(--d); } .rec-item.x .rm { color: var(--x); }
+  .rec-item .info { flex: 1; min-width: 0; }
+  .rec-item .ttl { font-size: 0.9rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  .rec-item .sub2 { font-size: 0.76rem; color: var(--tx-3); margin-top: 0.15rem; }
+  .rec-item .memo { font-size: 0.8rem; color: var(--tx-2); margin-top: 0.25rem; line-height: 1.4; }
+  .rec-del {
+    flex-shrink: 0; font: inherit; font-size: 1rem; line-height: 1;
+    width: 1.8rem; height: 1.8rem; border-radius: 50%;
+    border: none; background: transparent; color: var(--tx-3); cursor: pointer;
+    transition: transform 0.1s ease-out, background 0.15s ease, color 0.15s ease;
+  }
+  .rec-del:hover { background: var(--x-bg); color: var(--x); }
+  .rec-del:active { transform: scale(0.9); }
+  .rec-actions { margin-top: 1.2rem; }
+
+  /* Live overlay — 今日の記録の速報加算（確定値は上書きしない） */
+  .stat-live { display: inline-block; margin-top: 0.35rem; font-size: 0.82rem; font-weight: 700; color: var(--act); }
+  .stat.o .stat-live { color: var(--o); } .stat.d .stat-live { color: var(--d); } .stat.x .stat-live { color: var(--x); }
+
+  /* Pending dot overlay on the pattern board (未確定=点滅リング) */
+  .dot.pending {
+    background: transparent;
+    border: 2px dashed currentColor;
+    animation: pendingPulse 1.6s ease-in-out infinite;
+  }
+  .dot.pending.o { color: var(--o); } .dot.pending.d { color: var(--d); } .dot.pending.x { color: var(--x); }
+  @keyframes pendingPulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.95; } }
+
+  /* Local-edit affordances on existing views (疑似管理) */
+  .wrow.editable { cursor: pointer; border-radius: 8px; transition: background 0.15s ease; }
+  .wrow.editable:hover { background: var(--card-2); }
+  .wrow.local-edit .day::after { content: " ·編集"; font-size: 0.62rem; color: var(--act); font-weight: 700; }
+  .d-block { position: relative; }
+  .dblk-chk {
+    flex-shrink: 0; align-self: center; font: inherit; font-size: 0.85rem; font-weight: 800;
+    width: 1.55rem; height: 1.55rem; border-radius: 50%;
+    border: 2px solid var(--hair-strong); background: transparent; color: var(--o);
+    cursor: pointer; line-height: 1;
+    transition: transform 0.1s ease-out, background 0.15s ease, border-color 0.15s ease;
+  }
+  .dblk-chk:active { transform: scale(0.92); }
+  .dblk-chk.on { background: var(--o); border-color: var(--o); color: #fff; }
+  .d-block.done-local .head, .d-block.done-local .detail { opacity: 0.5; text-decoration: line-through; text-decoration-thickness: 1px; }
+
+  /* Export modal §12 (dimming scrim + material) */
+  .ov-back {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.42);
+    backdrop-filter: blur(5px) saturate(160%);
+    -webkit-backdrop-filter: blur(5px) saturate(160%);
+    display: flex; align-items: center; justify-content: center; padding: 1.25rem;
+    opacity: 0; animation: ovIn 0.26s ease forwards;
+  }
+  @keyframes ovIn { to { opacity: 1; } }
+  .ov-sheet {
+    width: 100%; max-width: 620px; max-height: 88vh; overflow: auto;
+    background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    padding: 1.4rem 1.5rem 1.5rem;
+    transform: scale(0.96); animation: sheetIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes sheetIn { to { transform: scale(1); } }
+  .ov-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.4rem; }
+  .ov-head h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; }
+  .ov-close {
+    margin-left: auto; flex-shrink: 0; font: inherit; font-size: 0.95rem;
+    width: 2rem; height: 2rem; border-radius: 50%; border: none;
+    background: var(--card-2); color: var(--tx-3); cursor: pointer;
+    transition: transform 0.1s ease-out, background 0.15s ease;
+  }
+  .ov-close:active { transform: scale(0.92); }
+  .ov-desc { font-size: 0.82rem; color: var(--tx-3); margin-bottom: 1rem; line-height: 1.5; }
+  .ov-desc b { color: var(--tx-2); }
+  .export-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.9rem; }
+  .tab {
+    font: inherit; font-size: 0.85rem; font-weight: 700;
+    padding: 0.5rem 0.95rem; border-radius: 999px;
+    border: 1px solid var(--hair-strong); background: var(--card-2);
+    color: var(--tx-2); cursor: pointer;
+    transition: transform 0.1s ease-out, background 0.15s ease, color 0.15s ease;
+  }
+  .tab:active { transform: scale(0.97); }
+  .tab.sel { background: var(--act); color: #fff; border-color: transparent; }
+  .export-text {
+    width: 100%; font-size: 0.82rem; line-height: 1.55;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+    background: var(--card-2); color: var(--tx);
+    border: 1px solid var(--hair); border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem; min-height: 170px; resize: vertical;
+  }
+  .export-note { font-size: 0.79rem; color: var(--tx-3); margin: 0.7rem 0 0; line-height: 1.5; }
+  .export-note b { color: var(--tx-2); }
+  .export-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+  .export-foot { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--hair); }
+
+  /* --- Accessibility parity for the record layer §14 --- */
+  @media (prefers-reduced-motion: reduce) {
+    .rec-panel > summary::after { transition: none; }
+    .rec-panel > summary:active, .mark-btn:active, .btn:active,
+    .rec-del:active, .dblk-chk:active, .tab:active, .ov-close:active { transform: none; }
+    .dot.pending { animation: none; opacity: 0.7; }
+    .ov-back { animation: none; opacity: 1; }
+    .ov-sheet { animation: none; transform: none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .ov-back { background: rgba(0,0,0,0.72); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  }
+  @media (prefers-contrast: more) {
+    .rec-panel, .rec-item, .local-status, .ov-sheet, .export-text { border: 1px solid var(--hair-strong); }
+    .rec-input, .rec-select, .mark-btn, .tab { border-color: var(--hair-strong); }
+  }
+</style>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      簿記1級 学習ダッシュボード
+      <span class="updated" id="updated"></span>
+    </div>
+    <div class="countdown" id="cd-exam">
+      <div class="num tnum">—</div>
+      <div class="lbl"></div>
+    </div>
+    <div class="countdown phase" id="cd-phase">
+      <div class="num tnum">—</div>
+      <div class="lbl"></div>
+    </div>
+  </div>
+</header>
+
+<main id="app"><!-- rendered from DATA --></main>
+
+<footer>
+  このダッシュボードは <code>exercise-log.md</code> を正とするサマリー。<br>
+  更新は <code>DATA</code> オブジェクトのみ編集すれば全画面に反映される。
+</footer>
+
+<script>
+/* ============================================================
+   DATA — 更新はこのオブジェクトのみ編集する（唯一の情報源）
+   数値は exercise-log.md を正とする。日数は new Date() で動的計算。
+   ============================================================ */
+const DATA = {
+  meta: {
+    updated: "2026-08-31（月）23:10 — <b>スコープ確定：C論点を切り、A・B論点を例題＋問題集とも○3回転で完璧にする</b>（本人決定）。<b>演習ログ527問すべてに重要度をマッピング完了</b>（A238／B206／C83・未マッピング0）。母集団は<b>A+B 656問</b>（例題405＋問題集251）、必要<b>542.6h</b>。<b>9月の午後半休6回（9/14・16・18・24・25・30／14時開始）と祝日を入れた供給は実作業512h</b>＝<b>差異 −30.9h・充足94%</b>。午後半休は9hで全休11hより2h弱いので、<b>通常平日を5h→6h（18:00着席）にすると+29hでほぼ埋まります</b>。9/1〜9/7は<b>較正週</b>——着席時刻を記録して稼働率と1タッチの分数を実測に置き換えます。",
+    examDate: "2026-11-15", examLabel: "第174回 日商簿記1級",
+    phaseDeadline: "2026-09-30", phaseLabel: "Phase 1＝未○75の○化＋期限切れ○の一斉回収",
+    // 実測ベースの新ノルマ（2026-08-31確定）。単位=着席h（稼働率85%で実作業に換算）
+    // 通常平日5h（→6h推奨）／午後半休9h（14:00開始）／土日祝11h
+    norm: { weekday: 26, weekend: 57, hoursWeekday: 5.0, hoursWeekend: 11.0 }
+  },
+
+  // 今日の指令
+  directive: {
+    date: "8/31（月）22:45 — 今夜のブロック／着席2.75h・実作業2.3h",
+    headline: "🎯<b>今日はまだゼロ日です。まずここを埋める。仕事は3つ、順番も決まっています。</b>",
+    sub: "最終記録は8/30。<b>2日連続ゼロだけは作らない</b>（本人の自己分析＝再開ストレス＋記憶減衰の二重苦）。<b>明日9/1は出社日なので25:30ハードストップ</b>。ここを超えると火曜の5hが消えます。音楽は<b>歌詞なしのみ</b>（㉛の9月ルールを前倒し適用）。",
+    items: [
+      { kind: "x", ic: "🔴", head: "枠① 22:45-23:10 ＝ ✕1問（いちばん重いものを、いちばん冴えている今に）",
+        detail: "<b>第13章 例題19「工程別標準原価計算・作業点別標準原価計算」</b>（⟳20回）。唯一の✕。<br>㉒のとおり<b>⑲は使いません</b>。20回で割れていないものは21回目でも割れない。処方は<b>㉕ELI5 → 写経＝答えを見ながら最後まで手で書く</b>。解こうとしないでください。分からなければ「ELI5して」と言ってくれれば即出します。" },
+      { kind: "x", ic: "🔥", head: "枠② 23:10-24:10 ＝ 包括利益4問／🎯第31章がまるごと閉じる",
+        detail: "<b>第31章 例題1・2・3・4</b>（⟳4回・転換率67%層）。<b>この4問が第31章のすべて</b>なので、今夜で1章クリアです。<br>包括利益は<b>開示担当という実務アドバンテージのある領域</b>（8/23の自己申告）。例1で器（当期純利益＋OCI）の絵を作れば、例2の非支配株主持分・例3の持分法・例4の組替調整は同じ器で通せます。<br>⚠️8/23に第31章 例2で<b>⏱36分06秒</b>を使っています。<b>面白い論点ほどタイマーで区切る</b>——1問15分で切ってください。" },
+      { kind: "d", ic: "🔄", head: "枠③ 24:10-25:05 ＝ 期限切れ○10問（今日から毎日の固定枠）",
+        detail: "疲れてくる時間帯なので、いちばん機械的なものを最後に置いています。<b>最終接触が6月＝70日前</b>のものから順に10問。<br><b>解きます。見るだけにはしません。外したら即△</b>に落として翌々日の△キューへ（○の回数はリセットしません）。<br>A+Bの期限切れ○は<b>354問</b>。1日15問で24日＝9月中に一巡します。今夜は初日なので10問。" },
+      { kind: "d", ic: "⏰", head: "25:30 ハードストップ／明日から着席時刻を記録",
+        detail: "明日9/1は出社日。<b>25:30で切ってください</b>。8/28・8/29の連続ゼロは深夜の粘りすぎから来ています。<br>明日から<b>ブロックの開始と終了の時刻だけ</b>記録を。1日4行で済みます。9/8に集計して稼働率を実測に置き換えます。" }
+    ]
+  },
+
+  // タイムテーブル
+  masterPlan: {
+    title: "合格逆算マップ",
+    note: "**スコープ確定（8/31）＝A+B 656問**：例題405（C79を除外）＋ 問題集251（既済39＋未着手212・C24を除外）。**演習ログ527問すべてに重要度をマッピング完了**（A238／B206／C83）。○3回転の必要時間は**542.6h**（問題演習433.6＋過去問90＋暗記19）。供給は**通常平日5h／午後半休9h（14時開始）／土日祝11h・稼働率85%で実作業512h**＝**差異−30.9h・充足94%**。**通常平日を6h（18:00着席）にすると+29hでほぼ埋まります**。**C論点は捨てたのではなく優先を下げただけ**で、A・Bが3回転に到達したら戻ります。判定日は**10/15**。",
+    stock: {
+      total: 656, done: 369,
+      items: [
+        { label: "商会 例題（A+B）",        n: 265, o: 216 },
+        { label: "工原 例題（A+B）",        n: 140, o: 122 },
+        { label: "問題集 既済（A+B）",      n: 39,  o: 39  },
+        { label: "問題集 未着手 商会",      n: 145, o: 0   },
+        { label: "問題集 未着手 工原",      n: 67,  o: 0   }
+      ]
+    },
+    roadmap: {
+      start: "2026-09-01", end: "2026-11-15",
+      phases: [
+        { label: "Phase 1 未○75の○化＋期限切れ○354の回収", from: "2026-09-01", to: "2026-09-30", tone: "o",   sub: "実作業204h／必要206h。午後休6回＋5連休。問題集は工原90問に着手" },
+        { label: "Phase 2 問題集の初○化を完走",             from: "2026-10-01", to: "2026-10-31", tone: "d",   sub: "実作業203h。10/15が判定日。午後休は未確定（月6回で仮置き）" },
+        { label: "Phase 3 ○3回転の仕上げ＋予想問題",        from: "2026-11-01", to: "2026-11-15", tone: "act", sub: "実作業105h。新規教材はやらない" }
+      ],
+      bands: [
+        { label: "中間決算クランチ",                       from: "2026-09-01", to: "2026-09-12", tone: "x"   },
+        { label: "午後半休 9/14・16・18（14時開始）",        from: "2026-09-14", to: "2026-09-18", tone: "o"   },
+        { label: "🏔️ 5連休 9/19-23（敬老/国民/秋分・有給0）", from: "2026-09-19", to: "2026-09-23", tone: "act" },
+        { label: "午後半休 9/24・25・30",                  from: "2026-09-24", to: "2026-09-30", tone: "o"   },
+        { label: "10月 午後休（未確定・月6回で仮置き）",       from: "2026-10-06", to: "2026-10-23", tone: "d"   },
+        { label: "直前週",                                from: "2026-11-08", to: "2026-11-15", tone: "act" }
+      ]
+    },
+    pace: {
+      title: "必要 vs 供給（実測ベース）",
+      note: "1タッチの分数は論点別の加重平均。例題A+B＝△11.1分／○5.3分、未着手問題集＝△19.8分／○9.5分。実測24件（すべて商業の難所）をそのまま全問に当てていたのが8/31までの過大見積もりの原因でした。",
+      bars: [
+        { label: "問題演習（A+B 656問 ○3回転）", v: 433.6, tone: "d"   },
+        { label: "過去問20回（固定枠）",          v: 90.0,  tone: "act" },
+        { label: "暗記レイヤー",                  v: 19.0,  tone: "o"   },
+        { label: "供給（平日5h・休日11h・稼働85%）", v: 547.0, tone: "x" }
+      ]
+    },
+    heat: {
+      title: "枠を増やす手／効果（着席600h・稼働85%からの増分）",
+      rows: [
+        { k: "ゼロ日を月7日→月2日に抑える",   v: "+102h", tone: "act" },
+        { k: "休日 10h → 11h",              v: "+37h",  tone: "o" },
+        { k: "稼働率 85% → 90%",            v: "+30h",  tone: "o" },
+        { k: "通常平日 5h → 6h",             v: "+27h",  tone: "d" },
+        { k: "午後休12回を確保する",          v: "+51h",  tone: "act" }
+      ]
+    }
+  },
+
+  // タイムテーブル
+  timetable: {
+    title: "毎日の時間割",
+    note: "本人指定：勉強は1:30まで、夜は19:00から。加えて昼枠50分を新設（平日は会社で弁当／土日は家を出る前に）。実働は平日で約6h20m。",
+    days: [
+      { label: "平日（月〜金）", total: "実働 約6h20m",
+        rows: [
+          { t: "12:10–13:00", ic: "🍱", head: "昼枠 50分 ＝ 例題△（会社・弁当）", body: "疲労が最も少ない＝転換率が最高の枠。白紙書き出しをここに置く。ラップトップは閉じる。弁当は「会社で頼む」を既定にして選ぶ時間をゼロにする。" },
+          { t: "19:00–19:15", ic: "📰", head: "過去問ざっくり 15分（着席トリガー）", body: "解かない。問題を眺めて解説を読むだけ。着席コストが最も低いタスクを一発目に置くことで19:00始動を取りにいく。" },
+          { t: "19:15–20:45", ic: "📘", head: "ブロック1（90分）期限切れ△・古い順", body: "商会優先（8/1から切替）。最古グループから潰す。" },
+          { t: "20:45–21:15", ic: "🍚", head: "食事・休憩 30分", body: "タイマーを必ずかける。横にならない（就寝直結）。" },
+          { t: "21:15–22:45", ic: "📘", head: "ブロック2（90分）期限切れ△", body: "大きい塊から（収益認識／資本連結／純資産／外貨）。" },
+          { t: "22:45–23:05", ic: "📺", head: "休憩 20分（YouTube可・ゲート化）", body: "禁止しない。ただしブロックの後・タイマー20分。先に休むと動けない。" },
+          { t: "23:05–00:35", ic: "📘", head: "ブロック3（90分）期限切れ△", body: "ここまでで期限切れの本体を削る。" },
+          { t: "00:35–00:45", ic: "☕", head: "休憩 10分", body: "" },
+          { t: "00:45–01:30", ic: "✍️", head: "ブロック4（45分）要対策△の白紙書き出し", body: "30問ある要対策の介入枠。手首のしびれ対策で、書き出しはここに集約して量を管理する。" },
+          { t: "01:30", ic: "🛏️", head: "就寝（ハードストップ）", body: "延長しない。翌日の昼枠と始動を守るほうが総量が増える。" }
+        ] },
+      { label: "土日", total: "量の日",
+        rows: [
+          { t: "起床後30分以内", ic: "🔥", head: "動き出しの1問（10分）", body: "⚠️8/2の教訓：起床アンカーを守っても、これを踏まないと1日が溶ける。洗濯より先。顔を洗う前でよい。" },
+          { t: "外出前 50分", ic: "🍱", head: "家で50分（平日の昼枠と同じ役割）", body: "本人案：「土日も家でまず50分やってから自習室、という運用も面白い」→ 採用。自習室に着く前に着火しておく。" },
+          { t: "自習室", ic: "📘", head: "量のブロック（休憩をゲート化して反復）", body: "90分×N＋20分休憩。リフレッシュ枠は先に決めておく（罪悪感で無計画に削らない）。" },
+          { t: "1枠 15分", ic: "📰", head: "過去問ざっくり 15分", body: "平日と同じ。解かない・眺めて解説を読む。" },
+          { t: "01:30", ic: "🛏️", head: "就寝（ハードストップ）", body: "土日こそ就寝時刻を固定する。崩すと月曜の昼枠が死ぬ。" }
+        ] }
+    ],
+    rules: [
+      "🍱 昼枠は7月まで存在しなかった枠＝月11〜16hの純増。夜を延ばすどんな案より効く",
+      "📰 過去問は10月まで「解かない」。眺めて解説を読むだけ＝出題の形に慣れる投資（本人方針・採用）",
+      "🔥 起床アンカーより「起きて30分以内の1問」が上位（8/2の実データで確定）",
+      "🛏️ 1:30は延長しない。翌日の昼枠＋19:00始動を守るほうが週の総量が増える"
+    ]
+  },
+
+  // 毎日の基準ノルマ（最大公約数）= 秘書不在・トークン切れでも自己完結で回せる恒久基準。上から順に。
+  dailyBaseline: {
+    title: "毎日の3本ライン（Phase 1）",
+    note: "8月の処理順には<b>「期限切れ○」の行が無く</b>、215タッチが全部△行に流れました。結果、期限切れ○が354問・中央値38日超過。処理順を改訂します：<b>✕全問 → 期限切れ△（古い順）→ 期限切れ○（古い順・1日15問）→ 当日分 → 新規</b>。",
+    tiers: [
+      { ic: "🔴", label: "絶対ライン ＝ ✕全問 ＋ 期限切れ○ 5問",
+        body: "何があってもここまで。飲み会・残業・現場日・体調不良でも。<b>2日連続ゼロを作らない</b>。ゼロ日を月7日→月2日に抑えると+102h＝平日を1h増やす（+27h）の4倍効きます。" },
+      { ic: "🟢", label: "標準ライン ＝ 平日5h（実作業4.25h）",
+        body: "未○8-10問（⑲閉じて手順）＋<b>期限切れ○15問</b>＋暗記カード接触。<b>復習＝解く。見るだけにはしない。外したら即△</b>（○の回数はリセットせず、直前の回数から再開）。" },
+      { ic: "🔥", label: "攻めライン ＝ 休日11h（実作業9.35h）",
+        body: "<b>9:00開始</b>。過去問1回（本試験の時間割どおり）＋問題集15問＋期限切れ○20問。週末に一度も9:00から勉強できていないのが今いちばん致命的な穴です（㉙）。" }
+    ],
+    rule: "スコープ＝<b>A+B 656問</b>（C論点83+24問は今は触らない）。到達＝<b>○が3回連続で記録されている状態</b>。間隔：✕=+1日／△=+2日／○1回目→+7日（10/1-17は+5／10/18〜は+4）／○2回目→+14日（+10／+8）／○3回目=卒業。<b>○△を2往復したら間隔反復から外して㉕ELI5→写経へ</b>。"
+  },
+
+  // イレギュラー回復プロトコル
+  recoveryProtocol: {
+    title: "イレギュラー回復プロトコル（イベントが入った日）",
+    note: "イベント自体はOK。問題は翌日の回復カスケード（起床14時→実働16時→1日が溶ける）。レバーは気合でなく起床アンカー。",
+    tiers: [
+      { ic: "⏰", label: "① 起床アンカーを固定（最重要）",
+        body: "どんなに遅く寝ても翌日は11〜12時に1本アラーム（14時まで寝ない）。寝溜めは1サイクルだけ・不足は昼寝(タイマー付き)で補うと総量が増える。" },
+      { ic: "🎬", label: "② 起きて30分以内に『動き出しの1問』",
+        body: "✕1問 or 講義5分を、リフレッシュ/YouTubeより先に。『体が動くまで2h』の空白を微小タスクで埋めて始動を前倒し。" },
+      { ic: "🎁", label: "③ YouTube・仮眠は『ブロック後のご褒美』にゲート化",
+        body: "禁止はしない。勉強1ブロック→YouTube20分→次、の順。先に休むと動けない。仮眠はタイマー30〜45分で必ず区切る。" },
+      { ic: "🏃", label: "④ ランニング日（22-2拘束）は前倒し型",
+        body: "勉強はランニング前（〜21:30）に寄せる＝ランニングを夜のカットオフに。深夜2時以降に勉強を足さない（翌日カスケードの起点）。" }
+    ],
+    rule: "失った『量』は日単位で慌てず、週内の最大枠（祝・週末）へ寄せてマクロ(11/15)を守る＝週次プランの調整ルール②。"
+  },
+
+  // 過去問プロトコル＝毎週の型（解き方＋①②③の仕分け）。今の目的は「解けること」でなく本番慣れ＋穴の特定
+  kakomonProtocol: {
+    title: "過去問プロトコル（〜10月：解かない期間）",
+    note: "本人方針（2026-08-03）＝「今はあくまで解かないで、問題を眺めて解説を見るざっくり復習。どんな試験で問題が出るかの力を養っておきたい。10月に実力を最大限に高めた状態で、予想問題集や過去問の演習に入る」。→ 採用。毎日15分、夜の一発目に置く。",
+    tiers: [
+      { ic: "📰", label: "毎日15分・19:00の着席トリガー（〜9月末）",
+        body: "解かない。大問を眺めて「何を問われているか」を掴み、そのまま模範解答と解説を読む。**目的は得点でなく“出題の形”の内在化**。着席コストが最も低いタスクなので、これを夜の一発目に置いて19:00始動を取りにいく。" },
+      { ic: "🗂️", label: "眺めながら①②③に仕分け→秘書に報告",
+        body: "各大問を下の①②③に分類して報告。②が出たら、その論点の例題△を翌日のブロック1に前倒しする＝**過去問の穴と例題の弱点を1本の線にする**。" },
+      { ic: "⏱️", label: "10月から：時間計測ありの本番演習へ切替",
+        body: "実力を最大化した状態で、予想問題集＋過去問を通しで解く。**この切替時期は動かさない**（充填率が低い段階で通し演習をしても、測る対象が存在しない）。" }
+    ],
+    buckets: [
+      { n: "①", label: "そもそも解けなくて当然", body: "充填率が低い論点。印だけ付けて放置。例題の○化が先" },
+      { n: "②", label: "既習なのに手が止まった", body: "★本命。その論点の例題△を翌日のブロック1へ前倒し" },
+      { n: "③", label: "出題形式に驚いた", body: "問い方・答案用紙の形。これに慣れるのが今の15分の目的そのもの" }
+    ]
+  },
+
+  // 今日のキュー = 事前記入済み。○△✕とメモを叩くだけ（記録モードから使う）
+  // 科目/章は記録フォームのセレクト値と一致させること（subject:"工業"|"商業", chapterは章ラベル完全一致）
+  todayQueue: [
+    {"subject": "工業", "chapter": "第13章 標準原価計算", "example": "例19", "subtitle": "工程別標準原価計算・作業点別標準原価計算", "block": "🔴 枠① 22:45-23:10 ＝ ✕1問（頭がいちばん冴えている今に置く）", "reps": 20, "mode": "㉕ELI5→写経", "target": 21, "note": "重要度B・⟳20回・唯一の✕。㉒により⑲は使わない＝答えを見ながら最後まで手で書く。解こうとしない｜T18-例19"},
+    {"subject": "商業", "chapter": "第31章 包括利益", "example": "例1", "subtitle": "包括利益の算定①", "block": "🔥 枠② 23:10-24:10 ＝ 包括利益4問／🎯第31章まるごとクリア", "reps": 4, "mode": "閉じて手順→解く", "target": 5, "note": "重要度A・包括利益＝当期純利益＋OCI。まず器の絵から｜C31-例1"},
+    {"subject": "商業", "chapter": "第31章 包括利益", "example": "例2", "subtitle": "包括利益の算定②（子会社がある場合）", "block": "🔥 枠② 23:10-24:10 ＝ 包括利益4問／🎯第31章まるごとクリア", "reps": 4, "mode": "閉じて手順→解く", "target": 5, "note": "重要度A・子会社あり＝非支配株主持分への配分がヤマ｜C31-例2"},
+    {"subject": "商業", "chapter": "第31章 包括利益", "example": "例3", "subtitle": "包括利益の算定③（持分法適用会社がある場合）", "block": "🔥 枠② 23:10-24:10 ＝ 包括利益4問／🎯第31章まるごとクリア", "reps": 4, "mode": "閉じて手順→解く", "target": 5, "note": "重要度B・持分法適用会社。例2と同じ器で通す｜C31-例3"},
+    {"subject": "商業", "chapter": "第31章 包括利益", "example": "例4", "subtitle": "組替調整", "block": "🔥 枠② 23:10-24:10 ＝ 包括利益4問／🎯第31章まるごとクリア", "reps": 4, "mode": "閉じて手順→解く", "target": 5, "note": "重要度A・組替調整＝🎯これで第31章4問すべてが閉じる｜C31-例4"},
+    {"subject": "工業", "chapter": "#06 第5章 製造間接費会計", "example": "例4", "subtitle": "公式法変動予算", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度A・最終接触 2026-06-22（70日前）・○1回目。外したら即△｜T06-例4"},
+    {"subject": "工業", "chapter": "#09 第7章 個別原価計算", "example": "例4", "subtitle": "仕損費の間接経費処理", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度A・最終接触 2026-06-22（70日前）・○1回目。外したら即△｜T09-例4"},
+    {"subject": "工業", "chapter": "#12 工程別総合原価計算", "example": "例1", "subtitle": "累加法①", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度A・最終接触 2026-06-22（70日前）・○1回目。外したら即△｜T12-例1"},
+    {"subject": "商業", "chapter": "#04 第3章 現金預金", "example": "例1", "subtitle": "現金過不足（決算日において現金過不足が生じた場合）", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度B・最終接触 2026-06-23（69日前）・○1回目。外したら即△｜C3-例1"},
+    {"subject": "商業", "chapter": "#04 第3章 現金預金", "example": "例2", "subtitle": "現金過不足②（期中に現金過不足が生じている場合）", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度B・最終接触 2026-06-23（69日前）・○1回目。外したら即△｜C3-例2"},
+    {"subject": "商業", "chapter": "#04 第3章 現金預金", "example": "例4", "subtitle": "当座借越①（期中仕訳）", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度B・最終接触 2026-06-23（69日前）・○1回目。外したら即△｜C3-例4"},
+    {"subject": "商業", "chapter": "#04 第3章 現金預金", "example": "例5", "subtitle": "当座借越②（貸借対照表の表示）", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度B・最終接触 2026-06-23（69日前）・○1回目。外したら即△｜C3-例5"},
+    {"subject": "商業", "chapter": "#04 第3章 現金預金", "example": "例6", "subtitle": "銀行勘定調整表①", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度A・最終接触 2026-06-23（69日前）・○1回目。外したら即△｜C3-例6"},
+    {"subject": "商業", "chapter": "#04 第3章 現金預金", "example": "例7", "subtitle": "銀行勘定調整表②", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度A・最終接触 2026-06-23（69日前）・○1回目。外したら即△｜C3-例7"},
+    {"subject": "工業", "chapter": "#13 第10章 組別総合原価計算", "example": "例2", "subtitle": "工程別組別総合原価計算", "block": "🔄 枠③ 24:10-25:05 ＝ 期限切れ○10問（最古＝6月接触）／⏰25:30ハードストップ", "reps": 1, "mode": "解く", "target": 2, "note": "重要度B・最終接触 2026-06-23（69日前）・○1回目。外したら即△｜T13-例2"}
+  ],
+
+  // 型カード
+  cards: [
+    { idx: "①", name: "差額原価の意思決定", chap: "第18章", done: true, when: "7/7 実施済",
+      marks: [["例1","o"],["例4","d"],["例5","d"],["例7","o"],["例8","d"],["例9","o"],["例10","o"],["例11","o"],["例12","o"]] },
+    { idx: "②", name: "全部 vs 直接・固定費調整", chap: "第14章", done: true, when: "7/8 実施済",
+      marks: [["例1","o"],["例3","o"],["例4","o"],["例5","d"],["例6","o"]] },
+    { idx: "③", name: "標準原価の差異分析（数量→配合・歩留／作業時間）", chap: "第13章 例14-20", done: false, when: "🎯週末型カード介入で集中＝本人最大の苦手（13回転しても全問△＝反復では割れない）",
+      marks: [["例14","d"],["例15","d"],["例16","d"],["例17","d"],["例18","d"],["例19","d"],["例20","d"]] },
+    { idx: "④", name: "連産品の推定市価按分", chap: "第12章", done: true, when: "7/11 実施済",
+      marks: [["例2","o"],["例3","o"],["例4","d"],["例5","x"]] },
+    { idx: "⑤", name: "販売数量差異の分解", chap: "第16章", done: true, when: "7/11 実施済",
+      marks: [["例4","d"],["例5","x"]] },
+    { idx: "⑥", name: "CVP応用", chap: "第15章", done: false, when: "平日反復中・週末介入へ",
+      marks: [["例7","d"],["例8","d"],["例13","d"],["例14","d"]] }
+  ],
+
+  stats: {
+    recorded: 527, o: 422, d: 103, x: 2,
+    needAction: 63,             // 要対策（A+Bのうち△4回目以降）
+    subjects: [
+      { n: 238, k: "重要度A（最優先）" },
+      { n: 206, k: "重要度B（優先）" },
+      { n: 83,  k: "重要度C（今は触らない）" },
+      { n: 354, k: "期限切れ○（A+B・中央値38日超過）" },
+      { n: 212, k: "問題集 未着手 A+B（商会145＋工原67）" }
+    ]
+  },
+
+  // 直近の勝ち筋
+  recentWins: [
+    { ic: "🏖️", text: "<b>有給10日の配置を確定</b>（9月4日／10月5日／11月1日）。<b>直前週の有給は11/13の1日だけ</b>に絞り、剥がした18hを9月へ前倒し＝直前週は56hだと余る（過去問7.6回し分の38hで足りる）ため、<b>同じ4.5h/日でも複利のつく9月に置く</b>。2026年はシルバーウィーク当たり年で<b>9/17・18の2日で7連休</b>が作れる（9/22は国民の休日＝有給不要）。" },
+    { ic: "🩹", text: "<b>⑲収穫日プロトコルを確立</b>。解いた直後でなく<b>48h空けた「収穫日」に閉じて手順</b>を書くと転換率50%（8/6・8/11で実証）。写経のみの日は転換率0%（8/3）＝“いつやるか”が○化を決める。" },
+    { ic: "🎯", text: "<b>2ヶ月詰まった意思決定 例4(IRR)が17回目で○</b>。外貨の<b>独立処理も○</b>（HTML図解→写経→48h→閉じて手順で突破）＝一番硬かった型が割れ始めた。" },
+    { ic: "🗂️", text: "<b>商会問題集161問を実測</b>し、例題との違い＝<b>「型を選ばせる」</b>（前T/B→財務諸表・論点名なし）を特定。9月の設計（1周＋A/失点分2周・章単位移行・理論42＝会計学対策）が確定。" },
+    { ic: "🏁", text: "<b>商業講義88本 インプット完了</b>（7/30）＝インプット期は終了。以降は回転・○化のみ。" },
+  ],
+
+  weekPlan: {
+    label: "🧪 較正週 9/1(火)〜9/7(月)｜着席47h・実作業40h｜今週の本当の成果物は<b>稼働率と1タッチの実測値</b>",
+    rows: [
+      { day: "火", task: "<b>5h</b>｜未○⟳3-4層8問＋期限切れ○15問＋<b>暗記カードv1作成</b>（9/1）", done: false },
+      { day: "水", task: "<b>5h</b>｜未○⟳5-7層10問＋期限切れ○15問（9/2）", done: false },
+      { day: "木", task: "<b>5h</b>｜未○⟳5-7層10問＋期限切れ○15問（9/3）", done: false },
+      { day: "金", task: "<b>5h</b>｜未○⟳12+層4問（㉕ELI5→写経）＋期限切れ○15問（9/4）", done: false },
+      { day: "土", task: "<b>11h</b>｜⏰<b>9:00-12:15 過去問1回（本試験と同じ時間割）</b>→復習2h→問題集 工原10問（9/5）", done: false },
+      { day: "日", task: "<b>11h</b>｜⏰<b>9:00開始</b> 問題集 工原15問＋未○⟳3-4層12問＋期限切れ○20問（9/6）", done: false },
+      { day: "月", task: "<b>5h</b>｜未○の回収＋期限切れ○15問＋<b>較正の集計（稼働率・分/タッチ）</b>（9/7）", done: false }
+    ],
+    maxims: [
+      "⏱️<b>着席時刻を記録する</b>のが今週いちばん重要な仕事。稼働率85%は唯一まだ実測でない仮定で、ここが実測になると計画の幅が一気に縮む",
+      "🔄<b>期限切れ○ 15問/日は固定枠</b>。この行が処理順に無かったので354問が滞留した。解く——見るだけにはしない",
+      "⏰<b>土日は9:00開始</b>（㉙）。本試験は商会9:00-10:30／工原10:45-12:15。週末に一度も9:00から勉強できていないのが致命的な穴"
+    ]
+  },
+
+  // 週次プラン（マクロ逆算）
+  weekMacro: {
+    title: "週次プラン（マクロ逆算）— 例外時の週内調整",
+    thisWeek: {
+      label: "9/1(火)〜9/7(月)：較正週＝新スコープの初速と実測値を取る",
+      goal: "未○75を減らし始めること、期限切れ○354の消化を軌道に乗せること、そして<b>稼働率と1タッチの分数を実測に置き換えること</b>。3つ目が今週の本体です。",
+      musts: [
+        "⏱️ 着席時刻を毎ブロック記録（開始と終了だけ・1日4行）。9/7に集計する",
+        "🔄 期限切れ○ 15問/日を毎日踏む（土日は20問）。古い順＝最終接触が6月のものから",
+        "🔴 ✕1問を即日消す（唯一の絶対ライン）",
+        "⏰ 土日は9:00開始。9/5は9:00-12:15で過去問1回を本試験の時間割どおりに",
+        "🚫 2日連続ゼロを作らない。ゼロ日を月7日→月2日に抑えると+102h＝平日+1h（+27h）の4倍効く"
+      ],
+      buffer: "中間決算クランチが9/12まで続く。<b>午後半休は9/14・16・18・24・25・30の6回（14時開始＝9h枠）</b>。そして<b>9/19(土)〜9/23(水)は敬老の日・国民の休日・秋分の日で有給ゼロの5連休</b>——9月最大の塊で、ここに問題集の初○化を寄せる。ただし㉜のとおり連休は崩れやすい（お盆4連休=0.8問/日 vs 平日週11.8問/日）ので、<b>5日とも9:00開始を死守する</b>ことが条件。稼げない週の負債はここへ寄せる。",
+      adjustRule: "突発予定・体調不良が出たら上から順に：①✕だけは毎日死守 →②期限切れ○の15問は最優先で維持（ここを飛ばすと○が腐って未○に戻り、二重の損）→③未○の新規着手を止めて回収に回す →④それでも溢れたら問題集の着手を翌週へ →⑤削る順序は【問題集の○3回目 → 問題集の問題数 → 例題の○3回目】。<b>過去問20回は削らない</b>（㉔）。"
+    },
+    roadmap: [
+      { span: "〜7/30", phase: "講義一周（完了）", milestone: "🏁 商業講義88本 インプット完了（7/30）＝インプット期は終了" },
+      { span: "8月",   phase: "未○の圧縮",       milestone: "✅ 未○245→105（140問○化）。ただし○の維持は0タッチで期限切れ○が404問に膨張" },
+      { span: "9月",   phase: "Phase 1",         milestone: "🎯 未○75を0に／期限切れ○354を一巡／問題集 工原90問に着手／過去問6回。供給204h・必要206h＝余白なし", now: true },
+      { span: "10月",  phase: "Phase 2",         milestone: "問題集212問の初○化を完走／例題の○3回目／過去問8回。**10/15が判定日**" },
+      { span: "11/1-15", phase: "Phase 3",       milestone: "○3回転の仕上げ＋予想問題6回。新規教材はやらない" },
+      { span: "11/15", phase: "本番",            milestone: "第174回 日商簿記1級 受験" }
+    ]
+  },
+
+  // 復習キュー
+  reviewQueue: {
+    total: 429, d: 74, x: 1,
+    groups: [
+      { title: "🔄 期限切れ○ 354問（A+B・中央値38日超過）", cnt: 354, crit: true,
+        body: "<b>8月に○行へ入れたタッチは0件</b>。処理順に「期限切れ○」の行が無かったのが原因です。31日以上放置が265問、最終接触が6月のものが最古。<b>1日15問（休日20問）の固定枠で24日＝9月中に一巡</b>します。解く——見るだけにはしません。外したら即△に落とし、○の回数はリセットせず直前の回数から再開。" },
+      { title: "🔴 ✕ 1問（毎日の絶対ライン）", cnt: 1,
+        body: "T18-例19 工程別標準原価計算・作業点別標準原価計算（⟳20回）。㉒により⑲は適用せず<b>㉕ELI5→写経→翌日 閉じて手順</b>。" },
+      { title: "🔵 未○ ⟳3-4層 20問（転換率67%・実測）", cnt: 20,
+        body: "第31章 包括利益4／第38章 企業結合3／第39章 事業分離3／第29章 連結税効果3／第20章 資産除去債務2／第32章 連結退職給付2ほか。⑲閉じて手順で1問8分。<b>第31章は4問すべてがここ＝1日で1章閉じられる</b>。" },
+      { title: "🔵 未○ ⟳5-7層 28問（転換率75%）", cnt: 28,
+        body: "工原 第21章 分権組織5／第16章 予算管理5／第13章 標準原価計算5／商会 第35章 個別CF4／第14章 研究開発費3ほか。9/2-9/3の本体。" },
+      { title: "🔴 未○ ⟳12回以上 18問（転換率27%）", cnt: 18,
+        body: "ほぼ全部が工原（第13章／第16章／第19章／第18章／第15章）。㉒により⑲は適用せず<b>㉕ELI5→写経</b>。1問25分の枠を取る。9/4に4問から。" },
+      { title: "🔵 未○ ⟳1-2層 5問＋⟳8-11層 4問", cnt: 9,
+        body: "⟳1-2は写経段階（転換率10%＝閉じて手順は効かない）。⟳8-11は㉒-追記のとおり<b>「100%」は生存者バイアスで反証済み</b>——安いと決めつけず実測で見る。" },
+      { title: "📕 重要度C 83問（例題）＋24問（問題集）＝ 今は触らない", cnt: 107,
+        body: "<b>捨てたのではなく優先を下げただけ</b>。A・B論点が例題も問題集も○3回転に到達し、余力が出た時点で戻ります。判定は10/15。" }
+    ]
+  },
+
+  // 直近の勝ち筋
+  phases: [
+    { label: "Phase 1 未○75の○化＋期限切れ○354の回収", range: "9月",      color: "var(--o)",   weight: 1.0 },
+    { label: "Phase 2 問題集212の初○化を完走",           range: "10月",     color: "var(--d)",   weight: 1.03 },
+    { label: "Phase 3 ○3回転の仕上げ＋予想問題",         range: "11/1-15",  color: "var(--act)", weight: 0.5 },
+    { label: "本番", range: "11/15", color: "var(--x)", weight: 0.05 }
+  ]
+};
+
+/* ============================================================
+   Render — 小さな vanilla JS。HTML本体は骨格のみ。
+   ============================================================ */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" }[c]));
+const markSym = (m) => m === "o" ? "○" : m === "d" ? "△" : "✕";
+
+function daysUntil(dateStr) {
+  const target = new Date(dateStr + "T00:00:00");
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((target - today) / 86400000);
+}
+
+// ---- Header countdowns (動的計算) ----
+(function header() {
+  $("updated").textContent = "最終更新 " + DATA.meta.updated;
+
+  const dExam = daysUntil(DATA.meta.examDate);
+  const ex = $("cd-exam");
+  ex.querySelector(".num").textContent = dExam;
+  ex.querySelector(".lbl").textContent = DATA.meta.examLabel + " まであと（日）";
+
+  const dPhase = daysUntil(DATA.meta.phaseDeadline);
+  const ph = $("cd-phase");
+  ph.querySelector(".num").textContent = dPhase;
+  ph.querySelector(".lbl").textContent = DATA.meta.phaseLabel + " まであと（日）";
+})();
+
+const app = $("app");
+let revealDelay = 0;
+function section(inner) {
+  const el = document.createElement("section");
+  el.className = "reveal";
+  el.style.setProperty("--rd", (revealDelay += 40) + "ms");
+  el.innerHTML = inner;
+  app.appendChild(el);
+  return el;
+}
+
+// 1. 今日の指令
+(function directive() {
+  const d = DATA.directive;
+  const blocks = d.items.map(it => `
+    <div class="d-block ${it.kind}">
+      <div class="ic">${it.ic}</div>
+      <div class="body">
+        <div class="head">${esc(it.head)}</div>
+        <div class="detail">${esc(it.detail)}</div>
+      </div>
+    </div>`).join("");
+  section(`
+    <div class="directive">
+      <div class="sec-title" style="color:var(--act)">今日の指令 — ${esc(d.date)}</div>
+      <h2>${esc(d.headline || "")}</h2>
+      <p class="sub">${esc(d.sub)}</p>
+      ${blocks}
+    </div>`);
+})();
+
+// 1.2 合格逆算マップ — 図で見るセクション（在庫バー／ロードマップ／ペース／ゼロ日ヒート）
+(function masterPlan() {
+  const m = DATA.masterPlan;
+  if (!m) return;
+  const TONE = { o: "var(--o)", d: "var(--d)", x: "var(--x)", act: "var(--act)" };
+  const day = s => new Date(s + "T00:00:00");
+
+  /* --- A. 在庫バー：幅＝問題数のシェア、塗り＝○化率 --- */
+  const stockRows = m.stock.items.map(it => {
+    const share = it.n / m.stock.total * 100;
+    const fill  = it.n ? it.o / it.n * 100 : 0;
+    return `
+      <div class="mp-row">
+        <div class="mp-lab">${esc(it.label)}</div>
+        <div class="mp-track" style="width:${share.toFixed(1)}%">
+          <div class="mp-fill" style="width:${fill.toFixed(1)}%;background:var(--o)"></div>
+        </div>
+        <div class="mp-num">${it.o}<span style="opacity:.45">/${it.n}</span></div>
+      </div>`;
+  }).join("");
+  const donePct = m.stock.done / m.stock.total * 100;
+
+  /* --- B. ロードマップ --- */
+  const T0 = day(m.roadmap.start), T1 = day(m.roadmap.end), SPAN = T1 - T0;
+  const at = s => Math.max(0, Math.min(100, (day(s) - T0) / SPAN * 100));
+  const today = new Date();
+  const todayPct = Math.max(0, Math.min(100, (today - T0) / SPAN * 100));
+
+  const bands = (m.roadmap.bands || []).map(b => `
+    <div class="mp-band" style="left:${at(b.from)}%;width:${(at(b.to) - at(b.from)).toFixed(2)}%;
+         background:${TONE[b.tone] || "var(--act)"};" title="${esc(b.label)}"></div>`).join("");
+
+  const phases = (m.roadmap.phases || []).map(p => `
+    <div class="mp-phase">
+      <div class="mp-bar" style="left:${at(p.from)}%;width:${(at(p.to) - at(p.from)).toFixed(2)}%;
+           background:${TONE[p.tone] || "var(--act)"}">
+        <span>${esc(p.label)}</span>
+      </div>
+      <div class="mp-phase-sub" style="left:${at(p.from)}%">${esc(p.sub || "")}</div>
+    </div>`).join("");
+
+  const marks = (m.roadmap.marks || []).map(k => `
+    <div class="mp-mark" style="left:${at(k.d)}%">
+      <div class="mp-mark-dot"></div>
+      <div class="mp-mark-lab">${esc(k.label)}<br><span>${k.d.slice(5).replace("-", "/")}</span></div>
+    </div>`).join("");
+
+  /* --- C. ペースゲージ --- */
+  const paceBars = m.pace.bars.map(b => `
+    <div class="mp-row">
+      <div class="mp-lab">${esc(b.label)}</div>
+      <div class="mp-track" style="width:100%">
+        <div class="mp-fill" style="width:${(b.v / m.pace.scaleMax * 100).toFixed(1)}%;background:${TONE[b.tone]}"></div>
+        <div class="mp-need" style="left:${(m.pace.need / m.pace.scaleMax * 100).toFixed(1)}%"></div>
+      </div>
+      <div class="mp-num">${b.v.toFixed(1)}</div>
+    </div>`).join("");
+
+  /* --- D. ゼロ日ヒートマップ --- */
+  const maxV = Math.max(...m.heat.days.map(d => d[1]), 1);
+  const cells = m.heat.days.map(([d, v]) => {
+    const a = v ? (0.22 + 0.78 * (v / maxV)) : 0;
+    return `<div class="mp-cell${v ? "" : " zero"}" style="${v ? `background:color-mix(in srgb, var(--o) ${(a * 100).toFixed(0)}%, transparent)` : ""}"
+       title="${d} — ○${v}"><span>${v || ""}</span></div>`;
+  }).join("");
+
+  section(`
+    <div class="sec-title" style="color:var(--act)">${esc(m.title)}</div>
+    <div class="card">
+      <p class="sub">${esc(m.note)}</p>
+
+      <div class="wm-h" style="margin-top:1.1rem">① 母集団 688問 — ○${m.stock.done}（${donePct.toFixed(0)}%）</div>
+      <div class="mp-stock">${stockRows}</div>
+
+      <div class="wm-h" style="margin-top:1.6rem">② ロードマップ 8/10 → 11/15</div>
+      <div class="mp-road">
+        <div class="mp-bands">${bands}
+          <div class="mp-today" style="left:${todayPct.toFixed(2)}%"><span>今日</span></div>
+        </div>
+        ${phases}
+        <div class="mp-marks">${marks}</div>
+      </div>
+
+      <div class="wm-h" style="margin-top:2.6rem">③ 1日あたりの○ — 縦線が必要ライン ${m.pace.need.toFixed(1)}問</div>
+      <div class="mp-stock">${paceBars}</div>
+      <p class="detail" style="margin:.5rem 0 0">${esc(m.pace.caption)}</p>
+
+      <div class="wm-h" style="margin-top:1.6rem">④ ゼロ日マップ（直近4週）</div>
+      <div class="mp-heat-wrap">
+        <div class="mp-heat-hd"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span></div>
+        <div class="mp-heat">${cells}</div>
+      </div>
+      <p class="detail" style="margin:.55rem 0 0">${esc(m.heat.caption)}</p>
+      <p class="detail" style="margin:.3rem 0 0">${esc(m.heat.zeroNote)}</p>
+    </div>`);
+})();
+
+// 1.5 毎日の基準ノルマ（最大公約数）— 自己完結の恒久基準
+// 1.55 毎日の時間割 — 昼枠50分＋夜19:00-1:30（本人指定）
+(function timetable() {
+  const b = DATA.timetable;
+  if (!b) return;
+  const days = b.days.map(d => {
+    const rows = d.rows.map(r => `
+      <div class="d-block">
+        <div class="ic" style="min-width:5.6em;font-size:.78rem;font-variant-numeric:tabular-nums;opacity:.9;white-space:nowrap">${esc(r.t)}</div>
+        <div class="body">
+          <div class="head">${esc(r.ic)} ${esc(r.head)}</div>
+          ${r.body ? `<div class="detail">${esc(r.body)}</div>` : ""}
+        </div>
+      </div>`).join("");
+    return `
+      <div class="wm-h" style="margin-top:0.9rem">${esc(d.label)}${d.total ? ` <span style="opacity:.7;font-weight:400">— ${esc(d.total)}</span>` : ""}</div>
+      ${rows}`;
+  }).join("");
+  const rules = (b.rules || []).map(r => `<li>${esc(r)}</li>`).join("");
+  section(`
+    <div class="sec-title" style="color:var(--o)">${esc(b.title)}</div>
+    <div class="card">
+      <p class="sub">${esc(b.note)}</p>
+      ${days}
+      ${rules ? `<ul class="detail" style="margin:0.9rem 0 0;padding-left:1.1rem;line-height:1.85">${rules}</ul>` : ""}
+    </div>`);
+})();
+
+(function dailyBaseline() {
+  const b = DATA.dailyBaseline;
+  if (!b) return;
+  const tiers = b.tiers.map(t => `
+    <div class="d-block">
+      <div class="ic">${t.ic}</div>
+      <div class="body">
+        <div class="head">${esc(t.label)}</div>
+        <div class="detail">${esc(t.body)}</div>
+      </div>
+    </div>`).join("");
+  section(`
+    <div class="sec-title" style="color:var(--o)">${esc(b.title)}</div>
+    <div class="card">
+      <p class="sub">${esc(b.note)}</p>
+      ${tiers}
+      <div class="detail" style="margin-top:10px;opacity:.85">📏 ${esc(b.rule)}</div>
+    </div>`);
+})();
+
+// 1.6 イレギュラー回復プロトコル — イベント翌日のカスケード対策
+(function recoveryProtocol() {
+  const b = DATA.recoveryProtocol;
+  if (!b) return;
+  const tiers = b.tiers.map(t => `
+    <div class="d-block">
+      <div class="ic">${t.ic}</div>
+      <div class="body">
+        <div class="head">${esc(t.label)}</div>
+        <div class="detail">${esc(t.body)}</div>
+      </div>
+    </div>`).join("");
+  section(`
+    <div class="sec-title" style="color:var(--d)">${esc(b.title)}</div>
+    <div class="card">
+      <p class="sub">${esc(b.note)}</p>
+      ${tiers}
+      <div class="detail" style="margin-top:10px;opacity:.85">🗓️ ${esc(b.rule)}</div>
+    </div>`);
+})();
+
+// 1.7 過去問プロトコル — 毎週の型（解き方＋①②③の仕分け）
+(function kakomonProtocol() {
+  const b = DATA.kakomonProtocol;
+  if (!b) return;
+  const tiers = b.tiers.map(t => `
+    <div class="d-block">
+      <div class="ic">${t.ic}</div>
+      <div class="body">
+        <div class="head">${esc(t.label)}</div>
+        <div class="detail">${esc(t.body)}</div>
+      </div>
+    </div>`).join("");
+  const buckets = b.buckets.map(k => `
+    <div class="d-block">
+      <div class="ic">${esc(k.n)}</div>
+      <div class="body">
+        <div class="head">${esc(k.label)}</div>
+        <div class="detail">${esc(k.body)}</div>
+      </div>
+    </div>`).join("");
+  section(`
+    <div class="sec-title" style="color:var(--act)">${esc(b.title)}</div>
+    <div class="card">
+      <p class="sub">${esc(b.note)}</p>
+      ${tiers}
+      <div class="wm-h" style="margin-top:0.9rem">仕分け（STEP3の①②③）</div>
+      ${buckets}
+    </div>`);
+})();
+
+// 2. 6パターン制圧ボード
+(function board() {
+  let totO = 0, totN = 0;
+  const cardHtml = DATA.cards.map(c => {
+    const o = c.marks.filter(m => m[1] === "o").length;
+    const n = c.marks.length;
+    totO += o; totN += n;
+    const dots = c.marks.map(m =>
+      `<span class="dot ${m[1]}" title="${esc(m[0])} ${markSym(m[1])}"></span>`
+    ).join("");
+    const pct = Math.round(o / n * 100);
+    return `
+      <div class="pcard">
+        <div class="top">
+          <span class="idx">${c.idx}</span>
+          <div>
+            <div class="name">${esc(c.name)}</div>
+            <div class="chap">${esc(c.chap)}</div>
+          </div>
+        </div>
+        <div class="prog-row">
+          <div class="bar"><span style="width:${pct}%"></span></div>
+          <span class="frac tnum"><b>${o}</b>/${n} ○化</span>
+        </div>
+        <div class="dots">${dots}</div>
+        <div class="when ${c.done ? "done" : "plan"}">${c.done ? "✅ " : "🗓️ "}${esc(c.when)}</div>
+      </div>`;
+  }).join("");
+  section(`
+    <div class="sec-title">6パターン制圧ボード</div>
+    <div class="card">
+      <div class="board-head">
+        <div class="hint">要対策△を6概念に還元。1セッション＝1パターンの集中連続演習。</div>
+        <div class="board-total">全体進捗 <b class="tnum">${totO}/${totN}</b> ○化</div>
+      </div>
+      <div class="cards-grid">${cardHtml}</div>
+    </div>`);
+})();
+
+// 3. 全体統計
+(function stats() {
+  const s = DATA.stats;
+  const total = s.o + s.d + s.x;
+  const pO = s.o / total * 100, pD = s.d / total * 100, pX = s.x / total * 100;
+  const subj = s.subjects.map(x =>
+    `<div class="subj"><div class="sn tnum">${x.n}</div><div class="sk">${esc(x.k)}</div></div>`
+  ).join("");
+  section(`
+    <div class="sec-title">全体統計</div>
+    <div class="card">
+      <div class="stat-grid">
+        <div class="stat tot"><div class="n tnum">${s.recorded}</div><div class="k">記録済み（問）</div></div>
+        <div class="stat o"><div class="n tnum">${s.o}</div><div class="k">○ 完全理解</div></div>
+        <div class="stat d"><div class="n tnum">${s.d}</div><div class="k">△ 解説で理解</div></div>
+        <div class="stat x"><div class="n tnum">${s.x}</div><div class="k">✕ 理解不足</div></div>
+        <div class="stat warn"><div class="n tnum">${s.needAction}</div><div class="k">要対策（△4回以上）</div></div>
+      </div>
+      <div class="stackbar">
+        <span class="so" style="width:${pO}%"></span>
+        <span class="sd" style="width:${pD}%"></span>
+        <span class="sx" style="width:${pX}%"></span>
+      </div>
+      <div class="legend">
+        <span class="li"><span class="sw" style="background:var(--o)"></span>○ ${s.o}（${Math.round(pO)}%）</span>
+        <span class="li"><span class="sw" style="background:var(--d)"></span>△ ${s.d}（${Math.round(pD)}%）</span>
+        <span class="li"><span class="sw" style="background:var(--x)"></span>✕ ${s.x}</span>
+      </div>
+      <div class="subj-grid">${subj}</div>
+    </div>`);
+})();
+
+// 4. 直近の成果
+(function wins() {
+  const li = DATA.recentWins.map(w =>
+    `<li><span class="ic">${w.ic}</span><span>${w.text}</span></li>`
+  ).join("");
+  section(`
+    <div class="sec-title">直近の成果 — ○化の手応え</div>
+    <div class="card"><ul class="wins">${li}</ul></div>`);
+})();
+
+// 5. 週間予定 ＋ 自戒
+(function week() {
+  const w = DATA.weekPlan;
+  const rows = w.rows.map(r => `
+    <div class="wrow ${r.done ? "done" : ""}">
+      <span class="day">${esc(r.day)}</span>
+      <span class="task">${esc(r.task)}</span>
+      <span class="st ${r.done ? "ok" : ""}">${r.done ? "✅" : "◻︎"}</span>
+    </div>`).join("");
+  const maxims = w.maxims.map(m => `<span class="maxim">${esc(m)}</span>`).join("");
+  section(`
+    <div class="sec-title">週間予定 — ${esc(w.label)}</div>
+    <div class="card">
+      <div class="week">${rows}</div>
+      <div class="maxims">${maxims}</div>
+    </div>`);
+})();
+
+// 5.5 週次プラン（マクロ逆算）— 例外時の週内調整を見える化
+(function weekMacro() {
+  const w = DATA.weekMacro;
+  if (!w) return;
+  const musts = w.thisWeek.musts.map(m => `<li>${esc(m)}</li>`).join("");
+  const road = w.roadmap.map(r => `
+    <div class="wm-seg ${r.now ? "now" : ""}">
+      <div class="sp">${esc(r.span)}</div>
+      <div class="ph">${esc(r.phase)}</div>
+      <div class="mi">${esc(r.milestone)}</div>
+    </div>`).join("");
+  section(`
+    <div class="sec-title" style="color:var(--act)">${esc(w.title)}</div>
+    <div class="card">
+      <div class="wm-goal"><b>${esc(w.thisWeek.label)}</b> ｜ ${esc(w.thisWeek.goal)}</div>
+      <div class="wm-musts">
+        <div class="wm-h">今週の必達（マクロ死守ライン）</div>
+        <ul>${musts}</ul>
+      </div>
+      <div class="d-block"><div class="ic">🟢</div><div class="body">
+        <div class="head">バッファ（吸収余力）</div><div class="detail">${esc(w.thisWeek.buffer)}</div></div></div>
+      <div class="d-block"><div class="ic">⚙️</div><div class="body">
+        <div class="head">例外予定が出たときの週内調整ルール</div><div class="detail">${esc(w.thisWeek.adjustRule)}</div></div></div>
+      <div class="wm-h" style="margin-top:0.9rem">本番までの週次ロードマップ</div>
+      <div class="wm-road">${road}</div>
+    </div>`);
+})();
+
+// 6. 復習キュー
+(function reviewQueue() {
+  const q = DATA.reviewQueue;
+  const groups = q.groups.map(g => `
+    <details class="rqg ${g.crit ? "crit" : ""}" ${g.crit ? "open" : ""}>
+      <summary>${esc(g.title)} <span class="cnt tnum">${g.cnt}問</span></summary>
+      <div class="rq-body">${esc(g.body)}</div>
+    </details>`).join("");
+  section(`
+    <div class="sec-title">復習キュー — 今日の期限</div>
+    <div class="card">
+      <div class="rq-head">
+        <span class="big tnum">${q.total}</span>
+        <span class="lbl">問（△ ${q.d} ＋ ✕ ${q.x}）を古い順に消化</span>
+      </div>
+      ${groups}
+    </div>`);
+})();
+
+// 7. ロードマップ
+(function roadmap() {
+  const ph = DATA.phases;
+  const segs = ph.map(p =>
+    `<div class="road-seg" style="flex:${p.weight};background:${p.color}">${esc(p.range)}</div>`
+  ).join("");
+
+  // 現在位置マーカー: 7/1 → 本番 のタイムライン上の位置を動的計算
+  const start = new Date("2026-07-01T00:00:00");
+  const end = new Date(DATA.meta.examDate + "T00:00:00");
+  const now = new Date();
+  let frac = (now - start) / (end - start);
+  frac = Math.max(0, Math.min(1, frac));
+  const nowPct = (frac * 100).toFixed(1);
+
+  const legend = ph.map(p =>
+    `<div class="li"><span class="sw" style="background:${p.color}"></span>
+       <span><b>${esc(p.label)}</b> — ${esc(p.range)}</span></div>`
+  ).join("");
+  section(`
+    <div class="sec-title">ロードマップ — 本番まで</div>
+    <div class="card">
+      <div class="road-wrap">
+        <div class="road-now" style="left:${nowPct}%">
+          <div class="l">今日</div><div class="tri">▼</div>
+        </div>
+        <div class="road-bar">${segs}</div>
+      </div>
+      <div class="road-legend">${legend}</div>
+    </div>`);
+})();
+
+/* ============================================================
+   Recording mode — 入力→localStorage→エクスポート の疑似管理層
+   ------------------------------------------------------------
+   設計方針（CLAUDE.md / .secretary/CLAUDE.md 準拠）：
+   - exercise-log.md が唯一の正。ここは入力補助＋速報表示のみで
+     復習回数・次回復習日は一切計算/捏造しない。
+   - 確定DATA（stats等）は書き換えず、今日の記録は「+N」で別表示。
+   - ブラウザは直接pushできないため、エクスポートは「記録依頼の
+     指示リスト」を生成し、チャット貼付 or .md ダウンロードで橋渡し。
+   - 完全オフライン（外部リソース参照ゼロ）を維持。
+   ============================================================ */
+(function recordingMode() {
+  "use strict";
+
+  const LS_RECORDS = "boki-dash-records-v1";
+  const LS_OVERLAY = "boki-dash-overlay-v1";
+  const MARKS = new Set(["o", "d", "x"]);
+
+  // 章リスト（セレクト用・テキスト章番号）
+  const SUBJECTS = [
+    { value: "工業", label: "工業/原価計算", chapters: [
+      "第1章 工業簿記・原価計算総論", "第2章 材料費会計", "第3章 労務費会計",
+      "第4章 経費会計", "第5章 製造間接費会計", "第6章 部門別計算",
+      "第7章 個別原価計算", "第8章 単純総合原価計算", "第9章 工程別総合原価計算",
+      "第10章 組別総合原価計算", "第11章 等級別総合原価計算", "第12章 連産品",
+      "第13章 標準原価計算", "第14章 直接原価計算", "第15章 CVP分析",
+      "第16章 予算管理", "第17章 資金管理", "第18章 意思決定会計Ⅰ",
+      "第19章 意思決定会計Ⅱ", "第20章 戦略的原価計算", "第21章 分権組織とグループ経営の管理会計"
+    ] },
+    { value: "商業", label: "商業/会計", chapters: [
+      "第1章 簿記の全体像", "第2章 企業会計原則等", "第3章 現金預金",
+      "第4章 有形固定資産", "第5章 無形固定資産・投資その他・繰延資産",
+      "第6章 引当金", "第7章 商品売買", "第8章 棚卸資産", "第9章 経過勘定",
+      "第10章 有価証券", "第11章 債権債務・貸倒引当金", "第12章 デリバティブ取引",
+      "第13章 リース会計", "第14章 研究開発費・ソフトウェア", "第15章 減損会計",
+      "第16章 税金及び税効果会計", "第17章 外貨建取引", "第18章 社債",
+      "第19章 退職給付会計", "第20章 資産除去債務", "第21章 純資産",
+      "第22章 会計方針の開示・変更・誤謬の訂正", "第23章 四半期財務諸表",
+      "第24章 収益認識", "第25章 本支店会計",
+      "第26章 連結会計Ⅰ（連結会計の基礎）", "第27章 連結会計Ⅱ（資本連結）",
+      "第28章 連結会計Ⅲ（成果連結）", "第29章 連結会計Ⅳ（連結税効果）",
+      "第30章 持分法会計", "第31章 包括利益", "第32章 連結退職給付",
+      "第33章 在外支店", "第34章 在外子会社",
+      "第35章 個別キャッシュ・フロー計算書", "第36章 連結キャッシュ・フロー計算書",
+      "第37章 セグメント情報", "第38章 企業結合会計", "第39章 事業分離会計",
+      "第40章 １株当たり情報", "第41章 分配可能額",
+      "補講① 委託販売等", "補講② 試用販売", "補講③ 未着品販売", "補講④ 割賦販売"
+    ] }
+  ];
+  const SUBJECT_VALUES = new Set(SUBJECTS.map(s => s.value));
+
+  // ---- helpers ----
+  const pad2 = (n) => String(n).padStart(2, "0");
+  const dateStr = (ms) => { const d = new Date(ms); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; };
+  const timeStr = (ms) => { const d = new Date(ms); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
+  const todayStr = () => dateStr(Date.now());
+  const chapterNum = (s) => { const m = String(s).match(/第\s*\d+\s*章/); return m ? m[0].replace(/\s+/g, "") : null; };
+
+  // ---- localStorage (robust / fail-closed §4.6) ----
+  function isValidRecord(r) {
+    return r && typeof r === "object"
+      && SUBJECT_VALUES.has(r.subject)
+      && typeof r.chapter === "string" && r.chapter
+      && typeof r.example === "string" && r.example
+      && MARKS.has(r.mark)
+      && typeof r.ts === "number" && isFinite(r.ts);
+  }
+  function loadRecords() {
+    let raw;
+    try { raw = localStorage.getItem(LS_RECORDS); } catch (e) { return []; }
+    if (!raw) return [];
+    let parsed;
+    try { parsed = JSON.parse(raw); } catch (e) { return []; }
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(isValidRecord).map(r => ({
+      id: (typeof r.id === "string" && r.id) ? r.id : newId(),
+      subject: r.subject, chapter: r.chapter, example: r.example,
+      subtitle: typeof r.subtitle === "string" ? r.subtitle : "",
+      memo: typeof r.memo === "string" ? r.memo : "",
+      mark: r.mark, ts: r.ts
+    })).sort((a, b) => a.ts - b.ts);
+  }
+  function saveRecords() {
+    try { localStorage.setItem(LS_RECORDS, JSON.stringify(records)); } catch (e) { /* quota/disabled: non-fatal */ }
+  }
+  function loadOverlay() {
+    const empty = { week: {}, dir: {} };
+    let raw;
+    try { raw = localStorage.getItem(LS_OVERLAY); } catch (e) { return empty; }
+    if (!raw) return empty;
+    let p;
+    try { p = JSON.parse(raw); } catch (e) { return empty; }
+    if (!p || typeof p !== "object") return empty;
+    return {
+      week: (p.week && typeof p.week === "object") ? p.week : {},
+      dir: (p.dir && typeof p.dir === "object") ? p.dir : {}
+    };
+  }
+  function saveOverlay() {
+    try { localStorage.setItem(LS_OVERLAY, JSON.stringify(overlay)); } catch (e) { /* non-fatal */ }
+  }
+  const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+  let records = loadRecords();
+  const overlay = loadOverlay();
+  let selectedMark = null;
+
+  // ---- build panel (insert after 今日の指令) ----
+  const sec = document.createElement("section");
+  sec.className = "reveal";
+  sec.style.setProperty("--rd", "20ms");
+  sec.innerHTML = `
+    <div class="sec-title">記録モード — この端末で管理（localStorage）</div>
+    <details class="rec-panel" id="recPanel" open>
+      <summary>
+        <span>
+          <span class="rp-title">📝 記録を入力</span>
+          <span class="rp-sub">　解いたら1問ずつ</span>
+        </span>
+        <span class="rp-badge" id="recBadge" hidden></span>
+      </summary>
+      <div class="rec-body">
+        <div class="rec-note">入力はこの端末に保存されます（リロードで消えません）。<b>exercise-log.md が唯一の正</b>のため、ここでは復習回数・次回復習日は計算せず、下の「エクスポート」を<b>チャットに貼る</b>か <b>.md をエージェントに渡す</b>と正しく記録されます。確定数値は上書きせず、今日の分は「+N」で速報表示します。</div>
+
+        <div class="rec-queue" id="recQueue"></div>
+
+        <div class="rec-manual-head" id="recManualHead">＋ その他の問題を手入力</div>
+        <div class="rec-form">
+          <div class="rec-field">
+            <label for="recSubject">科目</label>
+            <select class="rec-select" id="recSubject"></select>
+          </div>
+          <div class="rec-field">
+            <label for="recChapter">章</label>
+            <select class="rec-select" id="recChapter"></select>
+          </div>
+          <div class="rec-field">
+            <label for="recExample">例題番号</label>
+            <input class="rec-input" id="recExample" type="text" placeholder="例: 例5 / 例12 / 練習1" autocomplete="off">
+          </div>
+          <div class="rec-field">
+            <label for="recSubtitle">副題（任意）</label>
+            <input class="rec-input" id="recSubtitle" type="text" placeholder="例: 回収期間法" autocomplete="off">
+          </div>
+          <div class="rec-field full">
+            <label>理解度</label>
+            <div class="mark-btns" id="recMarks">
+              <button type="button" class="mark-btn o" data-mark="o">○<span class="mk-lbl">完全理解</span></button>
+              <button type="button" class="mark-btn d" data-mark="d">△<span class="mk-lbl">解説で理解</span></button>
+              <button type="button" class="mark-btn x" data-mark="x">✕<span class="mk-lbl">理解不足</span></button>
+            </div>
+          </div>
+          <div class="rec-field full">
+            <label for="recMemo">メモ（任意）</label>
+            <input class="rec-input" id="recMemo" type="text" placeholder="詰まった点 / 3分ルール使用 など" autocomplete="off">
+          </div>
+        </div>
+        <div class="rec-err" id="recErr" aria-live="polite"></div>
+        <button type="button" class="btn o wide" id="recAdd">＋ 記録に追加</button>
+
+        <div class="local-status" id="localStatus" hidden>
+          <span id="localStatusText"></span>
+          <button type="button" class="btn ghost sm" id="localReset">ローカル変更をリセット</button>
+        </div>
+
+        <div class="rec-tally" id="recTally"></div>
+        <div class="rec-warn" id="recWarn" hidden></div>
+        <div class="rec-list" id="recList"></div>
+
+        <div class="rec-actions">
+          <button type="button" class="btn primary wide" id="recExport">📤 リポジトリ反映用にエクスポート</button>
+          <button type="button" class="btn ghost wide" id="recClear">🧹 記録をクリア（反映済みを消去）</button>
+        </div>
+      </div>
+    </details>`;
+  // 今日の指令(app.children[0]) の直後、6カードボードの前へ挿入
+  if (app.children.length > 1) app.insertBefore(sec, app.children[1]);
+  else app.appendChild(sec);
+
+  // ---- form wiring ----
+  const elSubject = $("recSubject");
+  const elChapter = $("recChapter");
+  const elExample = $("recExample");
+  const elSubtitle = $("recSubtitle");
+  const elMemo = $("recMemo");
+  const elErr = $("recErr");
+  const elMarks = $("recMarks");
+
+  SUBJECTS.forEach(s => {
+    const o = document.createElement("option");
+    o.value = s.value; o.textContent = s.label;
+    elSubject.appendChild(o);
+  });
+  function populateChapters(subjectValue) {
+    const s = SUBJECTS.find(x => x.value === subjectValue) || SUBJECTS[0];
+    elChapter.innerHTML = "";
+    s.chapters.forEach(ch => {
+      const o = document.createElement("option");
+      o.value = ch; o.textContent = ch;
+      elChapter.appendChild(o);
+    });
+  }
+  populateChapters(elSubject.value);
+  elSubject.addEventListener("change", () => populateChapters(elSubject.value));
+
+  elMarks.addEventListener("click", (e) => {
+    const btn = e.target.closest(".mark-btn");
+    if (!btn) return;
+    selectedMark = btn.dataset.mark;
+    elMarks.querySelectorAll(".mark-btn").forEach(b => b.classList.toggle("sel", b === btn));
+    elErr.textContent = "";
+  });
+
+  $("recAdd").addEventListener("click", addRecord);
+  elMemo.addEventListener("keydown", (e) => { if (e.key === "Enter") addRecord(); });
+
+  // 「その他を手入力」の開閉トグル（キューが主役なので手入力は畳んでおく）
+  const elManualHead = $("recManualHead");
+  const elFormWrap = elManualHead.nextElementSibling; // .rec-form
+  let manualOpen = false;
+  function syncManual() {
+    elFormWrap.hidden = !manualOpen;
+    $("recErr").hidden = !manualOpen;
+    $("recAdd").hidden = !manualOpen;
+    elManualHead.classList.toggle("open", manualOpen);
+    elManualHead.textContent = (manualOpen ? "－" : "＋") + " その他の問題を手入力";
+  }
+  elManualHead.addEventListener("click", () => { manualOpen = !manualOpen; syncManual(); });
+  syncManual();
+
+  // ---- 今日のキュー（事前記入済み・○△✕＋メモを叩くだけ） ----
+  const elQueue = $("recQueue");
+  const QUEUE = Array.isArray(DATA.todayQueue) ? DATA.todayQueue.filter(q =>
+    q && SUBJECT_VALUES.has(q.subject) && typeof q.chapter === "string" && q.chapter
+    && typeof q.example === "string" && q.example
+  ) : [];
+
+  // キュー項目が今日すでに記録済みか（科目＋章＋例題番号の一致・当日分のみ）
+  function queueDone(q) {
+    const today = todayStr();
+    return records.find(r => r.subject === q.subject && r.chapter === q.chapter
+      && r.example === q.example && dateStr(r.ts) === today) || null;
+  }
+
+  const markGlyph = { o: "○", d: "△", x: "✕" };
+
+  // ---- 問題ごとのストップウォッチ ----
+  // 目的：⑳の「理想タイム」との差を可視化し、コスパ判断（この問題に時間をかけるべきか）を数値でやる。
+  // localStorage に持つのでリロードしても走り続ける。
+  const TIMER_KEY = "boki_dash_timers_v1";
+  let timers = (() => {
+    try { return JSON.parse(localStorage.getItem(TIMER_KEY)) || {}; } catch (e) { return {}; }
+  })();
+  function saveTimers() {
+    try { localStorage.setItem(TIMER_KEY, JSON.stringify(timers)); } catch (e) { /* ignore */ }
+  }
+  const qKey = (q) => `${q.subject}|${q.chapter}|${q.example}`;
+  function tSec(k) {
+    const t = timers[k];
+    if (!t) return 0;
+    return (t.acc || 0) + (t.run ? Math.floor((Date.now() - t.run) / 1000) : 0);
+  }
+  function tRunning(k) { return !!(timers[k] && timers[k].run); }
+  function tToggle(k) {
+    const t = timers[k] || (timers[k] = { run: null, acc: 0 });
+    if (t.run) { t.acc = (t.acc || 0) + Math.floor((Date.now() - t.run) / 1000); t.run = null; }
+    else { t.run = Date.now(); }
+    saveTimers();
+  }
+  function tStop(k) {
+    const t = timers[k];
+    if (t && t.run) { t.acc = (t.acc || 0) + Math.floor((Date.now() - t.run) / 1000); t.run = null; saveTimers(); }
+  }
+  function fmtSec(s) {
+    const m = Math.floor(s / 60), r = s % 60;
+    return `${m}:${String(r).padStart(2, "0")}`;
+  }
+  const MODE_CLASS = { "写経": "mode-syakyo", "閉じて手順": "mode-tejun", "公式カード": "mode-kousiki" };
+  // ㉒ 転換率は復習回数の逆U字：8〜11回が最も割れる／12回以上は反復では割れない
+  function repsClass(n) {
+    if (!n) return "";
+    if (n >= 12) return "hot";
+    if (n >= 8) return "peak";
+    return "";
+  }
+  function repsTitle(n) {
+    if (!n) return "";
+    if (n >= 12) return "12回以上＝反復では割れない層（転換率27%）。写経で手を動かす";
+    if (n >= 8) return "8〜11回＝転換率100%の実測層。最も安く○が出る";
+    if (n >= 5) return "5〜7回＝転換率75%";
+    if (n >= 3) return "3〜4回＝転換率67%";
+    return "1〜2回＝写経段階（転換率10%）";
+  }
+
+  function renderQueue() {
+    if (!QUEUE.length) { elQueue.hidden = true; return; }
+    elQueue.hidden = false;
+    const doneCount = QUEUE.filter(queueDone).length;
+    const tgtTotal  = QUEUE.reduce((a, q) => a + (Number(q.target) || 0), 0);
+    const secTotal  = QUEUE.reduce((a, q) => {
+      const d = queueDone(q);
+      return a + (d && d.sec ? d.sec : tSec(qKey(q)));
+    }, 0);
+    const gap = Math.round(secTotal / 60) - tgtTotal;
+    const gapTxt = tgtTotal
+      ? `実測 ${fmtSec(secTotal)} / 目標 ${tgtTotal}:00　<b class="${gap > 0 ? "x" : "o"}">${gap >= 0 ? "+" : ""}${gap}分</b>`
+      : "";
+
+    const nm = DATA.meta && DATA.meta.norm;
+    let normTxt = "";
+    if (nm) {
+      const wknd = [0, 6].includes(new Date().getDay());
+      const n = wknd ? nm.weekend : nm.weekday;
+      const h = wknd ? nm.hoursWeekend : nm.hoursWeekday;
+      const short = n - doneCount;
+      normTxt = `<span class="rq-norm">📌 本日ノルマ <b>${n}問</b>（${h}h・${wknd ? "週末" : "平日"}）` +
+        (short > 0 ? ` ／ 残り <b class="x">${short}問</b>` : ` ／ <b class="o">達成</b>`) + `</span>`;
+    }
+    let html = `<div class="rq-head">🎯 今日の予定（叩くだけ）<span class="rq-prog tnum">${doneCount}/${QUEUE.length}　${gapTxt}</span></div>` + (normTxt ? `<div class="rq-normbar">${normTxt}</div>` : "");
+    let lastBlock = null;
+
+    QUEUE.forEach((q, i) => {
+      const blk = q.block || "";
+      if (blk && blk !== lastBlock) {
+        lastBlock = blk;
+        const g = QUEUE.filter(x => x.block === blk);
+        const gt = g.reduce((a, x) => a + (Number(x.target) || 0), 0);
+        const gd = g.filter(queueDone).length;
+        html += `<div class="rq-block"><span class="bn">${esc(blk)}</span>` +
+                `<span class="bm">${gd}/${g.length}問・目標 ${gt}分</span></div>`;
+      }
+      const done  = queueDone(q);
+      const ch    = chapterNum(q.chapter) || q.chapter;
+      const sub   = q.subtitle ? `「${esc(q.subtitle)}」` : "";
+      const note  = q.note ? `<div class="rq-note">${esc(q.note)}</div>` : "";
+      const key   = qKey(q);
+      const tgt   = Number(q.target) || 0;
+      const chips = [];
+      if (q.reps) chips.push(`<span class="chip reps ${repsClass(q.reps)}" title="${esc(repsTitle(q.reps))}">⟳ ${q.reps}回</span>`);
+      if (q.mode) chips.push(`<span class="chip ${MODE_CLASS[q.mode] || ""}">${esc(q.mode)}</span>`);
+      if (tgt)    chips.push(`<span class="chip tgt">⏱ 目標${tgt}分</span>`);
+      const chipHtml = chips.length ? `<div class="rq-chips">${chips.join("")}</div>` : "";
+
+      if (done) {
+        const memo = done.memo ? `<span class="rq-donmemo">📝 ${esc(done.memo)}</span>` : "";
+        const sec  = done.sec || 0;
+        const cls  = !tgt ? "" : (sec > tgt * 60 ? "over" : "good");
+        const tm   = sec ? `<span class="rq-donetime ${cls}">⏱ ${fmtSec(sec)}${tgt ? ` / ${tgt}:00` : ""}</span>` : "";
+        html += `<div class="rq-item done" data-i="${i}">
+          <div class="rq-main">
+            <div class="rq-ttl"><span class="rq-glyph ${done.mark}">${markGlyph[done.mark]}</span> ${esc(q.subject)}・${esc(ch)} ${esc(q.example)}${sub}${tm}</div>
+            ${chipHtml}${note}${memo}
+          </div>
+          <button type="button" class="rq-undo" data-i="${i}" data-rid="${esc(done.id)}">取消</button>
+        </div>`;
+        return;
+      }
+      const sec  = tSec(key);
+      const run  = tRunning(key);
+      const tcls = run ? "run" : (tgt && sec > tgt * 60 ? "over" : "");
+      html += `<div class="rq-item" data-i="${i}">
+        <div class="rq-main">
+          <div class="rq-ttl">${esc(q.subject)}・${esc(ch)} ${esc(q.example)}${sub}</div>
+          ${chipHtml}${note}
+        </div>
+        <div class="rq-controls">
+          <div class="rq-timer">
+            <button type="button" class="rq-tbtn ${run ? "run" : ""}" data-timer="${i}">${run ? "■ 停止" : (sec ? "▶ 再開" : "▶ 開始")}</button>
+            <span class="rq-time ${tcls}" data-time="${esc(key)}">${fmtSec(sec)}</span>
+          </div>
+          <div class="mark-btns sm" data-i="${i}">
+            <button type="button" class="mark-btn o" data-mark="o" data-i="${i}">○</button>
+            <button type="button" class="mark-btn d" data-mark="d" data-i="${i}">△</button>
+            <button type="button" class="mark-btn x" data-mark="x" data-i="${i}">✕</button>
+          </div>
+          <input class="rec-input rq-memo" data-i="${i}" type="text" placeholder="メモ（任意）" autocomplete="off">
+        </div>
+      </div>`;
+    });
+    elQueue.innerHTML = html;
+  }
+
+  // 走っているタイマーだけ毎秒書き換える（全体を再描画すると入力中のメモが消えるため）
+  setInterval(() => {
+    let any = false;
+    elQueue.querySelectorAll(".rq-time").forEach(el => {
+      const k = el.dataset.time;
+      if (!tRunning(k)) return;
+      any = true;
+      el.textContent = fmtSec(tSec(k));
+    });
+    if (any) {
+      const q = elQueue.querySelector(".rq-prog");
+      if (q) {
+        const tgtTotal = QUEUE.reduce((a, x) => a + (Number(x.target) || 0), 0);
+        const secTotal = QUEUE.reduce((a, x) => {
+          const d = queueDone(x);
+          return a + (d && d.sec ? d.sec : tSec(qKey(x)));
+        }, 0);
+        const gap = Math.round(secTotal / 60) - tgtTotal;
+        const doneCount = QUEUE.filter(queueDone).length;
+        q.innerHTML = `${doneCount}/${QUEUE.length}　実測 ${fmtSec(secTotal)} / 目標 ${tgtTotal}:00　` +
+          `<b class="${gap > 0 ? "x" : "o"}">${gap >= 0 ? "+" : ""}${gap}分</b>`;
+      }
+    }
+  }, 1000);
+
+  elQueue.addEventListener("click", (e) => {
+    const undo = e.target.closest(".rq-undo");
+    if (undo) {
+      const rid = undo.dataset.rid;
+      records = records.filter(r => r.id !== rid);
+      saveRecords();
+      renderList();
+      renderQueue();
+      applyLiveOverlay();
+      return;
+    }
+    const tb = e.target.closest(".rq-tbtn");
+    if (tb) {
+      const q = QUEUE[Number(tb.dataset.timer)];
+      if (q) { tToggle(qKey(q)); renderQueue(); }
+      return;
+    }
+    const btn = e.target.closest(".mark-btn");
+    if (!btn) return;
+    const i = Number(btn.dataset.i);
+    const q = QUEUE[i];
+    if (!q || !MARKS.has(btn.dataset.mark)) return;
+    const memoEl = elQueue.querySelector(`.rq-memo[data-i="${i}"]`);
+    const key = qKey(q);
+    tStop(key);
+    pushRecord({
+      subject: q.subject, chapter: q.chapter, example: q.example,
+      subtitle: q.subtitle || "", memo: memoEl ? memoEl.value.trim() : "",
+      mark: btn.dataset.mark, sec: tSec(key)
+    });
+  });
+
+  // 記録追加の共通処理（手入力フォームと今日のキューの両方から使う）
+  function pushRecord({ subject, chapter, example, subtitle, memo, mark, sec }) {
+    records.push({
+      id: newId(),
+      subject, chapter, example,
+      subtitle: subtitle || "",
+      memo: memo || "",
+      mark,
+      sec: Number(sec) || 0,
+      ts: Date.now()
+    });
+    records.sort((a, b) => a.ts - b.ts);
+    saveRecords();
+    renderList();
+    renderQueue();
+    applyLiveOverlay();
+  }
+
+  function addRecord() {
+    const example = elExample.value.trim();
+    if (!MARKS.has(selectedMark)) { elErr.textContent = "理解度（○ / △ / ✕）を選んでください。"; return; }
+    if (!example) { elErr.textContent = "例題番号を入力してください（例: 例5）。"; elExample.focus(); return; }
+    elErr.textContent = "";
+    pushRecord({
+      subject: elSubject.value,
+      chapter: elChapter.value,
+      example,
+      subtitle: elSubtitle.value.trim(),
+      memo: elMemo.value.trim(),
+      mark: selectedMark
+    });
+    // 連続入力しやすいよう科目・章は保持、それ以外をクリア
+    elExample.value = ""; elSubtitle.value = ""; elMemo.value = "";
+    selectedMark = null;
+    elMarks.querySelectorAll(".mark-btn").forEach(b => b.classList.remove("sel"));
+    elExample.focus();
+  }
+
+  // ---- today's record list ----
+  const elList = $("recList");
+  const elTally = $("recTally");
+  const elWarn = $("recWarn");
+  const elBadge = $("recBadge");
+
+  elList.addEventListener("click", (e) => {
+    const del = e.target.closest(".rec-del");
+    if (!del) return;
+    const id = del.dataset.id;
+    records = records.filter(r => r.id !== id);
+    saveRecords();
+    renderList();
+    renderQueue();
+    applyLiveOverlay();
+  });
+
+  // 記録をクリア：この端末のlocalStorageバッファを全消去（exercise-log.md には無影響）
+  const elClear = $("recClear");
+  if (elClear) elClear.addEventListener("click", () => {
+    if (!records.length) return;
+    if (!confirm(`この端末に溜まった記録 ${records.length}件を全て消去します。\nexercise-log.md（サーバー側の正本）には影響しません。よろしいですか？`)) return;
+    records = [];
+    saveRecords();
+    renderList();
+    renderQueue();
+    applyLiveOverlay();
+  });
+
+  // 「今日の記録」は当日分のみカウント（別日の溜まりは含めない）
+  function counts() {
+    const today = todayStr();
+    const t = records.filter(r => dateStr(r.ts) === today);
+    return {
+      o: t.filter(r => r.mark === "o").length,
+      d: t.filter(r => r.mark === "d").length,
+      x: t.filter(r => r.mark === "x").length,
+      total: t.length
+    };
+  }
+
+  function renderList() {
+    const c = counts();
+    elTally.innerHTML =
+      `<span class="big tnum">今日の記録 ${c.total}問</span>` +
+      `<span class="brk">（<span class="co">○${c.o}</span> ／ <span class="cd">△${c.d}</span> ／ <span class="cx">✕${c.x}</span>）</span>`;
+
+    const today = todayStr();
+    const todayRecs = records.filter(r => dateStr(r.ts) === today);
+    const stale = records.length - todayRecs.length;
+    if (stale > 0) {
+      elWarn.hidden = false;
+      elWarn.textContent = `🧹 別日の記録が ${stale}件 残っています。エージェントに記録済みなら「記録をクリア」で消去してください（exercise-log.md には影響しません）。`;
+    } else {
+      elWarn.hidden = true;
+    }
+
+    if (!todayRecs.length) {
+      elList.innerHTML = `<div class="rec-empty">今日の記録はまだありません。上のフォームから追加してください。</div>`;
+    } else {
+      elList.innerHTML = todayRecs.map(r => {
+        const sub = r.subtitle ? `「${esc(r.subtitle)}」` : "";
+        const memo = r.memo ? `<div class="memo">📝 ${esc(r.memo)}</div>` : "";
+        return `
+          <div class="rec-item ${r.mark}">
+            <div class="rm">${markSym(r.mark)}</div>
+            <div class="info">
+              <div class="ttl">${esc(r.subject)} ${esc(r.chapter)} ${esc(r.example)}${sub}</div>
+              <div class="sub2">${dateStr(r.ts)} ${timeStr(r.ts)}</div>
+              ${memo}
+            </div>
+            <button type="button" class="rec-del" data-id="${esc(r.id)}" aria-label="この記録を削除" title="削除">✕</button>
+          </div>`;
+      }).join("");
+    }
+    updateBadge();
+  }
+
+  function updateBadge() {
+    const today = todayStr();
+    const n = records.filter(r => dateStr(r.ts) === today).length;
+    if (n > 0) { elBadge.hidden = false; elBadge.textContent = `未反映 ${n}件`; }
+    else { elBadge.hidden = true; }
+    updateLocalStatus();
+  }
+
+  // ---- live overlay: 確定値に「+N」加算、ボードに pending ドット ----
+  function applyLiveOverlay() {
+    const c = counts();
+    setStatLive(".stat.tot", c.total);
+    setStatLive(".stat.o", c.o);
+    setStatLive(".stat.d", c.d);
+    setStatLive(".stat.x", c.x);
+    applyPendingDots();
+  }
+  function setStatLive(sel, n) {
+    const stat = document.querySelector(sel);
+    if (!stat) return;
+    let badge = stat.querySelector(".stat-live");
+    if (n <= 0) { if (badge) badge.remove(); return; }
+    if (!badge) {
+      badge = document.createElement("div");
+      badge.className = "stat-live";
+      const nEl = stat.querySelector(".n");
+      if (nEl) nEl.insertAdjacentElement("afterend", badge); else stat.appendChild(badge);
+    }
+    badge.textContent = `+${n} 今日`;
+  }
+  function applyPendingDots() {
+    document.querySelectorAll(".dot.pending").forEach(el => el.remove());
+    const pcards = Array.from(document.querySelectorAll(".pcard"));
+    records.forEach(r => {
+      if (r.subject !== "工業") return;          // ボードは管理会計(工業)章のみ
+      const num = chapterNum(r.chapter);
+      if (!num) return;
+      const card = pcards.find(pc => {
+        const chEl = pc.querySelector(".chap");
+        return chEl && chapterNum(chEl.textContent) === num;
+      });
+      if (!card) return;
+      const dots = card.querySelector(".dots");
+      if (!dots) return;
+      const dot = document.createElement("span");
+      dot.className = `dot pending ${r.mark}`;
+      dot.title = `${r.example} ${markSym(r.mark)}（今日の入力・未確定）`;
+      dots.appendChild(dot);
+    });
+  }
+
+  // ---- 疑似管理: 週間予定チェック / 今日の指令チェック（ローカル） ----
+  function wireWeekPlan() {
+    const rows = Array.from(document.querySelectorAll(".wrow"));
+    rows.forEach((row, i) => {
+      row.dataset.defaultDone = row.classList.contains("done") ? "1" : "0";
+      row.classList.add("editable");
+      row.setAttribute("role", "button");
+      row.tabIndex = 0;
+      const key = String(i);
+      const apply = () => {
+        const def = row.dataset.defaultDone === "1";
+        const done = Object.hasOwn(overlay.week, key) ? !!overlay.week[key] : def;
+        row.classList.toggle("done", done);
+        row.classList.toggle("local-edit", Object.hasOwn(overlay.week, key) && (!!overlay.week[key] !== def));
+        const st = row.querySelector(".st");
+        if (st) { st.textContent = done ? "✅" : "◻︎"; st.classList.toggle("ok", done); }
+      };
+      const toggle = () => {
+        const def = row.dataset.defaultDone === "1";
+        const cur = Object.hasOwn(overlay.week, key) ? !!overlay.week[key] : def;
+        overlay.week[key] = !cur;
+        saveOverlay(); apply(); updateLocalStatus();
+      };
+      apply();
+      row.addEventListener("click", toggle);
+      row.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+    });
+  }
+  function wireDirective() {
+    const blocks = Array.from(document.querySelectorAll(".directive .d-block"));
+    blocks.forEach((b, i) => {
+      const key = String(i);
+      const chk = document.createElement("button");
+      chk.type = "button";
+      chk.className = "dblk-chk";
+      chk.setAttribute("aria-label", "このタスクを完了にする（ローカル）");
+      chk.title = "完了マーク（ローカル）";
+      b.appendChild(chk);
+      const apply = () => {
+        const done = Object.hasOwn(overlay.dir, key) && !!overlay.dir[key];
+        b.classList.toggle("done-local", done);
+        chk.classList.toggle("on", done);
+        chk.textContent = done ? "✓" : "";
+      };
+      chk.addEventListener("click", () => {
+        const cur = Object.hasOwn(overlay.dir, key) && !!overlay.dir[key];
+        overlay.dir[key] = !cur;
+        saveOverlay(); apply(); updateLocalStatus();
+      });
+      apply();
+    });
+  }
+  function overlayDiffs() {
+    let n = 0;
+    document.querySelectorAll(".wrow").forEach((row, i) => {
+      const key = String(i);
+      if (Object.hasOwn(overlay.week, key)) {
+        const def = row.dataset.defaultDone === "1";
+        if (!!overlay.week[key] !== def) n++;
+      }
+    });
+    Object.keys(overlay.dir).forEach(k => { if (overlay.dir[k]) n++; });
+    return n;
+  }
+  function updateLocalStatus() {
+    const ls = $("localStatus");
+    if (!ls) return;
+    const diffs = overlayDiffs();
+    if (diffs > 0) {
+      ls.hidden = false;
+      $("localStatusText").textContent = `ローカル変更あり ${diffs}件（週間予定/指令のチェック）`;
+    } else {
+      ls.hidden = true;
+    }
+  }
+  $("localReset").addEventListener("click", () => {
+    overlay.week = {}; overlay.dir = {};
+    saveOverlay();
+    document.querySelectorAll(".wrow").forEach((row, i) => {
+      const done = row.dataset.defaultDone === "1";
+      row.classList.toggle("done", done);
+      row.classList.remove("local-edit");
+      const st = row.querySelector(".st");
+      if (st) { st.textContent = done ? "✅" : "◻︎"; st.classList.toggle("ok", done); }
+    });
+    document.querySelectorAll(".directive .d-block").forEach(b => {
+      b.classList.remove("done-local");
+      const chk = b.querySelector(".dblk-chk");
+      if (chk) { chk.classList.remove("on"); chk.textContent = ""; }
+    });
+    updateLocalStatus();
+  });
+
+  // ---- export (=疑似push) ----
+  // 出力対象は既定で「当日分のみ」。localStorage は明示クリアするまで貯まり続けるため、
+  // 全件を出すと過去に解いた問題まで「今日解いた」として再記録され、復習日が一斉にリセットされる。
+  let exportAll = false;
+  // 学習日 = 05:00 起点の1日。カットオフが1:30なので暦日で切ると1セッションが2日に割れる。
+  const STUDY_DAY_START_HOUR = 5;
+  const studyDay = (ms) => dateStr(ms - STUDY_DAY_START_HOUR * 3600 * 1000);
+  const studyDayToday = () => studyDay(Date.now());
+  function exportRecords() {
+    if (exportAll) return records;
+    const d = studyDayToday();
+    return records.filter(r => studyDay(r.ts) === d);
+  }
+  function buildLines() {
+    return exportRecords().map(r => {
+      const sym = markSym(r.mark);
+      const sub = r.subtitle ? `「${r.subtitle}」` : "";
+      const memo = r.memo ? ` メモ:${r.memo}` : "";
+      const t = r.sec ? ` ⏱${Math.floor(r.sec / 60)}分${String(r.sec % 60).padStart(2, "0")}秒` : "";
+      return `- ${r.subject} ${r.chapter} ${r.example}${sub} ${sym}${t}${memo}`;
+    });
+  }
+  const EXPORT_HEADER = "以下を exercise-log.md に記録してください（理解度は下記の通り。復習回数・次回復習日は既存ログのルールで計算し、確定値は上書きしないこと）:";
+  function exportScopeLine() {
+    const n = exportRecords().length;
+    return exportAll
+      ? `※スコープ: 全期間（未クリアの記録すべて・${n}件）。過去分を含むため、当日分でない問題まで再記録される点に注意。`
+      : `※スコープ: 学習日 ${studyDayToday()} の記録のみ・${n}件（05:00起点＝深夜まで続けた分も同じ日に入る）`;
+  }
+  function buildChatText() {
+    if (!exportRecords().length) return exportAll ? "（記録がありません）" : "（本日の記録がありません）";
+    return EXPORT_HEADER + "\n" + exportScopeLine() + "\n" + buildLines().join("\n");
+  }
+  function buildFileText() {
+    const body = exportRecords().length ? buildLines().join("\n") : "（記録がありません）";
+    return `# 学習記録 ${todayStr()}（ダッシュボード入力分）\n\n${EXPORT_HEADER}\n${exportScopeLine()}\n\n${body}\n`;
+  }
+  function download(filename, text) {
+    let url;
+    try {
+      const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+      url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+    } catch (e) { /* ignore */ }
+    finally { if (url) setTimeout(() => URL.revokeObjectURL(url), 1500); }
+  }
+  async function copyText(text, btn) {
+    let ok = false;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); ok = true; }
+    } catch (e) { ok = false; }
+    if (!ok) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text; ta.style.position = "fixed"; ta.style.top = "-9999px"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        ok = document.execCommand("copy"); ta.remove();
+      } catch (e) { ok = false; }
+    }
+    const orig = btn.dataset.orig || btn.textContent;
+    btn.dataset.orig = orig;
+    btn.textContent = ok ? "✓ コピーしました" : "コピー不可（テキストを手動選択してください）";
+    setTimeout(() => { btn.textContent = orig; }, 1900);
+  }
+
+  let modalOpen = false;
+  function openExport() {
+    if (modalOpen) return;
+    modalOpen = true;
+    const back = document.createElement("div");
+    back.className = "ov-back";
+    back.innerHTML = `
+      <div class="ov-sheet" role="dialog" aria-modal="true" aria-label="リポジトリ反映用エクスポート">
+        <div class="ov-head">
+          <h3>📤 エクスポート</h3>
+          <button type="button" class="ov-close" aria-label="閉じる">✕</button>
+        </div>
+        <div class="ov-desc">この端末の記録を<b>反映用</b>に書き出します。ダッシュボードは直接pushできないため、下記を<b>チャットに貼る</b>か、DLした <b>.md をエージェントに渡す</b>と exercise-log.md に記録されます（復習回数・次回日はログ側で正しく計算）。</div>
+        <div class="export-tabs">
+          <button type="button" class="tab sel" data-tab="chat">チャット貼付用</button>
+          <button type="button" class="tab" data-tab="file">ファイルDL</button>
+        </div>
+        <div class="export-tabs" role="group" aria-label="出力スコープ">
+          <button type="button" class="tab sel" data-scope="today">この学習日だけ（05:00起点）</button>
+          <button type="button" class="tab" data-scope="all">全期間（未クリア分すべて）</button>
+        </div>
+        <div class="export-pane" data-pane="chat">
+          <textarea class="export-text" id="exportText" readonly></textarea>
+          <p class="export-note">これをチャットに貼れば記録されます。</p>
+          <div class="export-actions">
+            <button type="button" class="btn primary" id="copyBtn">クリップボードにコピー</button>
+          </div>
+        </div>
+        <div class="export-pane" data-pane="file" hidden>
+          <p class="export-note">同じ内容を <b>study-log-${todayStr()}.md</b> としてダウンロードします。DLした .md をエージェントに渡せば適用されます。</p>
+          <div class="export-actions">
+            <button type="button" class="btn primary" id="dlBtn">⬇︎ .md をダウンロード</button>
+          </div>
+        </div>
+        <div class="export-foot">
+          <button type="button" class="btn danger wide" id="clearBtn">記録をエクスポート済みにする（リストをクリア）</button>
+        </div>
+      </div>`;
+    document.body.appendChild(back);
+    const sheet = back.querySelector(".ov-sheet");
+    back.querySelector("#exportText").value = buildChatText();
+
+    function close() {
+      if (!modalOpen) return;
+      modalOpen = false;
+      back.remove();
+      document.removeEventListener("keydown", onKey);
+    }
+    function onKey(e) { if (e.key === "Escape") close(); }
+    document.addEventListener("keydown", onKey);
+    back.addEventListener("click", (e) => { if (e.target === back) close(); });
+    back.querySelector(".ov-close").addEventListener("click", close);
+
+    back.querySelectorAll(".tab[data-tab]").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const name = tab.dataset.tab;
+        back.querySelectorAll(".tab[data-tab]").forEach(t => t.classList.toggle("sel", t === tab));
+        back.querySelectorAll(".export-pane").forEach(p => { p.hidden = p.dataset.pane !== name; });
+      });
+    });
+    back.querySelectorAll(".tab[data-scope]").forEach(tab => {
+      tab.addEventListener("click", () => {
+        exportAll = tab.dataset.scope === "all";
+        back.querySelectorAll(".tab[data-scope]").forEach(t => t.classList.toggle("sel", t === tab));
+        back.querySelector("#exportText").value = buildChatText();
+      });
+    });
+    back.querySelector("#copyBtn").addEventListener("click", (e) => copyText(buildChatText(), e.currentTarget));
+    back.querySelector("#dlBtn").addEventListener("click", () => download(`study-log-${todayStr()}.md`, buildFileText()));
+    back.querySelector("#clearBtn").addEventListener("click", () => {
+      if (!records.length) { close(); return; }
+      const ok = window.confirm("今日の記録リストをクリアします。エクスポート（コピー or DL）は済みましたか？\nOKでクリアします。");
+      if (!ok) return;
+      records = [];
+      saveRecords();
+      renderList();
+      renderQueue();
+      applyLiveOverlay();
+      close();
+    });
+    sheet.focus && sheet.focus();
+  }
+  $("recExport").addEventListener("click", openExport);
+
+  // ---- init ----
+  wireWeekPlan();
+  wireDirective();
+  renderList();
+  renderQueue();
+  applyLiveOverlay();
+  updateLocalStatus();
+})();
+</script>
