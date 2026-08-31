@@ -912,28 +912,24 @@ const DATA = {
       ]
     },
     pace: {
-      title: "必要 vs 供給（実測ベース）",
-      note: "1タッチの分数は論点別の加重平均。例題A+B＝△11.1分／○5.3分、未着手問題集＝△19.8分／○9.5分。実測24件（すべて商業の難所）をそのまま全問に当てていたのが8/31までの過大見積もりの原因でした。",
+      scaleMax: 60, need: 26,
       bars: [
-        { label: "問題演習（A+B 656問 ○3回転）", v: 433.6, tone: "d"   },
-        { label: "過去問20回（固定枠）",          v: 90.0,  tone: "act" },
-        { label: "暗記レイヤー",                  v: 19.0,  tone: "o"   },
-        { label: "供給（平日5h・休日11h・稼働85%）", v: 547.0, tone: "x" }
-      ]
+        { label: "必要 通常平日(5h)",  v: 26, tone: "act" },
+        { label: "必要 土日祝(11h)",   v: 57, tone: "act" },
+        { label: "必要 午後半休(9h)",  v: 47, tone: "act" },
+        { label: "8/25 実績",          v: 29, tone: "o"   },
+        { label: "8/30 実績",          v: 7,  tone: "d"   },
+        { label: "8/31 実績",          v: 0,  tone: "x"   }
+      ],
+      caption: "**縦線が通常平日の必要ライン。** A+B 656問を○3回転させるのに必要な**2,275タッチ**を、論点別の加重平均（例題 △11.1分／○5.3分、問題集 △19.8分／○9.5分）で時間に直し、日ごとの枠で割った値。**8/31は現時点で0問**。"
     },
     heat: {
-      title: "枠を増やす手／効果（着席600h・稼働85%からの増分）",
-      rows: [
-        { k: "ゼロ日を月7日→月2日に抑える",   v: "+102h", tone: "act" },
-        { k: "休日 10h → 11h",              v: "+37h",  tone: "o" },
-        { k: "稼働率 85% → 90%",            v: "+30h",  tone: "o" },
-        { k: "通常平日 5h → 6h",             v: "+27h",  tone: "d" },
-        { k: "午後休12回を確保する",          v: "+51h",  tone: "act" }
-      ]
+      caption: "直近4週間（8/5〜8/31）。マスの濃さ＝その日の○昇格数。白マス＝ゼロ日。**8/25の29が最良**。",
+      days: [["2026-08-05", 7], ["2026-08-06", 20], ["2026-08-07", 7], ["2026-08-08", 1], ["2026-08-09", 11], ["2026-08-10", 3], ["2026-08-11", 7], ["2026-08-12", 6], ["2026-08-13", 0], ["2026-08-14", 0], ["2026-08-15", 0], ["2026-08-16", 1], ["2026-08-17", 9], ["2026-08-18", 14], ["2026-08-19", 5], ["2026-08-20", 9], ["2026-08-21", 4], ["2026-08-22", 0], ["2026-08-23", 6], ["2026-08-24", 9], ["2026-08-25", 14], ["2026-08-26", 0], ["2026-08-27", 0], ["2026-08-28", 0], ["2026-08-29", 2], ["2026-08-30", 2], ["2026-08-31", 0]],
+      zeroNote: "この4週でゼロ日 **8/27**。**時間を伸ばすよりゼロ日を潰すほうが効く**——ゼロ日を月7日→月2日で**+102h**、通常平日を1h増やしても+27h。**4倍の差**。"
     }
   },
 
-  // タイムテーブル
   timetable: {
     title: "毎日の時間割",
     note: "本人指定：勉強は1:30まで、夜は19:00から。加えて昼枠50分を新設（平日は会社で弁当／土日は家を出る前に）。実働は平日で約6h20m。",
@@ -1155,6 +1151,13 @@ const DATA = {
    ============================================================ */
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" }[c]));
+// 本文用：先にエスケープしてから、許可した書式だけHTMLに戻す（ホワイトリスト方式）。
+// DATA の文章は <b>/<br>/<code> と **強調** を混在で使っているので、両方を同じ見た目に寄せる。
+const rich = (s) => esc(s == null ? "" : s)
+  .replace(/&lt;br\s*\/?&gt;/g, "<br>")
+  .replace(/&lt;b&gt;([\s\S]*?)&lt;\/b&gt;/g, "<b>$1</b>")
+  .replace(/&lt;code&gt;([\s\S]*?)&lt;\/code&gt;/g, "<code>$1</code>")
+  .replace(/\*\*([^*\n]+)\*\*/g, "<b>$1</b>");
 const markSym = (m) => m === "o" ? "○" : m === "d" ? "△" : "✕";
 
 function daysUntil(dateStr) {
@@ -1166,7 +1169,7 @@ function daysUntil(dateStr) {
 
 // ---- Header countdowns (動的計算) ----
 (function header() {
-  $("updated").textContent = "最終更新 " + DATA.meta.updated;
+  $("updated").innerHTML = "最終更新 " + rich(DATA.meta.updated);
 
   const dExam = daysUntil(DATA.meta.examDate);
   const ex = $("cd-exam");
@@ -1197,15 +1200,15 @@ function section(inner) {
     <div class="d-block ${it.kind}">
       <div class="ic">${it.ic}</div>
       <div class="body">
-        <div class="head">${esc(it.head)}</div>
-        <div class="detail">${esc(it.detail)}</div>
+        <div class="head">${rich(it.head)}</div>
+        <div class="detail">${rich(it.detail)}</div>
       </div>
     </div>`).join("");
   section(`
     <div class="directive">
       <div class="sec-title" style="color:var(--act)">今日の指令 — ${esc(d.date)}</div>
-      <h2>${esc(d.headline || "")}</h2>
-      <p class="sub">${esc(d.sub)}</p>
+      <h2>${rich(d.headline || "")}</h2>
+      <p class="sub">${rich(d.sub)}</p>
       ${blocks}
     </div>`);
 })();
@@ -1246,9 +1249,9 @@ function section(inner) {
     <div class="mp-phase">
       <div class="mp-bar" style="left:${at(p.from)}%;width:${(at(p.to) - at(p.from)).toFixed(2)}%;
            background:${TONE[p.tone] || "var(--act)"}">
-        <span>${esc(p.label)}</span>
+        <span>${rich(p.label)}</span>
       </div>
-      <div class="mp-phase-sub" style="left:${at(p.from)}%">${esc(p.sub || "")}</div>
+      <div class="mp-phase-sub" style="left:${at(p.from)}%">${rich(p.sub || "")}</div>
     </div>`).join("");
 
   const marks = (m.roadmap.marks || []).map(k => `
@@ -1279,7 +1282,7 @@ function section(inner) {
   section(`
     <div class="sec-title" style="color:var(--act)">${esc(m.title)}</div>
     <div class="card">
-      <p class="sub">${esc(m.note)}</p>
+      <p class="sub">${rich(m.note)}</p>
 
       <div class="wm-h" style="margin-top:1.1rem">① 母集団 688問 — ○${m.stock.done}（${donePct.toFixed(0)}%）</div>
       <div class="mp-stock">${stockRows}</div>
@@ -1295,15 +1298,15 @@ function section(inner) {
 
       <div class="wm-h" style="margin-top:2.6rem">③ 1日あたりの○ — 縦線が必要ライン ${m.pace.need.toFixed(1)}問</div>
       <div class="mp-stock">${paceBars}</div>
-      <p class="detail" style="margin:.5rem 0 0">${esc(m.pace.caption)}</p>
+      <p class="detail" style="margin:.5rem 0 0">${rich(m.pace.caption)}</p>
 
       <div class="wm-h" style="margin-top:1.6rem">④ ゼロ日マップ（直近4週）</div>
       <div class="mp-heat-wrap">
         <div class="mp-heat-hd"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span></div>
         <div class="mp-heat">${cells}</div>
       </div>
-      <p class="detail" style="margin:.55rem 0 0">${esc(m.heat.caption)}</p>
-      <p class="detail" style="margin:.3rem 0 0">${esc(m.heat.zeroNote)}</p>
+      <p class="detail" style="margin:.55rem 0 0">${rich(m.heat.caption)}</p>
+      <p class="detail" style="margin:.3rem 0 0">${rich(m.heat.zeroNote)}</p>
     </div>`);
 })();
 
@@ -1317,19 +1320,19 @@ function section(inner) {
       <div class="d-block">
         <div class="ic" style="min-width:5.6em;font-size:.78rem;font-variant-numeric:tabular-nums;opacity:.9;white-space:nowrap">${esc(r.t)}</div>
         <div class="body">
-          <div class="head">${esc(r.ic)} ${esc(r.head)}</div>
-          ${r.body ? `<div class="detail">${esc(r.body)}</div>` : ""}
+          <div class="head">${rich(r.ic)} ${rich(r.head)}</div>
+          ${r.body ? `<div class="detail">${rich(r.body)}</div>` : ""}
         </div>
       </div>`).join("");
     return `
       <div class="wm-h" style="margin-top:0.9rem">${esc(d.label)}${d.total ? ` <span style="opacity:.7;font-weight:400">— ${esc(d.total)}</span>` : ""}</div>
       ${rows}`;
   }).join("");
-  const rules = (b.rules || []).map(r => `<li>${esc(r)}</li>`).join("");
+  const rules = (b.rules || []).map(r => `<li>${rich(r)}</li>`).join("");
   section(`
     <div class="sec-title" style="color:var(--o)">${esc(b.title)}</div>
     <div class="card">
-      <p class="sub">${esc(b.note)}</p>
+      <p class="sub">${rich(b.note)}</p>
       ${days}
       ${rules ? `<ul class="detail" style="margin:0.9rem 0 0;padding-left:1.1rem;line-height:1.85">${rules}</ul>` : ""}
     </div>`);
@@ -1342,16 +1345,16 @@ function section(inner) {
     <div class="d-block">
       <div class="ic">${t.ic}</div>
       <div class="body">
-        <div class="head">${esc(t.label)}</div>
-        <div class="detail">${esc(t.body)}</div>
+        <div class="head">${rich(t.label)}</div>
+        <div class="detail">${rich(t.body)}</div>
       </div>
     </div>`).join("");
   section(`
     <div class="sec-title" style="color:var(--o)">${esc(b.title)}</div>
     <div class="card">
-      <p class="sub">${esc(b.note)}</p>
+      <p class="sub">${rich(b.note)}</p>
       ${tiers}
-      <div class="detail" style="margin-top:10px;opacity:.85">📏 ${esc(b.rule)}</div>
+      <div class="detail" style="margin-top:10px;opacity:.85">📏 ${rich(b.rule)}</div>
     </div>`);
 })();
 
@@ -1363,16 +1366,16 @@ function section(inner) {
     <div class="d-block">
       <div class="ic">${t.ic}</div>
       <div class="body">
-        <div class="head">${esc(t.label)}</div>
-        <div class="detail">${esc(t.body)}</div>
+        <div class="head">${rich(t.label)}</div>
+        <div class="detail">${rich(t.body)}</div>
       </div>
     </div>`).join("");
   section(`
     <div class="sec-title" style="color:var(--d)">${esc(b.title)}</div>
     <div class="card">
-      <p class="sub">${esc(b.note)}</p>
+      <p class="sub">${rich(b.note)}</p>
       ${tiers}
-      <div class="detail" style="margin-top:10px;opacity:.85">🗓️ ${esc(b.rule)}</div>
+      <div class="detail" style="margin-top:10px;opacity:.85">🗓️ ${rich(b.rule)}</div>
     </div>`);
 })();
 
@@ -1384,22 +1387,22 @@ function section(inner) {
     <div class="d-block">
       <div class="ic">${t.ic}</div>
       <div class="body">
-        <div class="head">${esc(t.label)}</div>
-        <div class="detail">${esc(t.body)}</div>
+        <div class="head">${rich(t.label)}</div>
+        <div class="detail">${rich(t.body)}</div>
       </div>
     </div>`).join("");
   const buckets = b.buckets.map(k => `
     <div class="d-block">
       <div class="ic">${esc(k.n)}</div>
       <div class="body">
-        <div class="head">${esc(k.label)}</div>
-        <div class="detail">${esc(k.body)}</div>
+        <div class="head">${rich(k.label)}</div>
+        <div class="detail">${rich(k.body)}</div>
       </div>
     </div>`).join("");
   section(`
     <div class="sec-title" style="color:var(--act)">${esc(b.title)}</div>
     <div class="card">
-      <p class="sub">${esc(b.note)}</p>
+      <p class="sub">${rich(b.note)}</p>
       ${tiers}
       <div class="wm-h" style="margin-top:0.9rem">仕分け（STEP3の①②③）</div>
       ${buckets}
@@ -1493,12 +1496,12 @@ function section(inner) {
   const rows = w.rows.map(r => `
     <div class="wrow ${r.done ? "done" : ""}">
       <span class="day">${esc(r.day)}</span>
-      <span class="task">${esc(r.task)}</span>
+      <span class="task">${rich(r.task)}</span>
       <span class="st ${r.done ? "ok" : ""}">${r.done ? "✅" : "◻︎"}</span>
     </div>`).join("");
-  const maxims = w.maxims.map(m => `<span class="maxim">${esc(m)}</span>`).join("");
+  const maxims = w.maxims.map(m => `<span class="maxim">${rich(m)}</span>`).join("");
   section(`
-    <div class="sec-title">週間予定 — ${esc(w.label)}</div>
+    <div class="sec-title">週間予定 — ${rich(w.label)}</div>
     <div class="card">
       <div class="week">${rows}</div>
       <div class="maxims">${maxims}</div>
@@ -1509,25 +1512,25 @@ function section(inner) {
 (function weekMacro() {
   const w = DATA.weekMacro;
   if (!w) return;
-  const musts = w.thisWeek.musts.map(m => `<li>${esc(m)}</li>`).join("");
+  const musts = w.thisWeek.musts.map(m => `<li>${rich(m)}</li>`).join("");
   const road = w.roadmap.map(r => `
     <div class="wm-seg ${r.now ? "now" : ""}">
       <div class="sp">${esc(r.span)}</div>
       <div class="ph">${esc(r.phase)}</div>
-      <div class="mi">${esc(r.milestone)}</div>
+      <div class="mi">${rich(r.milestone)}</div>
     </div>`).join("");
   section(`
     <div class="sec-title" style="color:var(--act)">${esc(w.title)}</div>
     <div class="card">
-      <div class="wm-goal"><b>${esc(w.thisWeek.label)}</b> ｜ ${esc(w.thisWeek.goal)}</div>
+      <div class="wm-goal"><b>${rich(w.thisWeek.label)}</b> ｜ ${rich(w.thisWeek.goal)}</div>
       <div class="wm-musts">
         <div class="wm-h">今週の必達（マクロ死守ライン）</div>
         <ul>${musts}</ul>
       </div>
       <div class="d-block"><div class="ic">🟢</div><div class="body">
-        <div class="head">バッファ（吸収余力）</div><div class="detail">${esc(w.thisWeek.buffer)}</div></div></div>
+        <div class="head">バッファ（吸収余力）</div><div class="detail">${rich(w.thisWeek.buffer)}</div></div></div>
       <div class="d-block"><div class="ic">⚙️</div><div class="body">
-        <div class="head">例外予定が出たときの週内調整ルール</div><div class="detail">${esc(w.thisWeek.adjustRule)}</div></div></div>
+        <div class="head">例外予定が出たときの週内調整ルール</div><div class="detail">${rich(w.thisWeek.adjustRule)}</div></div></div>
       <div class="wm-h" style="margin-top:0.9rem">本番までの週次ロードマップ</div>
       <div class="wm-road">${road}</div>
     </div>`);
@@ -1538,8 +1541,8 @@ function section(inner) {
   const q = DATA.reviewQueue;
   const groups = q.groups.map(g => `
     <details class="rqg ${g.crit ? "crit" : ""}" ${g.crit ? "open" : ""}>
-      <summary>${esc(g.title)} <span class="cnt tnum">${g.cnt}問</span></summary>
-      <div class="rq-body">${esc(g.body)}</div>
+      <summary>${rich(g.title)} <span class="cnt tnum">${g.cnt}問</span></summary>
+      <div class="rq-body">${rich(g.body)}</div>
     </details>`).join("");
   section(`
     <div class="sec-title">復習キュー — 今日の期限</div>
@@ -1569,7 +1572,7 @@ function section(inner) {
 
   const legend = ph.map(p =>
     `<div class="li"><span class="sw" style="background:${p.color}"></span>
-       <span><b>${esc(p.label)}</b> — ${esc(p.range)}</span></div>`
+       <span><b>${rich(p.label)}</b> — ${rich(p.range)}</span></div>`
   ).join("");
   section(`
     <div class="sec-title">ロードマップ — 本番まで</div>
@@ -1918,7 +1921,7 @@ function section(inner) {
       const done  = queueDone(q);
       const ch    = chapterNum(q.chapter) || q.chapter;
       const sub   = q.subtitle ? `「${esc(q.subtitle)}」` : "";
-      const note  = q.note ? `<div class="rq-note">${esc(q.note)}</div>` : "";
+      const note  = q.note ? `<div class="rq-note">${rich(q.note)}</div>` : "";
       const key   = qKey(q);
       const tgt   = Number(q.target) || 0;
       const chips = [];
