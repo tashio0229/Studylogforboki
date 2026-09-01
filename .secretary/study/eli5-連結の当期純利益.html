@@ -1,0 +1,258 @@
+<title>連結の利益は畑で考える</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#EFF3EF; --surface:#FFFFFF; --surface-2:#F6F9F6;
+  --ink:#14201A; --ink-2:#3B4A42; --ink-3:#6E7D74;
+  --rule:#D2DCD5; --rule-2:#E3EAE5;
+  --pine:#1B6647;        /* 自分の取り分・育った利益 */
+  --pine-bg:#E2EFE8;
+  --clay:#A2532B;        /* 他人の分・消すもの */
+  --clay-bg:#F6E5DA;
+  --shadow:0 1px 2px rgba(20,32,26,.05), 0 10px 26px -18px rgba(20,32,26,.22);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1512; --surface:#171F1B; --surface-2:#1D2723;
+    --ink:#E3EBE6; --ink-2:#AEBCB4; --ink-3:#7C8B83;
+    --rule:#2A3630; --rule-2:#222D28;
+    --pine:#56C293; --pine-bg:#14352A;
+    --clay:#E08D63; --clay-bg:#3A2318;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 26px -18px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1512; --surface:#171F1B; --surface-2:#1D2723;
+  --ink:#E3EBE6; --ink-2:#AEBCB4; --ink-3:#7C8B83;
+  --rule:#2A3630; --rule-2:#222D28;
+  --pine:#56C293; --pine-bg:#14352A;
+  --clay:#E08D63; --clay-bg:#3A2318;
+  --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 26px -18px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink); margin:0;
+  font-family:"Zen Kaku Gothic New",-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+  font-size:15.5px; line-height:1.92; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:740px; margin:0 auto; padding:0 24px 88px}
+@media(max-width:640px){ .wrap{padding:0 16px 56px} body{font-size:15px} }
+h1,h2,h3{font-family:"Zen Old Mincho",Georgia,"Yu Mincho",serif; margin:0; text-wrap:balance}
+h1{font-size:clamp(28px,6vw,40px); font-weight:700; line-height:1.34}
+h2{font-size:clamp(20px,3.4vw,25px); font-weight:700; line-height:1.45}
+h3{font-size:17px; font-weight:600; line-height:1.5}
+p{margin:0}
+.eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px; letter-spacing:.18em; color:var(--ink-3); text-transform:uppercase}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums; font-weight:500}
+strong{font-weight:700}
+.pine{color:var(--pine)} .clay{color:var(--clay)}
+
+header{padding:60px 0 34px; border-bottom:2px solid var(--ink)}
+.meta{display:flex; flex-wrap:wrap; gap:6px 20px; margin-top:20px}
+.meta span{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3)}
+section{padding:46px 0; border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.head{display:flex; flex-direction:column; gap:9px; margin-bottom:22px}
+.stack{display:flex; flex-direction:column; gap:18px}
+
+.lead{background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--pine);
+      padding:22px 24px; box-shadow:var(--shadow)}
+.note{background:var(--surface-2); border:1px solid var(--rule); padding:18px 20px; font-size:14.5px; line-height:1.85; color:var(--ink-2)}
+.note strong{color:var(--ink)}
+.note.warn{border-left:3px solid var(--clay)}
+
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); padding:22px 20px 16px; box-shadow:var(--shadow)}
+figure svg{display:block; width:100%; height:auto}
+figcaption{font-size:12.5px; color:var(--ink-3); margin-top:12px; line-height:1.7}
+.sv-lab{font-family:"Zen Kaku Gothic New",sans-serif; font-size:12px; font-weight:700}
+.sv-num{font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:600}
+.sv-sm{font-family:"IBM Plex Mono",monospace; font-size:11px}
+
+.ladder{background:var(--surface); border:1px solid var(--rule); box-shadow:var(--shadow); overflow:hidden}
+.lrow{display:grid; grid-template-columns:1fr auto; gap:16px; align-items:baseline;
+      padding:13px 22px; border-bottom:1px solid var(--rule-2); font-size:14.5px}
+.lrow .v{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-size:15px; white-space:nowrap}
+.lrow small{display:block; font-size:12px; color:var(--ink-3); line-height:1.6; margin-top:2px}
+.lrow.minus .v{color:var(--clay)}
+.lrow.plus .v{color:var(--pine)}
+.lrow.total{border-bottom:0; border-top:2px solid var(--ink); background:var(--surface-2); font-weight:700}
+.lrow.total .v{font-size:20px}
+.lrow.sub{background:var(--surface-2); border-top:1px solid var(--rule)}
+
+.scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; font-size:14px; background:var(--surface); min-width:420px}
+th,td{padding:11px 14px; border-bottom:1px solid var(--rule-2); text-align:left; vertical-align:top}
+thead th{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; color:var(--ink-3);
+         text-transform:uppercase; font-weight:500; border-bottom:1px solid var(--rule); white-space:nowrap}
+td.n{text-align:right; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+
+.jnl{background:var(--surface); border:1px solid var(--rule); padding:16px 18px;
+     font-family:"IBM Plex Mono",monospace; font-size:13px; line-height:2.05; overflow-x:auto}
+.jnl b{color:var(--clay); font-weight:600}
+
+ol.steps{list-style:none; counter-reset:s; margin:0; padding:0;
+         background:var(--surface); border:1px solid var(--rule); box-shadow:var(--shadow)}
+ol.steps li{counter-increment:s; display:grid; grid-template-columns:30px 1fr; gap:14px;
+            padding:14px 22px; border-bottom:1px solid var(--rule-2); font-size:14.5px; line-height:1.8}
+ol.steps li:last-child{border-bottom:0}
+ol.steps li::before{content:counter(s); font-family:"IBM Plex Mono",monospace; font-size:12px;
+                    font-weight:600; color:var(--pine); padding-top:4px}
+ol.steps li small{display:block; font-size:12.5px; color:var(--ink-3); line-height:1.65}
+footer{padding:36px 0 0; border-top:1px solid var(--rule); color:var(--ink-3); font-size:12.5px; line-height:1.8}
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">簿記1級 · 商業 第31章 包括利益 · 例題2／例題3</p>
+  <h1>連結の利益は<br>畑で考える</h1>
+  <p style="margin-top:18px; font-size:17px; line-height:1.9; color:var(--ink-2)">当期純利益がどこから出てくるのか。子会社の配当はどう計算して、なぜ消すのか。</p>
+  <div class="meta"><span>ELI5</span><span>2026-09-01</span><span>㉕処方</span></div>
+</header>
+
+<section>
+  <div class="head"><p class="eyebrow">一言で</p><h2>「もらった配当」を消して、「育った利益」を書く</h2></div>
+  <div class="lead">
+    <p>P社の個別決算書に載っている利益には、<strong>子会社からもらった配当</strong>が入っています。連結では「子会社ごと自分のもの」として見るので、<strong class="clay">もらった配当を消して</strong>、代わりに<strong class="pine">子会社が育てた利益をまるごと足します</strong>。</p>
+    <p style="margin-top:12px">配当の計算はこれだけです — <strong>配当総額 × 自分の持分比率</strong>。例題2は 2,000×80%＝1,600、例題3は 3,000×20%＝600。<strong>連結でも持分法でも同じ式</strong>です。</p>
+  </div>
+</section>
+
+<section>
+  <div class="head"><p class="eyebrow">比喩</p><h2>S社は、あなたが80%持っている畑</h2></div>
+  <div class="stack">
+    <p>畑は今年 <span class="num">12,000</span>円 の作物を育てました。そのうち <span class="num">2,000</span>円 だけを「はい、どうぞ」と株主に配りました（＝配当）。</p>
+
+    <figure>
+      <svg viewBox="0 0 660 300" role="img" aria-label="S社が育てた利益12,000のうち80%の9,600がP社の取り分、20%の2,400が非支配株主の取り分。配当2,000のうち1,600がP社に渡る図">
+        <!-- 畑 -->
+        <rect x="8" y="34" width="286" height="150" rx="6" fill="var(--pine-bg)" stroke="var(--pine)" stroke-width="1.5"/>
+        <text x="20" y="24" class="sv-lab" fill="var(--pine)">S社の畑（子会社）</text>
+        <text x="24" y="66" class="sv-sm" fill="var(--ink-2)">今年 育った作物</text>
+        <text x="24" y="92" class="sv-num" fill="var(--ink)" style="font-size:22px">12,000</text>
+        <line x1="24" y1="106" x2="278" y2="106" stroke="var(--pine)" stroke-width="1" stroke-dasharray="3 3"/>
+        <rect x="24" y="118" width="200" height="24" rx="3" fill="var(--pine)" opacity="0.85"/>
+        <text x="34" y="135" class="sv-sm" fill="var(--surface)">あなたの取り分 80%</text>
+        <text x="232" y="136" class="sv-num" fill="var(--pine)">9,600</text>
+        <rect x="24" y="150" width="50" height="24" rx="3" fill="var(--ink-3)" opacity="0.55"/>
+        <text x="80" y="167" class="sv-sm" fill="var(--ink-3)">他人 20%</text>
+        <text x="232" y="167" class="sv-num" fill="var(--ink-3)">2,400</text>
+
+        <!-- 配当の矢印 -->
+        <path d="M300 118 L 372 118" stroke="var(--clay)" stroke-width="2" fill="none"/>
+        <path d="M372 118 l -8 -5 l 0 10 z" fill="var(--clay)"/>
+        <text x="302" y="108" class="sv-sm" fill="var(--clay)">配当 2,000 のうち</text>
+        <text x="302" y="140" class="sv-num" fill="var(--clay)">1,600（80%）</text>
+
+        <!-- P社 -->
+        <rect x="380" y="34" width="272" height="150" rx="6" fill="var(--surface-2)" stroke="var(--rule)" stroke-width="1.5"/>
+        <text x="392" y="24" class="sv-lab" fill="var(--ink-2)">P社の個別決算書</text>
+        <text x="396" y="66" class="sv-sm" fill="var(--ink-2)">当期純利益</text>
+        <text x="396" y="92" class="sv-num" fill="var(--ink)" style="font-size:22px">30,000</text>
+        <rect x="396" y="112" width="240" height="34" rx="4" fill="var(--clay-bg)" stroke="var(--clay)" stroke-width="1"/>
+        <text x="406" y="126" class="sv-sm" fill="var(--clay)">この中に「受取配当金」として</text>
+        <text x="406" y="141" class="sv-sm" fill="var(--clay)">1,600 が既に入っている ← 消す対象</text>
+
+        <!-- 下部の結論 -->
+        <rect x="8" y="208" width="644" height="72" rx="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5"/>
+        <text x="26" y="234" class="sv-lab" fill="var(--ink)">連結で書くのは「もらった 1,600」ではなく「育った 12,000」</text>
+        <text x="26" y="258" class="sv-sm" fill="var(--ink-2)">だから ①もらった 1,600 を消して　②育った 12,000 を足す</text>
+        <text x="26" y="274" class="sv-sm" fill="var(--ink-3)">配当は左のポケットから右のポケットへ移しただけ。グループ全体では 1円も増えていない</text>
+      </svg>
+      <figcaption>例題2 の数値。P社比率80%／非支配株主20%。</figcaption>
+    </figure>
+
+    <div class="note warn">
+      <strong>配当を消す理由はひとつだけです。</strong>消さないと、<strong>畑が育てた 12,000</strong> と <strong>あなたがもらった 1,600</strong> を<strong>二重に数えてしまう</strong>から。1,600 はもともと 12,000 の中から出たお金です。
+    </div>
+
+    <div class="jnl">
+（借）受取配当金　　　　　　　<b>1,600</b>　　（貸）利益剰余金−剰余金の配当　2,000<br>
+　　　非支配株主持分−当期変動額　 400
+    </div>
+    <p style="font-size:14px; color:var(--ink-2)">あなたの分 1,600 は「受取配当金」を消し、他人の分 400 は「非支配株主持分」を減らす。合わせて 2,000 で、配当がなかったことになります。</p>
+  </div>
+</section>
+
+<section>
+  <div class="head"><p class="eyebrow">例題2 · 連結子会社</p><h2>当期純利益の出し方</h2></div>
+  <div class="stack">
+    <p><strong>先にグループ全体の利益を出す。分けるのは後。</strong>この順で書くのが一番速く、間違えません。</p>
+    <div class="ladder">
+      <div class="lrow"><span>P社の利益<small>個別決算書の当期純利益をそのまま</small></span><span class="v">30,000</span></div>
+      <div class="lrow plus"><span>＋ S社の利益<small>連結子会社なので<strong>全額</strong>足す（持分比率は掛けない）</small></span><span class="v">+12,000</span></div>
+      <div class="lrow minus"><span>− のれん償却<small>7,200 ÷ 10年</small></span><span class="v">−720</span></div>
+      <div class="lrow minus"><span>− 受取配当金の消去<small>2,000 × 80%。P社の30,000に含まれている二重計上を消す</small></span><span class="v">−1,600</span></div>
+      <div class="lrow total"><span>当期純利益</span><span class="v">39,680</span></div>
+      <div class="lrow sub"><span>うち 非支配株主に帰属<small>12,000 × 20%　＝ 畑の20%は他人のもの</small></span><span class="v">2,400</span></div>
+      <div class="lrow sub" style="border-top:0"><span>うち 親会社株主に帰属<small>39,680 − 2,400</small></span><span class="v">37,280</span></div>
+    </div>
+
+    <div class="note">
+      <strong>教科書の「＋8,000（取得後剰余金）」の正体。</strong>解説は <span class="num">30,000 ＋ 8,000 − 720 ＝ 37,280</span> と、親会社の分だけ先に出す書き方をしています。ここが見えにくい原因です。<br>
+      <span class="num">8,000 ＝ 9,600（12,000×80%）− 1,600（もらった配当）</span><br>
+      <strong>「育った分の自分の取り分」から「もう受け取っていた分」を引いた差額</strong>。上のはしごとまったく同じことを言っています。
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head"><p class="eyebrow">例題3 · 持分法適用会社</p><h2>形はまったく同じ</h2></div>
+  <div class="stack">
+    <p>A社は <strong>20%しか持っていない畑</strong>。持分法では畑を丸ごと取り込まず、<strong>最初から自分の20%分だけ</strong>足します。</p>
+    <div class="ladder">
+      <div class="lrow"><span>P社の利益</span><span class="v">30,000</span></div>
+      <div class="lrow plus"><span>＋ A社の利益の20%<small>5,000 × 20%　＝ 持分法による投資損益</small></span><span class="v">+1,000</span></div>
+      <div class="lrow minus"><span>− のれん償却<small>400 ÷ 10年</small></span><span class="v">−40</span></div>
+      <div class="lrow minus"><span>− 受取配当金の消去<small><strong>3,000 × 20%</strong>　← 例題2と同じ式</small></span><span class="v">−600</span></div>
+      <div class="lrow total"><span>当期純利益</span><span class="v">30,360</span></div>
+      <div class="lrow sub"><span>うち 非支配株主に帰属<small>持分法適用会社に非支配株主持分は出てこない</small></span><span class="v">0</span></div>
+      <div class="lrow sub" style="border-top:0"><span>うち 親会社株主に帰属</span><span class="v">30,360</span></div>
+    </div>
+    <div class="note">
+      <strong>非支配株主が 0 になる理由。</strong>A社を丸ごと取り込んでいないので、<strong>「他人の分」を計上する場所がそもそもありません</strong>。連結子会社は12,000を全部足したから20%を返す必要がありましたが、持分法は最初から1,000（自分の分）しか足していない。返す相手がいないのです。
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head"><p class="eyebrow">対比</p><h2>2つの違いは1点だけ</h2></div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th></th><th>連結子会社（例題2）</th><th>持分法（例題3）</th></tr></thead>
+      <tbody>
+        <tr><td><strong>利益の足し方</strong></td><td><strong>全額</strong>足して、あとで20%を他人に配る</td><td>最初から<strong>持分比率の分だけ</strong>足す</td></tr>
+        <tr><td><strong>配当の消去</strong></td><td class="n">2,000 × 80% = 1,600</td><td class="n">3,000 × 20% = 600</td></tr>
+        <tr><td><strong>非支配株主に帰属</strong></td><td class="n">2,400</td><td class="n">0</td></tr>
+        <tr><td><strong>OCIの表示</strong></td><td>その他有価証券評価差額金として表示</td><td><strong>持分法適用会社に対する持分相当額</strong>として一括表示（税効果控除後）</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:18px">
+    <strong>配当の扱いだけは完全に共通です。</strong>どちらも「配当総額 × 自分の持分比率」を消す。連結だから／持分法だから、で変わりません。
+  </div>
+</section>
+
+<section style="border-bottom:0">
+  <div class="head"><p class="eyebrow">今夜やること</p><h2>開く前に、この6行を白紙に書く</h2></div>
+  <ol class="steps">
+    <li>P社の利益をそのまま書く</li>
+    <li>子会社（関連会社）の利益を足す<small>連結は全額 ／ 持分法は持分比率を掛ける</small></li>
+    <li>のれん償却を引く</li>
+    <li>受取配当金を引く<small>配当総額 × 持分比率</small></li>
+    <li>ここまでで <strong>当期純利益</strong></li>
+    <li>非支配株主に帰属 ＝ 子会社利益 × 非持比率　／　親会社株主に帰属 ＝ ⑤ − ⑥<small>持分法なら非支配株主は 0</small></li>
+  </ol>
+  <div class="note" style="margin-top:18px">
+    この6行が書ければ例題2も例題3も通ります。<strong>書けたら開いて照合、書けなければ写経に戻る</strong> — ⑲の閉じて手順です。
+  </div>
+</section>
+
+<footer>
+  出典：簿記1級 商会 教科書 第Ⅲ部 第31章 包括利益（第1節 総論 例題2／第2節 持分法適用会社 例題3）。数値はテキストの解答解説に一致。
+</footer>
+
+</div>
