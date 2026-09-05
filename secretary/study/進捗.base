@@ -1,0 +1,66 @@
+filters:
+  and:
+    - file.inFolder("secretary/study/問題ノート")
+    - 'grade != "-"'
+
+formulas:
+  status_icon: 'if(grade == "○", "🟢", if(grade == "△", "🟠", "🔴"))'
+
+properties:
+  id:
+    displayName: "問題ID"
+  subtitle:
+    displayName: "副題"
+  chapter:
+    displayName: "章"
+  subject:
+    displayName: "科目"
+  grade:
+    displayName: "理解度"
+  solved:
+    displayName: "解いた日"
+  due:
+    displayName: "次回復習日"
+  formula.status_icon:
+    displayName: ""
+
+views:
+  - type: table
+    name: "章別（全問）"
+    groupBy:
+      property: chapter
+      direction: ASC
+    order:
+      - formula.status_icon
+      - id
+      - subtitle
+      - grade
+      - solved
+      - due
+
+  - type: table
+    name: "科目別"
+    groupBy:
+      property: subject
+      direction: ASC
+    order:
+      - formula.status_icon
+      - id
+      - subtitle
+      - chapter
+      - grade
+
+  - type: table
+    name: "まだ△が残っている問題"
+    filters:
+      and:
+        - 'grade != "○"'
+    groupBy:
+      property: subject
+      direction: ASC
+    order:
+      - id
+      - subtitle
+      - chapter
+      - grade
+      - due

@@ -1,0 +1,92 @@
+name: sync-obsidian-vault
+
+# 目的: 「記録がどのブランチに書かれても」Obsidian保管庫を最新に保つ。
+#
+# 背景（この設計の理由）:
+#   秘書セッションは毎回そのセッション用のブランチを作るため、記録先ブランチは固定できない。
+#   特定ブランチだけを見張る作りだと、セッションが新ブランチに移った瞬間に保管庫が置き去りになる。
+#   よってこのワークフローは「全ブランチを走査して exercise-log.md が最も新しいものを正とみなす」。
+#
+# 動作: 1時間ごと（＋手動実行）に全ブランチを調べ、最新の演習ログから保管庫を再生成し、
+#       PDFを除いた軽量スナップショットを claude/obsidian-vault へ反映する。
+#       Obsidianはこのブランチだけを見ればよい。
+
+on:
+  schedule:
+    - cron: '17 * * * *'   # 毎時17分（GitHubの混雑を避けるため0分を外す）
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-obsidian-vault
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 全ブランチを取得
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 演習ログが最新のブランチを特定し、保管庫を再生成してミラー
+        run: |
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          LOG='.secretary/study/exercise-log.md'
+          VAULT_BRANCH='claude/obsidian-vault'
+
+          # 1) 全リモートブランチから、演習ログの最終更新が最も新しいものを選ぶ
+          BEST_REF=''; BEST_TS=0
+          for ref in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin | grep -v 'HEAD$'); do
+            [ "$ref" = "origin/$VAULT_BRANCH" ] && continue
+            git cat-file -e "$ref:$LOG" 2>/dev/null || continue
+            ts=$(git log -1 --format='%ct' "$ref" -- "$LOG" 2>/dev/null || echo 0)
+            n=$(git show "$ref:$LOG" | grep -cE '^\|[[:space:]]*[TPC][0-9]' || echo 0)
+            echo "candidate: $ref  ts=$ts  問題数=$n"
+            # 新しいログを優先。同時刻なら問題数が多い方
+            if [ "$ts" -gt "$BEST_TS" ]; then BEST_TS=$ts; BEST_REF=$ref; BEST_N=$n; fi
+          done
+          [ -n "$BEST_REF" ] || { echo "演習ログを持つブランチが無い"; exit 1; }
+          echo "==> 採用: $BEST_REF （問題数 $BEST_N）"
+
+          # 2) 採用ブランチの中身を作業ツリーに展開
+          git checkout -B mirror "$BEST_REF"
+
+          # 3) 生成器とObsidian設定は保管庫ブランチの版を正とする（記録ブランチ側は古いことがある）
+          if git ls-remote --exit-code --heads origin "$VAULT_BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$VAULT_BRANCH"
+            for p in tools/generate_vault_views.py .obsidian セットアップ.md .github/workflows/sync-obsidian-vault.yml; do
+              git checkout "origin/$VAULT_BRANCH" -- "$p" 2>/dev/null || true
+            done
+          fi
+
+          # 4) Obsidian可視化: ドット始まりのフォルダはObsidianが読まないため .secretary → secretary へ
+          if [ -d .secretary ]; then
+            rm -rf secretary
+            mv .secretary secretary
+          fi
+          # 生成器とBasesビューの参照パスを可視フォルダへ揃える
+          sed -i 's|REPO / "\.secretary/study|REPO / "secretary/study|g' tools/generate_vault_views.py
+          for f in secretary/study/*.base; do
+            [ -e "$f" ] && sed -i 's|\.secretary/study/問題ノート|secretary/study/問題ノート|g' "$f"
+          done
+
+          # 5) 最新ログから保管庫を再生成
+          python3 tools/generate_vault_views.py
+
+          # 6) PDFと開発用ファイルを除いて軽量化し、保管庫ブランチへ反映
+          git ls-files -z '*.pdf' '*.PDF' | xargs -0 --no-run-if-empty rm -f --
+          rm -rf .claude .claude-plugin plugins
+          git add -A
+          if git diff --cached --quiet; then
+            echo "差分なし。保管庫は既に最新。"
+            exit 0
+          fi
+          git commit -m "vault: ${BEST_REF#origin/} の演習ログ（${BEST_N}問）から再生成 [skip ci]"
+          git push -f origin mirror:"$VAULT_BRANCH"
+          echo "保管庫を更新した。"
